@@ -83,6 +83,7 @@ import { ClinicalTimeline } from "@/components/timeline/clinical-timeline";
 import { VisualFrame } from "@/visualization/core/VisualFrame";
 import { PatientStateRadar } from "@/visualization/patient/PatientStateRadar";
 import { ClinicalTrendLinkage } from "@/visualization/patient/ClinicalTrendLinkage";
+import ServerPatientDetailPage from "./detail-server";
 
 /* ------------------------------ 页脚小组件 ------------------------------ */
 
@@ -200,6 +201,9 @@ function TaskLine({ task }: { task: Task }) {
 
 export default function PatientDetailPage() {
   const { id = "" } = useParams();
+  if (import.meta.env.VITE_HCC_API_MODE === "server") {
+    return <ServerPatientDetailPage />;
+  }
   const patient = getPatient(id);
 
   if (!patient) {

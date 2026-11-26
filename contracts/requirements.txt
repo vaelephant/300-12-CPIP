@@ -1,0 +1,3 @@
+# Contract validation only (not required by the runtime API server)
+jsonschema==4.26.0
+PyYAML==6.0.3

@@ -55,6 +55,7 @@ import { FieldStatusBadge } from "@/components/patient/ui";
 import { GanttChart, type GanttRow } from "@/components/charts/advanced";
 import { DecisionEvidenceGraph } from "@/visualization/knowledge/DecisionEvidenceGraph";
 import { VisualFrame } from "@/visualization/core/VisualFrame";
+import ServerPlanningPage from "./index-server";
 
 /* ------------------------------ 规划草案 · 转化治疗后手术（INST-HCC-002） ------------------------------ */
 
@@ -87,7 +88,7 @@ const VALIDATION_META = {
 
 /* ------------------------------ 页面入口 ------------------------------ */
 
-export default function PlanningPage() {
+function DemoPlanningPage() {
   const { instanceId = "" } = useParams();
   const instance = getInstance(instanceId);
   const patient = instance ? getPatient(instance.patientId) : undefined;
@@ -1054,3 +1055,9 @@ function PlanningWorkbench({ instance, patient }: { instance: PathwayInstance; p
   );
 }
 
+
+
+export default function PlanningPage() {
+  if (import.meta.env.VITE_HCC_API_MODE === "server") return <ServerPlanningPage />;
+  return <DemoPlanningPage />;
+}

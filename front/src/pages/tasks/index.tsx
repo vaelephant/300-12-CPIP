@@ -33,6 +33,7 @@ import { useSessionStore } from "@/stores/session-store";
 import { TaskActions } from "@/components/patient/task-actions";
 import { Pagination } from "@/components/patient/ui";
 import { isTerminalTask } from "@/components/patient/stages";
+import ServerTasksPage from "./index-server";
 
 const PAGE_SIZE = 24;
 
@@ -215,7 +216,7 @@ function BoardCard({ task }: { task: Task }) {
 
 /* ------------------------------ 页面 ------------------------------ */
 
-export default function TasksPage() {
+function DemoTasksPage() {
   const user = useSessionStore((s) => s.user);
   const tasks = useRuntimeStore((s) => s.tasks);
   const [tab, setTab] = useState<TabKey>("mine");
@@ -640,4 +641,10 @@ export default function TasksPage() {
       </div>
     </Page>
   );
+}
+
+
+export default function TasksPage() {
+  if (import.meta.env.VITE_HCC_API_MODE === "server") return <ServerTasksPage />;
+  return <DemoTasksPage />;
 }

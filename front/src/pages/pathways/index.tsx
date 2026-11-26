@@ -23,6 +23,7 @@ import { PATHWAY_STATUS_META } from "@/lib/clinical";
 import type { Pathway, PathwayStatus } from "@/types";
 import { DEPARTMENTS, LAST_SYNC, PATHWAYS } from "@/data";
 import { useSessionStore } from "@/stores/session-store";
+import ServerPathwaysPage from "./index-server";
 import { useStudioStore } from "@/stores/studio-store";
 import { Page, PageHeader, PageMeta } from "@/components/app/page-header";
 import { EmptyState, SyntheticTag } from "@/components/app/section";
@@ -90,7 +91,7 @@ function pathwayIdSuffix() {
   return `${Date.now()}`.slice(-6);
 }
 
-export default function PathwaysPage() {
+function DemoPathwaysPage() {
   const navigate = useNavigate();
   const user = useSessionStore((state) => state.user);
   const customPathways = useStudioStore((state) => state.customPathways);
@@ -766,4 +767,10 @@ export default function PathwaysPage() {
       </Dialog>
     </Page>
   );
+}
+
+
+export default function PathwaysPage() {
+  if (import.meta.env.VITE_HCC_API_MODE === "server") return <ServerPathwaysPage />;
+  return <DemoPathwaysPage />;
 }

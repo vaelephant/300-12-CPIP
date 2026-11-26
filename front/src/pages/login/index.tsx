@@ -17,6 +17,10 @@ import { BrandMark } from "@/components/app/brand-mark";
 import { StatusBadge } from "@/components/app/status-badge";
 import { SyntheticTag } from "@/components/app/section";
 import { PatientAvatar } from "@/components/app/patient-avatar";
+import { ApiError } from "@/services/http";
+import { hccApi } from "@/services/hcc-api";
+
+const API_MODE = import.meta.env.VITE_HCC_API_MODE === "server";
 
 const schema = z.object({
   employeeNo: z.string().min(1, "请输入工号"),
@@ -69,9 +73,24 @@ export default function LoginPage() {
     }, 260);
   };
 
+  const enterAs = async (userId: string, employeeNo: string, password = "cpip-demo") => {
+    if (API_MODE) {
+      setPending(true);
+      try {
+        await hccApi.login({ employee_no: employeeNo, password });
+      } catch (error) {
+        setPending(false);
+        const message = error instanceof ApiError ? `${error.message}（${error.requestId}）` : "后端登录失败";
+        toast.error("无法连接 HCC-CIP 后端", { description: message, duration: 4000 });
+        return;
+      }
+    }
+    doLogin(userId);
+  };
+
   const onSubmit = (values: FormValues) => {
     const user = USERS.find((u) => u.employeeNo.toLowerCase() === values.employeeNo.toLowerCase());
-    doLogin(user?.id ?? selected);
+    void enterAs(user?.id ?? selected, values.employeeNo, values.password);
   };
 
   const selectedAccount = DEMO_ACCOUNTS.find((a) => a.user.id === selected)!;
@@ -295,7 +314,7 @@ export default function LoginPage() {
           <Button
             variant="secondary"
             className="mt-3 h-8 w-full"
-            onClick={() => doLogin(selectedAccount.user.id)}
+            onClick={() => void enterAs(selectedAccount.user.id, selectedAccount.user.employeeNo)}
             disabled={pending}
           >
             以「{selectedAccount.roleLabel}」身份进入

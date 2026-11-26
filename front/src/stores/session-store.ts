@@ -4,6 +4,7 @@ import type { RoleKey, User } from "@/types";
 import { DEMO_ACCOUNTS, USERS } from "@/data/org";
 import { ROLES } from "@/data/org";
 import { ROLE_SYSTEM_LABELS } from "@/lib/clinical";
+import { clearBackendToken } from "@/services/http";
 
 interface SessionState {
   user: User | null;
@@ -28,7 +29,10 @@ export const useSessionStore = create<SessionState>()(
         const role = ROLES.find((r) => r.key === user.role);
         set({ user, permissions: role?.permissions ?? [] });
       },
-      logout: () => set({ user: null, permissions: [] }),
+      logout: () => {
+        clearBackendToken();
+        set({ user: null, permissions: [] });
+      },
       has: (permission) => get().permissions.includes(permission),
       hasAny: (permissions) => permissions.some((p) => get().permissions.includes(p)),
     }),

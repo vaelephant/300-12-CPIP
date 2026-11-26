@@ -14,7 +14,6 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import type { PatientScenario, PatientStatus } from "@/types";
-import { LAST_SYNC, PATIENTS, PATIENT_SUMMARY } from "@/data";
 import { PATIENT_SCENARIO_META, PATIENT_STATUS_META, RISK_META } from "@/lib/clinical";
 import { fmt, fmtDate, pct, relTime } from "@/lib/utils";
 import { Page, PageHeader, PageMeta } from "@/components/app/page-header";
@@ -33,6 +32,7 @@ import { FlagChips, Pagination } from "@/components/patient/ui";
 import { DonutChart } from "@/components/charts/advanced";
 import { HBarChart } from "@/components/charts/chart-kit";
 import { EnrollmentMatchDialog } from "@/components/patient/enrollment-dialog";
+import { usePatientDirectory } from "@/queries/patient-directory";
 
 const PAGE_SIZE = 20;
 
@@ -57,12 +57,13 @@ export default function PatientsPage() {
   const [ward, setWard] = useState("ALL");
   const [page, setPage] = useState(1);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const { patients, summary, lastSync, mode } = usePatientDirectory();
 
-  const wardOptions = Array.from(new Set(PATIENTS.map((p) => p.ward)));
+  const wardOptions = Array.from(new Set(patients.map((p) => p.ward)));
 
   const scoped = useMemo(() => {
     const q = search.trim().toLowerCase();
-    return PATIENTS.filter((p) => {
+    return patients.filter((p) => {
       const matchesQuery =
         !q ||
         p.name.toLowerCase().includes(q) ||
@@ -74,7 +75,7 @@ export default function PatientsPage() {
       const matchesWard = ward === "ALL" || p.ward === ward;
       return matchesQuery && matchesScenario && matchesWard;
     });
-  }, [search, scenario, ward]);
+  }, [patients, search, scenario, ward]);
 
   const filtered = useMemo(
     () => (status === "ALL" ? scoped : scoped.filter((p) => p.status === status)),
@@ -108,13 +109,13 @@ export default function PatientsPage() {
     setPage(1);
   };
 
-  const highRisk = PATIENTS.filter((p) => p.riskLevel === "HIGH").length;
-  const mediumRisk = PATIENTS.filter((p) => p.riskLevel === "MEDIUM").length;
-  const pendingMissing = PATIENTS.filter(
+  const highRisk = patients.filter((p) => p.riskLevel === "HIGH").length;
+  const mediumRisk = patients.filter((p) => p.riskLevel === "MEDIUM").length;
+  const pendingMissing = patients.filter(
     (p) => p.status === "PENDING_ADMISSION" && p.scenario === "MISSING_DATA",
   ).length;
 
-  const scenarioCount = (scenario: PatientScenario) => PATIENTS.filter((p) => p.scenario === scenario).length;
+  const scenarioCount = (scenario: PatientScenario) => patients.filter((p) => p.scenario === scenario).length;
 
   return (
     <Page>
@@ -149,8 +150,9 @@ export default function PatientsPage() {
         meta={
           <>
             <SyntheticTag />
-            <PageMeta label="合成病例" value={`${fmt(PATIENT_SUMMARY.total)} 例`} mono />
-            <PageMeta label="最近同步" value={`${fmtDate(LAST_SYNC, true)} · ${relTime(LAST_SYNC)}`} mono />
+            <PageMeta label="合成病例" value={`${fmt(summary.total)} 例`} mono />
+            <PageMeta label="数据源" value={mode === "server" ? "后端 API" : "V0.5 合成演示"} mono />
+            <PageMeta label="最近同步" value={`${fmtDate(lastSync, true)} · ${relTime(lastSync)}`} mono />
             <PageMeta label="数据源" value="HIS / EMR / LIS / PACS" />
             <PageMeta label="专病范围" value="原发性肝癌（C22.0）· 单病种" />
           </>
@@ -160,7 +162,7 @@ export default function PatientsPage() {
       <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
           label="合成病例"
-          value={fmt(PATIENT_SUMMARY.total)}
+          value={fmt(summary.total)}
           unit="例"
           hint="演示环境中的全部病例均为合成数据，不代表真实患者"
           tone="info"
@@ -169,17 +171,17 @@ export default function PatientsPage() {
         />
         <StatCard
           label="在径患者"
-          value={fmt(PATIENT_SUMMARY.inPathway)}
+          value={fmt(summary.inPathway)}
           unit="例"
           hint="已确认入径且路径实例处于执行中的患者数量"
           tone="ok"
-          footer={`占全部病例 ${pct(PATIENT_SUMMARY.inPathway, PATIENT_SUMMARY.total)}`}
-          progress={(PATIENT_SUMMARY.inPathway / PATIENT_SUMMARY.total) * 100}
+          footer={`占全部病例 ${pct(summary.inPathway, summary.total)}`}
+          progress={(summary.inPathway / summary.total) * 100}
           trend={[236, 240, 243, 246, 249, 252, 254]}
         />
         <StatCard
           label="待入径确认"
-          value={fmt(PATIENT_SUMMARY.pendingAdmission)}
+          value={fmt(summary.pendingAdmission)}
           unit="例"
           hint="已完成建档、等待医生确认入径的患者；含数据不完整病例"
           tone="info"
@@ -203,20 +205,20 @@ export default function PatientsPage() {
         <Card className="px-4 py-3">
           <SectionHead
             title="队列风险构成"
-            count={PATIENTS.length}
+            count={patients.length}
             description="按最新风险等级汇总的全部合成病例"
             action={<StatusBadge tone="warn" dot={false}>需关注 {highRisk} 例</StatusBadge>}
           />
           <div className="pt-3">
             <DonutChart
               data={[
-                { name: "低风险", value: PATIENTS.filter((p) => p.riskLevel === "LOW").length, color: "var(--chart-1)" },
-                { name: "中风险", value: PATIENTS.filter((p) => p.riskLevel === "MEDIUM").length, color: "var(--chart-3)" },
-                { name: "高风险", value: PATIENTS.filter((p) => p.riskLevel === "HIGH").length, color: "var(--chart-5)" },
+                { name: "低风险", value: patients.filter((p) => p.riskLevel === "LOW").length, color: "var(--chart-1)" },
+                { name: "中风险", value: patients.filter((p) => p.riskLevel === "MEDIUM").length, color: "var(--chart-3)" },
+                { name: "高风险", value: patients.filter((p) => p.riskLevel === "HIGH").length, color: "var(--chart-5)" },
               ]}
               height={132}
               centerLabel="合成病例"
-              centerValue={PATIENTS.length}
+              centerValue={patients.length}
               unit="例"
               footnote="风险等级用于路径关注与审核提示，不替代临床判断。"
             />

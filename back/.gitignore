@@ -1,0 +1,12 @@
+# HCC-CIP local backend
+.env
+*.db
+*.sqlite3
+__pycache__/
+.pytest_cache/
+.venv/
+.venv-*/
+*.pyc
+.coverage
+
+backups/

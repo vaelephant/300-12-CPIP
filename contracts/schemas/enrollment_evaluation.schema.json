@@ -132,6 +132,12 @@
               "minLength": 1,
               "maxLength": 160
             }
+          },
+          "reasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         }
       }

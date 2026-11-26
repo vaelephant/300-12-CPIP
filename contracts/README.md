@@ -6,7 +6,7 @@
 
 | 文件 | 用途 |
 | --- | --- |
-| `openapi.yaml` | OpenAPI 3.1 · 35 个路径 · 统一 `/api/v1` |
+| `openapi.yaml` | OpenAPI 3.1 · 45 个路径 · 统一 `/api/v1` |
 | `schemas/*.schema.json` | 13 个 Draft 2020-12 领域 Schema |
 | `examples/hcc-surgery-case.json` | 合成端到端验收病例 `HCC-ACC-001` |
 | `validate.py` | Schema、语义引用与 OpenAPI 形状校验 |

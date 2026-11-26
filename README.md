@@ -11,9 +11,9 @@
 | 部分 | 状态 | 说明 |
 | --- | --- | --- |
 | `front/` 前端高保真 | ✅ 已完成 | React 19 + Vite 8 + TypeScript + shadcn/ui + Tailwind CSS v4 + React Flow + Apache ECharts |
-| `back/` 后端服务 | ⏳ V0.6 待启动 | 按 V0.6 清单 S1 起实施 FastAPI + SQLAlchemy + Alembic + PostgreSQL；当前为空目录 |
-| `contracts/` 数据协议 | ✅ T02 完成 | OpenAPI 3.1（35 paths）、13 个 JSON Schema、HCC 合成验收病例，`python3 contracts/validate.py` 通过 |
-| V0.6 研发实施 | 🚧 T01/T02 完成 | T01 基线报告、T02 领域契约已冻结；T03–T05 后端骨架待启动 |
+| `back/` 后端服务 | ✅ S1–S3 完成（SQLite 开发） | FastAPI + SQLAlchemy + Alembic；路径/规则/入径/计划/任务/变异/随访/结局与聚合指标；48 项 pytest 通过 |
+| `contracts/` 数据协议 | ✅ T02 完成 | OpenAPI 3.1（36 paths）、13 个 JSON Schema、HCC 合成验收病例，`python3 contracts/validate.py` 通过 |
+| V0.6 研发实施 | 🚧 S1–S3 完成，S4 进行中 | 后端契约 45/45 路径已实现；部署/备份/端到端/安全测试完成；前端登录 + 患者中心 + 患者详情 + 路径库 + 任务中心 + 规划页已接入真实 API，变异/随访/分析等页面仍待迁移 |
 
 ## 快速开始
 
@@ -31,12 +31,25 @@ npm run dev        # http://127.0.0.1:5173
 - [T01 基线报告 · 干净检出构建结果与已知缺口](docs/V0.6-T01-BASELINE.md)
 - [T02 领域契约 · 三值逻辑、状态机、验收病例](docs/V0.6-T02-DOMAIN-CONTRACTS.md)
 - [契约目录 · OpenAPI / JSON Schema / 校验脚本](contracts/README.md)
+- [后端 README · S1–S3 启动、API、演示账号与边界](back/README.md)
+- [S4 部署与演示手册 · SQLite 备份/恢复、生产切换边界](docs/V0.6-S4-DEPLOYMENT.md)
+- [临床规则审阅清单（待签署）](docs/V0.6-CLINICAL-REVIEW.md)
+- CI：`.github/workflows/ci.yml`（契约、后端测试、迁移重放、前端 typecheck/build）；本地命令见 `Makefile`
 
 ```bash
-python3 contracts/validate.py   # 契约与合成病例校验
+# 契约校验
+python3 contracts/validate.py
+
+# 后端（SQLite 本地开发）
+cd back
+python3 -m pip install -r requirements.txt
+cp .env.example .env
+alembic upgrade head
+python3 -m app.seed
+python3 -m uvicorn app.main:app --reload --port 8000
 ```
 
-> V0.6 仍处于研发规划/契约阶段：后端、数据库、服务端授权与真实随访闭环尚未实现。所有 P0 验收项未完成前，不得视为可上线产品。
+> V0.6 当前完成 **S1–S3 后端核心闭环**：患者基础 API、路径版本与审批发布、三值入径、计划与任务状态机、变异重规划、专病评估、随访与结局。前端 API 替换、端到端测试和部署手册仍待 S4；所有 P0 验收项完成前，不得视为可上线产品。
 
 ## 文档
 

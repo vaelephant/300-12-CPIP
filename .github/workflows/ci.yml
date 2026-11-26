@@ -1,0 +1,49 @@
+name: hcc-cip-ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  backend-contracts-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install backend and contract dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r back/requirements.txt
+          python -m pip install -r contracts/requirements.txt
+
+      - name: Validate contracts and synthetic acceptance case
+        run: python contracts/validate.py
+
+      - name: Backend test suite
+        run: cd back && python -m pytest -q
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: front/package-lock.json
+
+      - name: Frontend typecheck and build
+        run: |
+          cd front
+          npm ci
+          npm run typecheck
+          npx vite build
+
+      - name: Migration replay smoke test
+        env:
+          HCC_CIP_DATABASE_URL: sqlite:////tmp/hcc-ci.db
+        run: |
+          rm -f /tmp/hcc-ci.db
+          cd back
+          python -m alembic upgrade head
+          python -m app.seed

@@ -95,6 +95,17 @@ npm run preview     # 预览生产构建
 | `/settings/audit` | M12 | 审计日志、系统健康 |
 | `/about` | VIS | 产品定义、平台定位、可视化注册表与版本边界 |
 
+## V0.6 前端接入状态
+
+- `src/services/` + `src/queries/` 已建立后端 API 客户端与查询层基础。
+- **已接入后端**：`VITE_HCC_API_MODE=server` 时，登录走后端 `/auth/login`，患者中心读取 `/patients/overview`，患者详情读取 `/patients/{id}/overview`，路径库读取 `/pathways/overview`（只读聚合视图）。
+- 任务中心：读取 `/tasks/overview`，支持受服务端状态机约束的状态推进与完成结果。
+- 规划页：读取 `/instances/{id}/plans`，支持提交/审核/激活（服务端校验），任务推进仍在任务中心。
+- 其余页面仍使用 `src/data` 的 V0.5 合成数据；T12 未完成全部页面替换。
+- 原因：后端 Patient 契约目前只含患者主数据，缺少患者列表所需床位、风险、路径进度等字段；不能在前端拼造。
+- 配置示例见 `front/.env.example`（`VITE_HCC_API_URL`）。
+- 详见 `src/services/README.md`。
+
 ## Clinical Visualization Engine（临床可视化引擎）
 
 将路径设计、患者状态、临床决策、疾病演化、路径推演与执行过程统一纳入可视化体系。
@@ -149,6 +160,8 @@ front/
 ├── src/
 │   ├── main.tsx / App.tsx    # 入口与路由（各页面已接入）
 │   ├── styles/globals.css    # Tailwind v4 主题 token 与全局样式
+│   ├── services/             # V0.6 API 服务层（T12 基础：http / hcc-api / types）
+│   ├── queries/              # V0.6 TanStack Query hooks（患者/观测/路径/任务）
 │   ├── components/
 │   │   ├── ui/               # shadcn/ui 基础组件
 │   │   ├── app/              # 应用外壳：侧边栏、顶栏、页头、状态徽章、命令面板等
