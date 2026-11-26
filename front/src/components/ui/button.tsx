@@ -9,7 +9,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground shadow-[0_1px_1px_rgba(16,36,30,0.12)] hover:bg-primary/92 active:bg-primary/98",
+          "bg-primary text-primary-foreground shadow-[0_1px_1px_rgba(24,24,27,0.10)] hover:bg-primary/92 active:bg-primary/98",
         secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/70",
         outline:
           "border border-input bg-card text-foreground hover:bg-secondary/60 hover:border-line-strong",
@@ -22,11 +22,11 @@ const buttonVariants = cva(
       },
       size: {
         xs: "h-6 px-2 text-[11.5px] rounded",
-        sm: "h-7 px-2.5 text-[12.5px] rounded-md",
-        default: "h-8 px-3",
-        lg: "h-9 px-4",
-        icon: "size-8",
-        "icon-sm": "size-7 rounded-md",
+        sm: "h-8 px-2.5 text-[12.5px] rounded-md",
+        default: "h-9 px-3.5",
+        lg: "h-10 px-4",
+        icon: "size-9",
+        "icon-sm": "size-8 rounded-md",
       },
     },
     defaultVariants: { variant: "default", size: "default" },

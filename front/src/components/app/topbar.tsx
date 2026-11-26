@@ -7,6 +7,7 @@ import {
   CircleHelp,
   Command as CommandIcon,
   LogOut,
+  PlayCircle,
   Search,
   ShieldCheck,
   UserRound,
@@ -30,6 +31,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { crumbForPath } from "./nav-config";
 import { BrandMark } from "./brand-mark";
+import { IS_SERVER_MODE } from "@/lib/data-mode";
 
 export function Topbar() {
   const location = useLocation();
@@ -44,10 +46,10 @@ export function Topbar() {
   const unread = NOTIFICATIONS.filter((n) => n.level !== "INFO").length;
 
   return (
-    <header className="sticky top-0 z-20 flex h-[52px] shrink-0 items-center gap-4 border-b border-line bg-paper/92 px-5 backdrop-blur">
+    <header className="sticky top-0 z-20 flex h-[52px] shrink-0 items-center gap-4 border-b border-line bg-card/95 px-5 backdrop-blur">
       {/* 面包屑 */}
       <div className="flex min-w-0 items-center gap-2">
-        <div className="flex size-6 items-center justify-center rounded-[4px] border border-line bg-card text-primary">
+        <div className="flex size-6 items-center justify-center rounded-[4px] border border-line bg-brand-wash text-brand">
           <BrandMark className="size-3.5" />
         </div>
         <nav className="flex min-w-0 items-center gap-1.5 text-[12px]">
@@ -65,6 +67,15 @@ export function Topbar() {
           ))}
         </nav>
       </div>
+
+      {!IS_SERVER_MODE && (
+        <button
+          onClick={() => useUiStore.getState().openTour()}
+          className="ml-1 hidden h-8 shrink-0 items-center gap-1.5 rounded-md border border-brand/20 bg-brand-wash px-2.5 text-[11px] font-medium text-brand transition-colors hover:bg-brand/10 sm:flex"
+        >
+          <PlayCircle className="size-3.5" /> 演示导览
+        </button>
+      )}
 
       {/* 全局搜索 */}
       <button
@@ -210,7 +221,7 @@ export function Topbar() {
               <LogOut className="size-3.5" />
               退出登录
             </DropdownMenuItem>
-            <div className="px-2 pt-1.5 pb-1 font-mono text-[9px] text-muted-foreground/60">{ORGANIZATION.code} · V0.5</div>
+            <div className="px-2 pt-1.5 pb-1 font-mono text-[9px] text-muted-foreground/60">{ORGANIZATION.code} · V0.6.1</div>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

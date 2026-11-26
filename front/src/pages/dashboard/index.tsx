@@ -122,7 +122,7 @@ export default function DashboardPage() {
           <>
             <PageMeta label="当前班次" value="日班 · 08:00 – 17:00" />
             <PageMeta label="数据同步" value={`${fmtTime(LAST_SYNC)} · 合成数据`} />
-            <PageMeta label="模板版本" value="V0.5 · 研发演示" mono />
+            <PageMeta label="模板版本" value="V0.6.1 · 研发演示" mono />
             <SyntheticTag className="ml-1" />
           </>
         }

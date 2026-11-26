@@ -32,6 +32,8 @@ const MINIMAP_COLOR: Record<PathwayNodeVisualState, string> = {
   variant: "var(--risk)",
   blocked: "var(--risk)",
   pending: "var(--line-strong)",
+  unknown: "var(--warn)",
+  not_selected: "var(--line)",
 };
 
 export interface LivePathwayGraphProps {
@@ -52,6 +54,9 @@ export interface LivePathwayGraphProps {
   layoutScale?: number;
   /** 自增计数触发 fitView（用于工具栏「适应画布」） */
   fitSignal?: number;
+  fitOnMount?: boolean;
+  /** Optional node to center at a readable zoom on first render. */
+  focusKey?: string | null;
   defaultViewport?: { x: number; y: number; zoom: number };
   className?: string;
 }
@@ -66,6 +71,8 @@ interface GraphCanvasProps extends Required<Pick<LivePathwayGraphProps, "stateMa
   showMiniMap: boolean;
   layoutScale: number;
   fitSignal: number;
+  fitOnMount: boolean;
+  focusKey?: string | null;
   defaultViewport: { x: number; y: number; zoom: number };
 }
 
@@ -80,9 +87,11 @@ function GraphCanvas({
   showMiniMap,
   layoutScale,
   fitSignal,
+  fitOnMount,
+  focusKey,
   defaultViewport,
 }: GraphCanvasProps) {
-  const { fitView } = useReactFlow<LivePathwayNode, Edge>();
+  const { fitView, setCenter } = useReactFlow<LivePathwayNode, Edge>();
 
   const nodeIdByKey = useMemo(() => new Map(nodes.map((node) => [node.nodeKey, node.id])), [nodes]);
 
@@ -117,15 +126,21 @@ function GraphCanvas({
           targetState === "blocked";
         const isActive = sourceState === "active" || targetState === "active";
         const isCompleted = sourceState === "completed" && targetState === "completed";
-        const stroke = isVariant
-          ? "var(--risk)"
-          : isActive
-            ? "var(--warn)"
-            : isCompleted
-              ? "var(--primary)"
-              : mode === "planned"
-                ? "var(--line-strong)"
-                : "var(--line)";
+        const isNotSelected = sourceState === "not_selected" || targetState === "not_selected";
+        const isUnknown = sourceState === "unknown" || targetState === "unknown";
+        const stroke = isUnknown
+          ? "var(--warn)"
+          : isNotSelected
+          ? "var(--line-strong)"
+          : isVariant
+            ? "var(--risk)"
+            : isActive
+              ? "var(--warn)"
+              : isCompleted
+                ? "var(--primary)"
+                : mode === "planned"
+                  ? "var(--line-strong)"
+                  : "var(--line)";
         const strokeWidth = isVariant ? 1.7 : isActive ? 2.3 : isCompleted ? 1.7 : 1.2;
         const conditional = edge.type === "CONDITIONAL";
         return {
@@ -143,7 +158,7 @@ function GraphCanvas({
           labelBgStyle: { fill: "var(--card)", fillOpacity: 0.92 },
           labelBgPadding: [3, 1] as [number, number],
           labelBgBorderRadius: 2,
-          style: { stroke, strokeWidth, strokeDasharray: isVariant ? "5 4" : undefined },
+          style: { stroke, strokeWidth, strokeDasharray: isVariant || isNotSelected || isUnknown ? "5 4" : undefined },
           markerEnd: { type: MarkerType.ArrowClosed, width: 13, height: 13, color: stroke },
         };
       }),
@@ -155,6 +170,15 @@ function GraphCanvas({
     void fitView({ padding: 0.16, maxZoom: 1, duration: 450 });
   }, [fitSignal, fitView]);
 
+  useEffect(() => {
+    if (!focusKey) return;
+    const focus = nodes.find((node) => node.nodeKey === focusKey);
+    if (!focus) return;
+    // Center the current/selected clinical node at a readable zoom instead of
+    // shrinking the whole large DAG to fit the viewport.
+    void setCenter((focus.position.x + 100) * layoutScale, (focus.position.y + 40) * layoutScale, { zoom: 0.82, duration: 0 });
+  }, [focusKey, layoutScale, nodes, setCenter]);
+
   return (
     <ReactFlow<LivePathwayNode, Edge>
       nodes={rfNodes}
@@ -165,6 +189,7 @@ function GraphCanvas({
       elementsSelectable={false}
       edgesFocusable={false}
       deleteKeyCode={null}
+      fitView={fitOnMount}
       fitViewOptions={{ padding: 0.16, maxZoom: 1 }}
       minZoom={0.12}
       maxZoom={1.5}
@@ -204,6 +229,8 @@ export function LivePathwayGraph({
   showMiniMap = false,
   layoutScale = 1.45,
   fitSignal = 0,
+  fitOnMount = false,
+  focusKey,
   defaultViewport = { x: 0, y: 4, zoom: 0.66 },
   className,
 }: LivePathwayGraphProps) {
@@ -224,6 +251,8 @@ export function LivePathwayGraph({
           showMiniMap={showMiniMap}
           layoutScale={layoutScale}
           fitSignal={fitSignal}
+          fitOnMount={fitOnMount}
+          focusKey={focusKey}
           defaultViewport={defaultViewport}
         />
       </ReactFlowProvider>
@@ -261,8 +290,8 @@ export function PathwayStateLegend({
   className,
 }: PathwayStateLegendProps) {
   const states: PathwayNodeVisualState[] = includeBlocked
-    ? ["completed", "active", "variant", "blocked", "pending"]
-    : ["completed", "active", "variant", "pending"];
+    ? ["completed", "active", "variant", "blocked", "unknown", "pending", "not_selected"]
+    : ["completed", "active", "variant", "unknown", "pending", "not_selected"];
 
   if (compact) {
     return (

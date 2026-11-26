@@ -11,7 +11,7 @@ interface PageProps {
 /** 页面内容容器：统一 1560px 工作区、24px 边距与纵向节奏 */
 export function Page({ children, className, wide, padded = true }: PageProps) {
   return (
-    <div className={cn("mx-auto w-full px-6 py-5", wide ? "max-w-[1680px]" : "max-w-[1560px]", padded && "pb-10", className)}>
+    <div className={cn("mx-auto w-full px-6 py-6", wide ? "max-w-[1680px]" : "max-w-[1560px]", padded && "pb-10", className)}>
       {children}
     </div>
   );
@@ -38,9 +38,9 @@ export function PageHeader({ module, title, description, actions, meta, eyebrow,
             {eyebrow ?? "肝癌全病程智能诊疗平台"}
           </span>
         </div>
-        <h1 className="text-[21px] leading-tight font-semibold tracking-[-0.02em] text-foreground">{title}</h1>
+        <h1 className="text-[24px] leading-[32px] font-semibold tracking-[-0.02em] text-foreground">{title}</h1>
         {description && (
-          <p className="mt-1 max-w-[760px] text-[12.5px] leading-relaxed text-muted-foreground">{description}</p>
+          <p className="mt-1 max-w-[760px] text-[13px] leading-[22px] text-muted-foreground">{description}</p>
         )}
         {meta && <div className="mt-2.5 flex flex-wrap items-center gap-x-4 gap-y-1.5">{meta}</div>}
       </div>

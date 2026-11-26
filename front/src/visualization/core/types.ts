@@ -4,7 +4,14 @@
 
 export type TimeScale = "day" | "week" | "month" | "year";
 
-export type PathwayNodeVisualState = "completed" | "active" | "variant" | "pending" | "blocked";
+export type PathwayNodeVisualState =
+  | "completed"
+  | "active"
+  | "variant"
+  | "pending"
+  | "blocked"
+  | "unknown"
+  | "not_selected";
 
 export type EventLane = "assess" | "exam" | "lab" | "surgery" | "medication" | "nursing" | "followup";
 

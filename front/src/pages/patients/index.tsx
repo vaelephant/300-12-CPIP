@@ -151,7 +151,7 @@ export default function PatientsPage() {
           <>
             <SyntheticTag />
             <PageMeta label="合成病例" value={`${fmt(summary.total)} 例`} mono />
-            <PageMeta label="数据源" value={mode === "server" ? "后端 API" : "V0.5 合成演示"} mono />
+            <PageMeta label="数据源" value={mode === "server" ? "后端 API" : "V0.6.1 合成演示"} mono />
             <PageMeta label="最近同步" value={`${fmtDate(lastSync, true)} · ${relTime(lastSync)}`} mono />
             <PageMeta label="数据源" value="HIS / EMR / LIS / PACS" />
             <PageMeta label="专病范围" value="原发性肝癌（C22.0）· 单病种" />
@@ -461,7 +461,7 @@ export default function PatientsPage() {
       <div className="mt-3 flex flex-wrap items-center justify-between gap-2 px-1 text-[10.5px] text-muted-foreground">
         <span className="inline-flex items-center gap-1">
           <Activity className="size-3 text-muted-foreground/70" />
-          数据每 5 分钟增量同步；当前为 V0.5 研发演示环境，未连接真实院内系统。
+          数据每 5 分钟增量同步；当前为 V0.6.1 研发演示环境，未连接真实院内系统。
         </span>
         <Link to="/approvals" className="inline-flex items-center gap-0.5 text-primary hover:underline">
           前往审核中心

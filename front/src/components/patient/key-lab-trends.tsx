@@ -1,8 +1,10 @@
-import { AlertTriangle, FlaskConical } from "lucide-react";
+import { useState } from "react";
+import { AlertTriangle, FlaskConical, Table2, TrendingUp } from "lucide-react";
 import { LAB_REFERENCE, LAB_TREND } from "@/data";
 import { ClinicalTrendChart } from "@/components/charts/advanced";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { SectionHead } from "@/components/app/section";
 import { cn } from "@/lib/utils";
 
@@ -54,7 +56,16 @@ function direction(value: number, low: number, high: number): "high" | "low" | "
  * 检验检查 · 关键指标趋势卡：ALT / TBIL / AFP 三张紧凑折线，带参考区间底色。
  * 数据来自 data/visuals 的 LAB_TREND 与 LAB_REFERENCE，标记 SYNTHETIC。
  */
+const SHORT_TIME = new Intl.DateTimeFormat("zh-CN", {
+  timeZone: "Asia/Shanghai",
+  month: "2-digit",
+  day: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+});
+
 export function KeyLabTrendsCard({ className }: { className?: string }) {
+  const [view, setView] = useState<"chart" | "table">("chart");
   return (
     <Card className={cn("overflow-hidden", className)}>
       <CardHeader className="pb-2">
@@ -62,9 +73,19 @@ export function KeyLabTrendsCard({ className }: { className?: string }) {
           title="关键指标趋势"
           description="入院以来 ALT / TBIL / AFP 变化 · 参考区间来自院内检验标准（合成）"
           action={
-            <Badge variant="outline" className="font-mono text-[9px]">
-              SYNTHETIC · 趋势
-            </Badge>
+            <div className="flex items-center gap-1.5">
+              <Badge variant="outline" className="font-mono text-[9px]">
+                SYNTHETIC · 趋势
+              </Badge>
+              <div className="flex items-center gap-1 rounded-md border border-line bg-secondary/40 p-0.5">
+                <Button size="xs" variant={view === "chart" ? "secondary" : "ghost"} onClick={() => setView("chart")}>
+                  <TrendingUp className="size-3" /> 图
+                </Button>
+                <Button size="xs" variant={view === "table" ? "secondary" : "ghost"} onClick={() => setView("table")}>
+                  <Table2 className="size-3" /> 表
+                </Button>
+              </div>
+            </div>
           }
         />
       </CardHeader>
@@ -75,7 +96,11 @@ export function KeyLabTrendsCard({ className }: { className?: string }) {
             const latest = LAB_TREND[LAB_TREND.length - 1][panel.key];
             const dir = direction(latest, ref.low, ref.high);
             const overCount = LAB_TREND.filter((d) => direction(d[panel.key], ref.low, ref.high) === "high").length;
-            const chartData = LAB_TREND.map((d) => ({ label: d.label, value: d[panel.key] }));
+            const chartData = LAB_TREND.map((d) => ({
+              label: d.label,
+              atMs: +new Date(d.at),
+              value: d[panel.key],
+            }));
             const tone = dir === "high" ? "text-risk" : dir === "low" ? "text-warn" : "text-ok";
             return (
               <div key={panel.key} className="rounded-md border border-line/80 bg-secondary/15 p-2.5">
@@ -113,22 +138,42 @@ export function KeyLabTrendsCard({ className }: { className?: string }) {
                   </div>
                 </div>
 
-                <ClinicalTrendChart
-                  className="mt-1.5"
-                  data={chartData}
-                  series={[{ key: "value", label: panel.short, color: panel.color, unit: panel.unit }]}
-                  bands={[
-                    {
-                      low: ref.low,
-                      high: ref.high,
-                      label: `${panel.short} 参考 ${ref.low}–${ref.high}`,
-                      color: "var(--ok)",
-                    },
-                  ]}
-                  height={112}
-                />
+                {view === "chart" ? (
+                  <ClinicalTrendChart
+                    className="mt-1.5"
+                    data={chartData}
+                    series={[{ key: "value", label: panel.short, color: panel.color, unit: panel.unit }]}
+                    bands={[
+                      {
+                        low: ref.low,
+                        high: ref.high,
+                        label: `${panel.short} 参考 ${ref.low}–${ref.high}`,
+                        color: "var(--ok)",
+                      },
+                    ]}
+                    height={112}
+                    xKey="atMs"
+                    xTickFormatter={(value) => SHORT_TIME.format(new Date(value))}
+                    xTooltipFormatter={(value) => SHORT_TIME.format(new Date(value))}
+                  />
+                ) : (
+                  <table className="mt-2 w-full text-left text-[9.5px]">
+                    <thead className="text-muted-foreground">
+                      <tr><th className="py-1 font-medium">采集时间</th><th className="py-1 font-medium">数值</th><th className="py-1 font-medium">参考</th></tr>
+                    </thead>
+                    <tbody>
+                      {LAB_TREND.map((row) => (
+                        <tr key={row.at} className="border-t border-line/60">
+                          <td className="py-1 font-mono">{SHORT_TIME.format(new Date(row.at))}</td>
+                          <td className="py-1 font-mono">{row[panel.key]} {panel.unit}</td>
+                          <td className="py-1 font-mono text-muted-foreground">{ref.low}–{ref.high}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
                 <p className="mt-0.5 flex items-center justify-between gap-2 font-mono text-[9px] text-muted-foreground/80">
-                  <span>4 个采集点</span>
+                  <span>4 个采集点 · LIS 合成 · 最近 {SHORT_TIME.format(new Date(LAB_TREND[LAB_TREND.length - 1].at))}</span>
                   <span className={cn(dir !== "normal" || overCount > 0 ? "text-warn" : "text-muted-foreground/80")}>
                     {overCount > 0 ? `${overCount} 点高于参考上限` : "均在参考区间"}
                   </span>
@@ -141,7 +186,7 @@ export function KeyLabTrendsCard({ className }: { className?: string }) {
 
         <div className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-line bg-secondary/20 px-2.5 py-1.5">
           <p className="text-[10px] leading-relaxed text-muted-foreground">
-            异常方向以「高于上限 / 低于下限」标注；参考区间底色仅为提示，异常结果需结合临床判断，不构成诊断结论。
+            异常方向以「高于上限 / 低于下限」标注；参考区间底色仅为提示，异常结果需结合临床判断，不构成诊断结论。缺测不绘制、不填零；单位不一致不直接连线。
           </p>
           <span className="font-mono text-[9px] text-muted-foreground/70">LAB_TREND · 合成演示数据</span>
         </div>

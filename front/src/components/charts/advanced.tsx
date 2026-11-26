@@ -1033,6 +1033,10 @@ interface ClinicalTrendChartProps {
   yDomain?: [number | "auto", number | "auto"];
   yRightDomain?: [number | "auto", number | "auto"];
   className?: string;
+  /** Optional numeric time axis key (milliseconds) for true temporal spacing. */
+  xKey?: string;
+  xTickFormatter?: (value: number) => string;
+  xTooltipFormatter?: (value: number) => string;
 }
 
 /** 生命体征 / 检验指标趋势：双 Y 轴 + 参考区间底色 + 发丝网格。 */
@@ -1044,6 +1048,9 @@ export function ClinicalTrendChart({
   yDomain,
   yRightDomain,
   className,
+  xKey,
+  xTickFormatter,
+  xTooltipFormatter,
 }: ClinicalTrendChartProps) {
   const hasRight = series.some((s) => s.axis === "right");
   return (
@@ -1052,11 +1059,15 @@ export function ClinicalTrendChart({
         <ComposedChart data={data} margin={{ top: 10, right: hasRight ? 8 : 18, bottom: 0, left: 0 }}>
           <CartesianGrid vertical={false} stroke="var(--line)" strokeDasharray="2 4" />
           <XAxis
-            dataKey="label"
+            dataKey={xKey ?? "label"}
+            type={xKey ? "number" : "category"}
+            domain={xKey ? ["dataMin", "dataMax"] : undefined}
+            scale={xKey ? "time" : undefined}
             axisLine={false}
             tickLine={false}
             tickMargin={7}
             interval="preserveStartEnd"
+            tickFormatter={xKey ? xTickFormatter : undefined}
             tick={{ fontSize: 9.5, fill: "var(--muted-foreground)", fontFamily: "var(--font-mono)" }}
           />
           <YAxis
@@ -1094,7 +1105,7 @@ export function ClinicalTrendChart({
             content={({ active, payload, label }) =>
               active && payload && payload.length ? (
                 <ChartTooltipCard
-                  title={String(label ?? "")}
+                  title={xKey && typeof label === "number" ? xTooltipFormatter?.(label) ?? String(label) : String(label ?? "")}
                   rows={payload.map((entry) => {
                     const def = series.find((s) => s.label === entry.name);
                     return {
@@ -1117,6 +1128,7 @@ export function ClinicalTrendChart({
               stroke={s.color}
               strokeWidth={1.6}
               strokeDasharray={s.dashed ? "4 3" : undefined}
+              connectNulls={false}
               dot={{ r: 2, strokeWidth: 0, fill: s.color }}
               activeDot={{ r: 3, strokeWidth: 0 }}
               isAnimationActive={false}

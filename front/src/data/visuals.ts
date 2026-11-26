@@ -180,10 +180,10 @@ export const VITALS_TREND = [
 /* ------------------------------ 检验指标趋势 ------------------------------ */
 
 export const LAB_TREND = [
-  { label: `入院 D0`, alt: 42, tbil: 21.3, alb: 39.2, afp: 86.4 },
-  { label: `D1`, alt: 58, tbil: 26.8, alb: 37.6, afp: 84.1 },
-  { label: `D2`, alt: 46, tbil: 23.1, alb: 38.1, afp: 82.0 },
-  { label: `D3`, alt: 38, tbil: 18.9, alb: 38.4, afp: 78.6 },
+  { label: `入院 D0`, at: "2026-11-23T08:00:00+08:00", alt: 42, tbil: 21.3, alb: 39.2, afp: 86.4 },
+  { label: `D1`, at: "2026-11-24T06:30:00+08:00", alt: 58, tbil: 26.8, alb: 37.6, afp: 84.1 },
+  { label: `D2`, at: "2026-11-25T06:30:00+08:00", alt: 46, tbil: 23.1, alb: 38.1, afp: 82.0 },
+  { label: `D3`, at: "2026-11-26T06:30:00+08:00", alt: 38, tbil: 18.9, alb: 38.4, afp: 78.6 },
 ];
 
 export const LAB_REFERENCE = {

@@ -164,6 +164,8 @@ export interface ClinicalEvent {
   title: string;
   description: string;
   occurredAt: ISODate;
+  /** Optional source-recorded-at timestamp; absent means not supplied, not equal to occurredAt. */
+  recordedAt?: ISODate;
   sourceSystem: string;
   actor: string;
   severity: "INFO" | "WARN" | "RISK";

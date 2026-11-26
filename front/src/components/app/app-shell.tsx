@@ -5,6 +5,7 @@ import { crumbForPath } from "./nav-config";
 import { Sidebar } from "./sidebar";
 import { Topbar } from "./topbar";
 import { CommandPalette } from "./command-palette";
+import { DemoTour } from "./demo-tour";
 import { AccessDenied } from "./access-denied";
 
 const ROUTE_RULES: { prefix: string; module: string; permissions: string[] }[] = [
@@ -52,7 +53,7 @@ export function AppShell() {
         {!location.pathname.endsWith("/studio") && (
           <footer className="mt-auto border-t border-line px-6 py-3">
             <div className="mx-auto flex max-w-[1560px] flex-wrap items-center justify-between gap-2 text-[10px] text-muted-foreground/70">
-              <span>HCC-CIP V0.5 · 肝癌全病程智能诊疗平台 · 研发演示版本</span>
+              <span>HCC-CIP V0.6.1 · 肝癌全病程智能诊疗平台 · 研发演示版本</span>
               <span className="flex items-center gap-3">
                 <span>所有数据均为合成演示数据</span>
                 <button onClick={() => navigate("/dashboard")} className="hover:text-foreground">工作台</button>
@@ -62,6 +63,7 @@ export function AppShell() {
         )}
       </div>
       <CommandPalette />
+      <DemoTour />
     </div>
   );
 }

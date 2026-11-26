@@ -80,6 +80,8 @@ const STATE_LABEL = {
   variant: { label: "变异", tone: "risk" as const },
   blocked: { label: "阻塞", tone: "risk" as const },
   pending: { label: "待执行", tone: "neutral" as const },
+  unknown: { label: "UNKNOWN", tone: "warn" as const },
+  not_selected: { label: "未选路径", tone: "neutral" as const },
 };
 
 const REFERENCE_SCORES = [85, 90, 80, 78, 75, 88];
@@ -227,7 +229,7 @@ export default function PatientReplayPage() {
         <PageHeader
           module="VIS-011 · 患者病程回放"
           title={`${patient.name} · 病程回放`}
-          description="V0.5 演示版仅提供陈志远（肝癌手术路径）的完整回放事件与状态快照。"
+          description="V0.6.1 演示版仅提供陈志远（肝癌手术路径）的完整回放事件与状态快照。"
           actions={<SyntheticTag />}
         />
         <EmptyState

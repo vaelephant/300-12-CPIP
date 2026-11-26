@@ -66,6 +66,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { FlagChips, AllergyChips, SubNote } from "@/components/patient/ui";
 import { PatientHeaderCard } from "@/components/patient/patient-header";
+import { StateSnapshot } from "@/components/clinical/state-snapshot";
 import {
   CLINICAL_STAGES,
   StageProgressStrip,
@@ -80,7 +81,7 @@ import { DataCompletenessCard } from "@/components/patient/data-completeness";
 import { ObservationPanel } from "@/components/patient/observation-table";
 import { VitalsTrendCard } from "@/components/patient/vitals-trends";
 import { KeyLabTrendsCard } from "@/components/patient/key-lab-trends";
-import { ClinicalTimeline } from "@/components/timeline/clinical-timeline";
+import { PatientTimeline } from "@/visualization/patient/PatientTimeline";
 import { VisualFrame } from "@/visualization/core/VisualFrame";
 import { PatientStateRadar } from "@/visualization/patient/PatientStateRadar";
 import { ClinicalTrendLinkage } from "@/visualization/patient/ClinicalTrendLinkage";
@@ -350,6 +351,12 @@ function PatientDetailContent({ patient }: { patient: Patient }) {
           </>
         }
         meta={<span className="font-mono text-[9.5px] text-muted-foreground/70">SYNTHETIC PATIENT · {patient.id}</span>}
+      />
+      <StateSnapshot
+        stage={currentStage ?? "未开始"}
+        risk={patient.riskLevel}
+        completeness={state.dataCompleteness}
+        asOf={state.snapshotAt}
       />
 
       <Tabs defaultValue="overview" className="mt-4 gap-3">
@@ -906,7 +913,7 @@ function PatientDetailContent({ patient }: { patient: Patient }) {
               />
             </CardHeader>
             <CardContent>
-              <ClinicalTimeline events={events} />
+              <PatientTimeline events={events} />
             </CardContent>
           </Card>
         </TabsContent>
@@ -1093,7 +1100,7 @@ function PatientDetailContent({ patient }: { patient: Patient }) {
       <div className="mt-4 flex flex-wrap items-center justify-between gap-2 px-1 text-[10.5px] text-muted-foreground">
         <span className="inline-flex items-center gap-1">
           <Users className="size-3 text-muted-foreground/70" />
-          本页展示内容均来自 V0.5 合成演示数据集，不代表真实患者诊疗信息。
+          本页展示内容均来自 V0.6.1 合成演示数据集，不代表真实患者诊疗信息。
         </span>
         <Link to={executionLink} className="inline-flex items-center gap-0.5 text-primary hover:underline">
           进入路径执行中心 <ExternalLink className="size-3" />

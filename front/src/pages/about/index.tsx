@@ -20,7 +20,7 @@ export default function AboutPage() {
   return (
     <Page>
       <PageHeader
-        module="PRODUCT DEFINITION · V0.5"
+        module="PRODUCT DEFINITION · V0.6.1"
         eyebrow="HCC Clinical Intelligence Platform"
         title="关于平台"
         description="平台产品定义、能力边界与当前版本状态。所有病例、指标与预测均为合成演示数据。"
@@ -30,7 +30,7 @@ export default function AboutPage() {
       {/* 产品定义 —— 对应产品定义图 */}
       <Card className="overflow-hidden">
         <CardContent className="px-7 py-7 sm:px-10 sm:py-9">
-          <p className="font-mono text-[10px] tracking-[0.18em] text-muted-foreground uppercase">Product Definition · V0.5</p>
+          <p className="font-mono text-[10px] tracking-[0.18em] text-muted-foreground uppercase">Product Definition · V0.6.1</p>
           <h1 className="mt-3 text-[26px] leading-tight font-semibold tracking-[-0.02em] sm:text-[30px]">
             原发性肝癌智能临床路径平台
           </h1>
@@ -109,7 +109,7 @@ export default function AboutPage() {
 
         <Card>
           <CardHeader className="pb-2">
-            <SectionHead title="当前版本边界" description="V0.5 · 研发演示" />
+            <SectionHead title="当前版本边界" description="V0.6.1 · 研发演示" />
           </CardHeader>
           <CardContent className="space-y-2">
             <Callout tone="warn" title="全部数据为合成演示">
@@ -136,7 +136,7 @@ export default function AboutPage() {
           <Sparkles className="size-3" />
           统一技术底座 · 独立产品开发 · 标准接口集成
         </span>
-        <span className="font-mono">HCC-CIP · V0.5 · PRODUCT DEFINITION</span>
+        <span className="font-mono">HCC-CIP · V0.6.1 · PRODUCT DEFINITION</span>
       </div>
     </Page>
   );

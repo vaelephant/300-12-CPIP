@@ -109,7 +109,7 @@ export function NodeInspector({
           <div className="mt-2 rounded-md border border-line bg-secondary/30 p-3">
             <div className="mb-1 flex items-center justify-between">
               <span className="label-micro">路径概况</span>
-              <span className="font-mono text-[9px] text-muted-foreground">V0.5</span>
+              <span className="font-mono text-[9px] text-muted-foreground">V0.6.1</span>
             </div>
             <Field label="节点总数" value={summary.nodeCount} mono />
             <Field label="连线总数" value={summary.edgeCount} mono />

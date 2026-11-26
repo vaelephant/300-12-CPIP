@@ -109,50 +109,50 @@ export default function LoginPage() {
   return (
     <div className="grid min-h-screen lg:grid-cols-[1.08fr_0.92fr]">
       {/* 左：品牌与场景 */}
-      <aside className="relative hidden flex-col justify-between overflow-hidden bg-ink px-10 py-9 text-white lg:flex xl:px-14">
-        <div className="ink-grid absolute inset-0 opacity-60" />
-        <div className="absolute -top-24 -right-24 size-[420px] rounded-full border border-white/[0.04]" />
-        <div className="absolute -top-10 -right-10 size-[260px] rounded-full border border-white/[0.05]" />
+      <aside className="relative hidden flex-col justify-between overflow-hidden border-r border-line bg-card px-10 py-9 text-foreground lg:flex xl:px-14">
+        <div className="grid-paper absolute inset-0 opacity-35" />
+        <div className="absolute -top-24 -right-24 size-[420px] rounded-full border border-line" />
+        <div className="absolute -top-10 -right-10 size-[260px] rounded-full border border-line/70" />
         <svg className="absolute right-0 bottom-[16%] left-0 h-24 w-full opacity-[0.14]" viewBox="0 0 800 100" fill="none" preserveAspectRatio="none">
           <path
             d="M0 60 H210 l14 0 10 -26 12 52 12 -34 10 18 14 -10 H420 l12 0 8 -18 10 38 12 -26 10 12 14 -6 H800"
-            stroke="#9db4cd"
+            stroke="#C63538"
             strokeWidth="1.2"
             strokeLinejoin="round"
           />
         </svg>
 
         <div className="relative flex items-center gap-2.5">
-          <div className="flex size-8 items-center justify-center rounded-[7px] bg-white/8 text-[#b7cadd] ring-1 ring-white/10">
+          <div className="flex size-8 items-center justify-center rounded-[7px] bg-brand-wash text-brand ring-1 ring-brand/15">
             <BrandMark className="size-5" />
           </div>
           <div>
             <div className="flex items-baseline gap-2">
               <span className="text-[16px] font-semibold tracking-[0.06em]">HCC-CIP</span>
-              <span className="font-mono text-[9px] text-white/30">V0.5</span>
+              <span className="font-mono text-[9px] text-muted-foreground">V0.6.1</span>
             </div>
-            <p className="mt-0.5 text-[9.5px] tracking-[0.08em] text-white/40">肝癌全病程智能诊疗平台</p>
+            <p className="mt-0.5 text-[9.5px] tracking-[0.08em] text-muted-foreground">肝癌全病程智能诊疗平台</p>
           </div>
         </div>
 
         <div className="relative max-w-[560px]">
           <div className="mb-4 flex items-center gap-2">
-            <span className="font-mono text-[10px] tracking-[0.18em] text-[#9db4cd] uppercase">Product Definition · V0.5</span>
-            <span className="h-px w-10 bg-white/15" />
+            <span className="font-mono text-[10px] tracking-[0.18em] text-brand uppercase">Design System V1.0 · Product Definition</span>
+            <span className="h-px w-10 bg-line-strong" />
           </div>
           <h1 className="text-[31px] leading-[1.25] font-semibold tracking-[-0.015em] text-balance">
             原发性肝癌智能临床路径平台
           </h1>
-          <p className="mt-2 text-[13px] tracking-wide text-white/45">Liver Cancer Clinical Pathway Platform</p>
-          <p className="mt-4 max-w-[500px] text-[12.5px] leading-relaxed text-white/55">
+          <p className="mt-2 text-[13px] tracking-wide text-muted-foreground">Liver Cancer Clinical Pathway Platform</p>
+          <p className="mt-4 max-w-[500px] text-[12.5px] leading-relaxed text-muted-foreground">
             {PRODUCT_DEFINITION}
           </p>
 
-          <div className="mt-7 grid max-w-[500px] grid-cols-3 gap-x-4 gap-y-4 border-t border-white/10 pt-5">
+          <div className="mt-7 grid max-w-[500px] grid-cols-3 gap-x-4 gap-y-4 border-t border-line pt-5">
             {CAPABILITIES.map((cap) => (
-              <div key={cap.zh} className="border-t border-white/12 pt-2">
-                <p className="text-[13px] font-medium tracking-wide text-white/85">{cap.zh}</p>
-                <p className="mt-0.5 font-mono text-[8px] tracking-[0.16em] text-white/30 uppercase">{cap.en}</p>
+              <div key={cap.zh} className="border-t border-line pt-2">
+                <p className="text-[13px] font-medium tracking-wide text-foreground">{cap.zh}</p>
+                <p className="mt-0.5 font-mono text-[8px] tracking-[0.16em] text-muted-foreground uppercase">{cap.en}</p>
               </div>
             ))}
           </div>
@@ -160,48 +160,48 @@ export default function LoginPage() {
 
         <div className="relative">
           {/* 运行快照 */}
-          <div className="mb-6 max-w-[430px] rounded-lg border border-white/10 bg-white/[0.045] p-3.5">
+          <div className="mb-6 max-w-[430px] rounded-lg border border-line bg-secondary/50 p-3.5">
             <div className="flex items-center justify-between">
-              <span className="flex items-center gap-1.5 font-mono text-[9px] tracking-[0.14em] text-white/35 uppercase">
+              <span className="flex items-center gap-1.5 font-mono text-[9px] tracking-[0.14em] text-muted-foreground uppercase">
                 <span className="relative flex size-1.5">
-                  <span className="absolute size-full animate-ping rounded-full bg-[#9db4cd]/60" />
-                  <span className="relative size-1.5 rounded-full bg-[#9db4cd]" />
+                  <span className="absolute size-full animate-ping rounded-full bg-brand/50" />
+                  <span className="relative size-1.5 rounded-full bg-brand" />
                 </span>
                 Pathway Runtime · 实时演示
               </span>
-              <span className="font-mono text-[9px] text-white/25">INST-HCC-001</span>
+              <span className="font-mono text-[9px] text-muted-foreground/70">INST-HCC-001</span>
             </div>
             <div className="mt-2.5 flex items-center gap-2.5">
               <PatientAvatar name="陈志远" id="HCC-DEMO-001" size="sm" className="ring-1 ring-white/15" />
               <div className="min-w-0 flex-1">
                 <div className="flex items-center justify-between gap-2">
-                  <p className="text-[11.5px] font-medium text-white/80">陈志远 · 肝细胞癌 Ⅰb 期</p>
-                  <span className="tabular text-[10px] text-white/40">46%</span>
+                  <p className="text-[11.5px] font-medium text-foreground/85">陈志远 · 肝细胞癌 Ⅰb 期</p>
+                  <span className="tabular text-[10px] text-muted-foreground">46%</span>
                 </div>
-                <div className="mt-1.5 h-1 w-full overflow-hidden rounded-full bg-white/10">
-                  <div className="h-full w-[46%] rounded-full bg-[#8fa6bf]" />
+                <div className="mt-1.5 h-1 w-full overflow-hidden rounded-full bg-secondary">
+                  <div className="h-full w-[46%] rounded-full bg-brand/70" />
                 </div>
               </div>
             </div>
             <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
-              <span className="rounded-[3px] border border-white/10 px-1.5 py-px text-[9.5px] text-white/45">入院评估 已完成</span>
-              <span className="rounded-[3px] border border-[#8fa6bf]/30 bg-[#8fa6bf]/10 px-1.5 py-px text-[9.5px] text-[#bfd3e6]">术前检查 执行中</span>
-              <span className="rounded-[3px] border border-white/10 px-1.5 py-px text-[9.5px] text-white/30">治疗方案确认 待执行</span>
+              <span className="rounded-[3px] border border-line px-1.5 py-px text-[9.5px] text-muted-foreground">入院评估 已完成</span>
+              <span className="rounded-[3px] border border-brand/20 bg-brand-wash px-1.5 py-px text-[9.5px] text-brand">术前检查 执行中</span>
+              <span className="rounded-[3px] border border-line px-1.5 py-px text-[9.5px] text-muted-foreground">治疗方案确认 待执行</span>
             </div>
           </div>
 
-          <div className="flex items-center gap-5 border-t border-white/8 pt-4">
+          <div className="flex items-center gap-5 border-t border-line pt-4">
             {[
               { k: "01", v: "专病 · 原发肝癌" },
               { k: "300", v: "合成病例" },
               { k: "16", v: "可视化能力" },
             ].map((s) => (
               <div key={s.v} className="flex items-baseline gap-1.5">
-                <span className="font-mono text-[15px] font-medium text-white/80">{s.k}</span>
-                <span className="text-[10px] text-white/30">{s.v}</span>
+                <span className="font-mono text-[15px] font-medium text-foreground/85">{s.k}</span>
+                <span className="text-[10px] text-muted-foreground">{s.v}</span>
               </div>
             ))}
-            <span className="ml-auto text-[9px] text-white/20">仅限研发与演示 · 不用于临床决策</span>
+            <span className="ml-auto text-[9px] text-muted-foreground/60">仅限研发与演示 · 不用于临床决策</span>
           </div>
         </div>
       </aside>
@@ -211,7 +211,7 @@ export default function LoginPage() {
         <div className="mx-auto w-full max-w-[380px] animate-in-up">
           <div className="mb-8 flex items-center justify-between lg:hidden">
             <div className="flex items-center gap-2">
-              <div className="flex size-7 items-center justify-center rounded-[6px] bg-ink text-[#b7cadd]">
+              <div className="flex size-7 items-center justify-center rounded-[6px] bg-brand-wash text-brand">
                 <BrandMark className="size-4" />
               </div>
               <span className="text-[14px] font-semibold tracking-[0.06em]">HCC-CIP</span>
@@ -223,7 +223,7 @@ export default function LoginPage() {
             <div className="mb-2 flex items-center gap-2">
               <span className="label-micro">SIGN IN</span>
               <span className="h-px flex-1 bg-line" />
-              <span className="font-mono text-[9px] text-muted-foreground">V0.5</span>
+              <span className="font-mono text-[9px] text-muted-foreground">V0.6.1</span>
             </div>
             <h2 className="text-[24px] font-semibold tracking-[-0.02em]">登录智能诊疗平台</h2>
             <p className="mt-1.5 text-[12.5px] text-muted-foreground">

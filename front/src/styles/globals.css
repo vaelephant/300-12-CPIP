@@ -44,6 +44,12 @@
   --color-ok-wash: var(--ok-wash);
   --color-info: var(--info);
   --color-info-wash: var(--info-wash);
+  --color-brand: var(--brand);
+  --color-brand-wash: var(--brand-wash);
+  --color-ai: var(--ai);
+  --color-ai-wash: var(--ai-wash);
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
 
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
@@ -64,49 +70,58 @@
 :root {
   --radius: 0.5rem;
 
-  /* HCC Clinical Intelligence Platform · navy / paper / hairline palette */
-  --background: #f6f6f4;
-  --foreground: #1b2430;
-  --card: #ffffff;
-  --card-foreground: #1b2430;
+  /* HCC-CIP Design System V1.0 · Minimal. Clinical. Intelligent. */
+  --canvas: #f7f8fa;
+  --surface: #ffffff;
+  --surface-muted: #f4f4f5;
+
+  --background: var(--canvas);
+  --foreground: #18181b;
+  --card: var(--surface);
+  --card-foreground: #18181b;
   --popover: #ffffff;
-  --popover-foreground: #1b2430;
+  --popover-foreground: #18181b;
 
-  --primary: #263343;
-  --primary-foreground: #f8fafc;
-  --secondary: #f0f0ed;
-  --secondary-foreground: #2c3644;
-  --muted: #f2f2ef;
-  --muted-foreground: #68717d;
-  --accent: #edf1f5;
-  --accent-foreground: #2d3e52;
-  --destructive: #b23b36;
-  --destructive-foreground: #fdf7f6;
-  --border: #e3e3de;
-  --input: #d9dad5;
-  --ring: #7890a8;
+  --primary: #18181b;
+  --primary-foreground: #ffffff;
+  --secondary: #f4f4f5;
+  --secondary-foreground: #27272a;
+  --muted: #f4f4f5;
+  --muted-foreground: #71717a;
+  --accent: #eff6ff;
+  --accent-foreground: #1e3a8a;
+  --destructive: #b91c1c;
+  --destructive-foreground: #ffffff;
+  --border: #e4e4e7;
+  --input: #d4d4d8;
+  --ring: #2563eb;
 
-  --ink: #1c2634;
-  --ink-2: #263343;
-  --ink-3: #354358;
-  --paper: #f6f6f4;
-  --line: #e3e3de;
-  --line-strong: #d2d4cf;
+  --ink: #18181b;
+  --ink-2: #27272a;
+  --ink-3: #52525b;
+  --paper: var(--canvas);
+  --line: var(--border);
+  --line-strong: #d4d4d8;
 
-  --risk: #b23b36;
-  --risk-wash: #f8edeb;
-  --warn: #a5772f;
-  --warn-wash: #f7f1e6;
-  --ok: #4c6f63;
-  --ok-wash: #edf2ef;
-  --info: #4a6a8b;
-  --info-wash: #eef2f7;
+  --brand: #c63538;
+  --brand-wash: #fdf2f2;
+  --ai: #7c3aed;
+  --ai-wash: #f5f3ff;
 
-  --chart-1: #2e4057;
-  --chart-2: #5c7a94;
-  --chart-3: #b08a4f;
-  --chart-4: #4d6e90;
-  --chart-5: #a9544e;
+  --risk: #b91c1c;
+  --risk-wash: #fef2f2;
+  --warn: #b45309;
+  --warn-wash: #fffbeb;
+  --ok: #15803d;
+  --ok-wash: #f0fdf4;
+  --info: #2563eb;
+  --info-wash: #eff6ff;
+
+  --chart-1: #27272a;
+  --chart-2: #2563eb;
+  --chart-3: #b45309;
+  --chart-4: #15803d;
+  --chart-5: #7c3aed;
 }
 
 @layer base {
@@ -124,8 +139,12 @@
     font-feature-settings: "cv05" 1, "ss01" 1;
   }
   ::selection {
-    background: #d9e2ec;
-    color: #1b2430;
+    background: #e4e4e7;
+    color: #18181b;
+  }
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
   }
   h1,
   h2,
@@ -179,7 +198,7 @@
     height: 6px;
   }
   .scrollbar-slim::-webkit-scrollbar-thumb {
-    background: #cfd1cc;
+    background: #d4d4d8;
     border-radius: 999px;
   }
   .scrollbar-slim::-webkit-scrollbar-track {
@@ -266,4 +285,16 @@
 .react-flow__node.selected .cp-node {
   outline: 2px solid var(--primary);
   outline-offset: 1px;
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

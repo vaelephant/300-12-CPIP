@@ -28,12 +28,12 @@ function NavRow({ item, collapsed }: { item: NavItem; collapsed: boolean }) {
       title={collapsed ? item.label : undefined}
       className={cn(
         "group relative flex h-8 items-center gap-2.5 rounded-[5px] px-2.5 text-[12.5px] font-medium transition-colors",
-        active ? "bg-white/8 text-white" : "text-white/55 hover:bg-white/5 hover:text-white/85",
+        active ? "bg-secondary text-foreground" : "text-muted-foreground hover:bg-secondary/70 hover:text-foreground",
         collapsed && "justify-center px-0",
       )}
     >
-      {active && <span className="absolute top-1/2 left-0 h-3.5 w-[2px] -translate-y-1/2 rounded-r-full bg-[#9db4cd]" />}
-      <Icon className={cn("size-[15px] shrink-0", active ? "text-[#b7cadd]" : "text-white/45 group-hover:text-white/70")} />
+      {active && <span className="absolute top-1/2 left-0 h-3.5 w-[2px] -translate-y-1/2 rounded-r-full bg-brand" />}
+      <Icon className={cn("size-[15px] shrink-0", active ? "text-foreground" : "text-muted-foreground group-hover:text-foreground")} />
       {!collapsed && <span className="truncate">{item.label}</span>}
       {!collapsed && item.badge !== undefined && (
         <span className="ml-auto">
@@ -41,7 +41,7 @@ function NavRow({ item, collapsed }: { item: NavItem; collapsed: boolean }) {
         </span>
       )}
       {collapsed && item.badge !== undefined && (
-        <span className="absolute top-1.5 right-1.5 size-1.5 rounded-full bg-[#b23b36]" />
+        <span className="absolute top-1.5 right-1.5 size-1.5 rounded-full bg-risk" />
       )}
     </NavLink>
   );
@@ -55,36 +55,36 @@ export function Sidebar() {
   return (
     <aside
       className={cn(
-        "sticky top-0 z-30 flex h-screen shrink-0 flex-col border-r border-white/6 bg-ink text-white transition-[width] duration-200",
-        collapsed ? "w-[64px]" : "w-[232px]",
+        "sticky top-0 z-30 flex h-screen shrink-0 flex-col border-r border-line bg-card text-foreground transition-[width] duration-200",
+        collapsed ? "w-[56px]" : "w-[216px]",
       )}
     >
       {/* 品牌 */}
-      <div className={cn("flex h-[58px] items-center gap-2.5 border-b border-white/6 px-4", collapsed && "justify-center px-0")}>
-        <div className="flex size-8 shrink-0 items-center justify-center rounded-[7px] bg-white/8 text-[#b7cadd] ring-1 ring-white/10">
+      <div className={cn("flex h-[52px] items-center gap-2.5 border-b border-line px-4", collapsed && "justify-center px-0")}>
+        <div className="flex size-8 shrink-0 items-center justify-center rounded-[7px] bg-brand-wash text-brand ring-1 ring-brand/15">
           <BrandMark className="size-[19px]" />
         </div>
         {!collapsed && (
           <div className="min-w-0">
             <div className="flex items-baseline gap-1.5">
               <span className="text-[15px] leading-none font-semibold tracking-[0.05em]">HCC-CIP</span>
-              <span className="font-mono text-[8.5px] text-white/35">V0.5</span>
+              <span className="font-mono text-[8.5px] text-muted-foreground">V0.6.1</span>
             </div>
-            <p className="mt-1 truncate text-[8.5px] tracking-[0.04em] text-white/35">肝癌全病程智能诊疗平台</p>
+            <p className="mt-1 truncate text-[8.5px] tracking-[0.04em] text-muted-foreground">肝癌全病程智能诊疗平台</p>
           </div>
         )}
       </div>
 
       {/* 组织 */}
       {!collapsed && (
-        <div className="border-b border-white/6 px-3 py-2.5">
-          <button className="flex w-full items-center gap-2 rounded-[5px] px-1.5 py-1 text-left transition-colors hover:bg-white/5">
-            <span className="flex size-5 items-center justify-center rounded-[3px] bg-white/8 font-mono text-[9px] text-white/60">RH</span>
+        <div className="border-b border-line px-3 py-2.5">
+          <button className="flex w-full items-center gap-2 rounded-[5px] px-1.5 py-1 text-left transition-colors hover:bg-secondary">
+            <span className="flex size-5 items-center justify-center rounded-[3px] bg-secondary font-mono text-[9px] text-muted-foreground">RH</span>
             <span className="min-w-0 flex-1">
-              <span className="block truncate text-[11.5px] font-medium text-white/75">{ORGANIZATION.name}</span>
-              <span className="block text-[9.5px] text-white/35">{ORGANIZATION.level} · 私有化部署</span>
+              <span className="block truncate text-[11.5px] font-medium text-foreground">{ORGANIZATION.name}</span>
+              <span className="block text-[9.5px] text-muted-foreground">{ORGANIZATION.level} · 私有化部署</span>
             </span>
-            <ChevronsLeft className="size-3 rotate-[-90deg] text-white/25" />
+            <ChevronsLeft className="size-3 rotate-[-90deg] text-muted-foreground/70" />
           </button>
         </div>
       )}
@@ -102,7 +102,7 @@ export function Sidebar() {
           return (
             <div key={group.label}>
               {!collapsed && (
-                <p className="mb-1.5 px-2 font-mono text-[9px] tracking-[0.16em] text-white/28 uppercase">{group.label}</p>
+                <p className="mb-1.5 px-2 font-mono text-[9px] tracking-[0.16em] text-muted-foreground uppercase">{group.label}</p>
               )}
               <div className="space-y-0.5">
                 {visibleItems.map((item) => (
@@ -115,21 +115,21 @@ export function Sidebar() {
       </nav>
 
       {/* 底部 */}
-      <div className={cn("border-t border-white/6 p-2.5", collapsed && "px-2")}>
+      <div className={cn("border-t border-line p-2.5", collapsed && "px-2")}>
         {!collapsed ? (
           <>
-            <div className="rounded-[6px] border border-white/8 bg-white/[0.035] px-2.5 py-2">
+            <div className="rounded-[6px] border border-line bg-secondary/60 px-2.5 py-2">
               <div className="flex items-center gap-1.5">
-                <CircleDot className="size-2.5 text-[#7e9a8c]" />
-                <span className="text-[10px] font-medium text-white/60">演示环境 · 合成数据</span>
+                <CircleDot className="size-2.5 text-ok" />
+                <span className="text-[10px] font-medium text-foreground/70">演示环境 · 合成数据</span>
               </div>
-              <p className="mt-1 text-[9px] leading-relaxed text-white/30">
+              <p className="mt-1 text-[9px] leading-relaxed text-muted-foreground">
                 不连接真实医院数据，不用于临床决策。
               </p>
             </div>
             <button
               onClick={toggle}
-              className="mt-2 flex w-full items-center gap-2 rounded-[5px] px-2 py-1.5 text-[10.5px] text-white/35 transition-colors hover:bg-white/5 hover:text-white/60"
+              className="mt-2 flex w-full items-center gap-2 rounded-[5px] px-2 py-1.5 text-[10.5px] text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground/70"
             >
               <PanelLeftClose className="size-3.5" />
               收起侧边栏
@@ -138,7 +138,7 @@ export function Sidebar() {
         ) : (
           <button
             onClick={toggle}
-            className="flex h-8 w-full items-center justify-center rounded-[5px] text-white/40 hover:bg-white/5 hover:text-white/70"
+            className="flex h-8 w-full items-center justify-center rounded-[5px] text-muted-foreground hover:bg-secondary hover:text-foreground"
             title="展开侧边栏"
           >
             <PanelLeftOpen className="size-4" />
@@ -146,12 +146,12 @@ export function Sidebar() {
         )}
         {!collapsed && user && (
           <div className="mt-2 flex items-center gap-2 rounded-[5px] px-1 py-1">
-            <span className="flex size-6 items-center justify-center rounded-full bg-white/10 text-[10px] font-medium text-white/75">
+            <span className="flex size-6 items-center justify-center rounded-full bg-secondary text-[10px] font-medium text-foreground/80">
               {user.name.slice(-2)}
             </span>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-[10.5px] text-white/60">{user.name}</p>
-              <p className="truncate text-[9px] text-white/30">{user.title}</p>
+              <p className="truncate text-[10.5px] text-foreground/70">{user.name}</p>
+              <p className="truncate text-[9px] text-muted-foreground">{user.title}</p>
             </div>
           </div>
         )}

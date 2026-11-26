@@ -8,6 +8,7 @@ import {
   Download,
   FileText,
   Layers,
+  List,
   PlayCircle,
   Route,
   ShieldCheck,
@@ -27,7 +28,7 @@ import { HCC_GRAPH, getGraph } from "@/data/pathways";
 import { REPLAY_SNAPSHOTS } from "@/data/visualization-data";
 import { INSTANCE_STATUS_META, NODE_META, ROLE_LABELS, TASK_STATUS_META } from "@/lib/clinical";
 import { cn, fmtDate } from "@/lib/utils";
-import { LivePathwayGraph, PathwayStateLegend } from "@/visualization/pathway/LivePathwayGraph";
+import { LivePathwayGraph, PATHWAY_STATE_META, PathwayStateLegend } from "@/visualization/pathway/LivePathwayGraph";
 import type { PathwayNodeVisualState } from "@/visualization/core/types";
 import type { PathwayNode } from "@/types";
 
@@ -52,6 +53,8 @@ export default function PatientMapPage() {
   const [selectedKey, setSelectedKey] = useState<string | null>("imaging");
   const [showEvidence, setShowEvidence] = useState(true);
   const [fitSignal, setFitSignal] = useState(0);
+  const [view, setView] = useState<"graph" | "list">("graph");
+  const [inspectorOpen, setInspectorOpen] = useState(true);
 
   const graph = useMemo(() => (instance ? getGraph(instance.pathwayId) : HCC_GRAPH), [instance]);
 
@@ -76,6 +79,11 @@ export default function PatientMapPage() {
   const activeNodes = graph.nodes.filter((n) => stateMap[n.nodeKey] === "active");
   const completedCount = graph.nodes.filter((n) => stateMap[n.nodeKey] === "completed").length;
   const pendingCount = graph.nodes.filter((n) => (stateMap[n.nodeKey] ?? "pending") === "pending").length;
+  const activeNode = graph.nodes.find((n) => stateMap[n.nodeKey] === "active") ?? null;
+  const decisionNode = graph.nodes.find((n) => n.type === "DECISION") ?? null;
+  const decisionState = decisionNode ? (stateMap[decisionNode.nodeKey] ?? "pending") : "pending";
+  const attentionNodes = graph.nodes.filter((n) => ["variant", "blocked", "unknown"].includes(stateMap[n.nodeKey] ?? ""));
+  const unselectedCount = graph.nodes.filter((n) => stateMap[n.nodeKey] === "not_selected").length;
 
   if (!patient) {
     return (
@@ -217,8 +225,37 @@ export default function PatientMapPage() {
         </CardContent>
       </Card>
 
-      <div className="grid grid-cols-1 gap-4 xl:grid-cols-12">
-        <div className="xl:col-span-9">
+      <div className="mb-4 grid grid-cols-1 gap-3 md:grid-cols-3">
+        <Card className="px-4 py-3">
+          <p className="label-micro">当前阶段</p>
+          <p className="mt-1 text-[13px] font-semibold">{instance.currentStage}</p>
+          <p className="mt-1 text-[10px] text-muted-foreground">
+            {activeNode ? `正在执行：${activeNode.name}` : "当前无执行中节点"}
+          </p>
+        </Card>
+        <Card className={cn("px-4 py-3", decisionState === "unknown" && "border-warn/35 bg-warn-wash/30")}>
+          <p className="label-micro">关键决策</p>
+          <p className="mt-1 text-[13px] font-semibold">{decisionNode?.name ?? "未配置决策节点"}</p>
+          <div className="mt-1 flex items-center gap-1.5">
+            <span className={cn("size-1.5 rounded-full", PATHWAY_STATE_META[decisionState].dotClass)} />
+            <span className="text-[10px] text-muted-foreground">{PATHWAY_STATE_META[decisionState].label} · 规则轨迹以服务端为准</span>
+          </div>
+        </Card>
+        <Card className={cn("px-4 py-3", attentionNodes.length > 0 && "border-risk/25 bg-risk-wash/20")}>
+          <p className="label-micro">需要关注</p>
+          <p className="mt-1 text-[13px] font-semibold">
+            {attentionNodes.length > 0 ? `${attentionNodes.length} 个节点需要人工确认` : "当前无变异或阻断节点"}
+          </p>
+          <p className="mt-1 text-[10px] text-muted-foreground">
+            {attentionNodes.length > 0
+              ? attentionNodes.map((n) => n.name).slice(0, 2).join("、")
+              : `${unselectedCount} 个未选分支不生成任务`}
+          </p>
+        </Card>
+      </div>
+
+      <div className={cn("grid grid-cols-1 gap-4", inspectorOpen && "xl:grid-cols-[minmax(0,1fr)_320px]")}>
+        <div className="min-w-0">
           <Card className="overflow-hidden">
             <div className="flex flex-wrap items-center gap-2 border-b border-line px-4 py-2.5">
               <FilterPill active={mode === "actual"} onClick={() => setMode("actual")}>
@@ -228,6 +265,23 @@ export default function PatientMapPage() {
                 计划路径
               </FilterPill>
               <span className="mx-1 h-4 w-px bg-line" />
+              <button
+                onClick={() => setInspectorOpen((value) => !value)}
+                className={cn(
+                  "inline-flex h-7 items-center gap-1.5 rounded-md border px-2 text-[11px] transition-colors",
+                  inspectorOpen ? "border-primary/25 bg-accent text-accent-foreground" : "border-line text-muted-foreground hover:text-foreground",
+                )}
+              >
+                <FileText className="size-3" /> 检查器
+              </button>
+              <div className="flex items-center gap-1 rounded-md border border-line bg-secondary/40 p-0.5">
+                <Button size="xs" variant={view === "graph" ? "secondary" : "ghost"} onClick={() => setView("graph")}>
+                  <Route className="size-3" /> 图
+                </Button>
+                <Button size="xs" variant={view === "list" ? "secondary" : "ghost"} onClick={() => setView("list")}>
+                  <List className="size-3" /> 列表
+                </Button>
+              </div>
               <button
                 onClick={() => setShowEvidence((v) => !v)}
                 className={cn(
@@ -249,31 +303,73 @@ export default function PatientMapPage() {
                 V{instance.version} · 已锁定
               </span>
               <div className="ml-auto flex items-center gap-2">
-                <PathwayStateLegend compact />
+                <PathwayStateLegend compact includeBlocked />
               </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_300px]">
-              <div className="relative border-b border-line lg:border-r lg:border-b-0">
-                <LivePathwayGraph
-                  nodes={graph.nodes}
-                  edges={graph.edges}
-                  stateMap={stateMap}
-                  mode={mode}
-                  selectedKey={selectedKey}
-                  onNodeSelect={(key) => setSelectedKey(key)}
-                  showEvidence={showEvidence}
-                  height={586}
-                  fitSignal={fitSignal}
-                  showMiniMap
-                  defaultViewport={{ x: 0, y: 10, zoom: 0.62 }}
-                />
-                <div className="pointer-events-none absolute top-2 left-2 rounded-[3px] border border-line bg-card/95 px-1.5 py-0.5 font-mono text-[9px] text-muted-foreground">
-                  {mode === "actual" ? "ACTUAL · D3 当前状态" : "PLANNED · 标准路径"}
+            <div className={cn("grid grid-cols-1", inspectorOpen && "lg:grid-cols-[minmax(0,1fr)_320px]")}>
+              {view === "graph" ? (
+                <div className="relative border-b border-line lg:border-r lg:border-b-0">
+                  <LivePathwayGraph
+                    nodes={graph.nodes}
+                    edges={graph.edges}
+                    stateMap={stateMap}
+                    mode={mode}
+                    selectedKey={selectedKey}
+                    onNodeSelect={(key) => setSelectedKey(key)}
+                    showEvidence={showEvidence}
+                    height={586}
+                    fitSignal={fitSignal}
+                    showMiniMap
+                    focusKey={selectedKey ?? activeNode?.nodeKey ?? null}
+                    defaultViewport={{ x: 0, y: 10, zoom: 0.72 }}
+                  />
+                  <div className="pointer-events-none absolute top-2 left-2 rounded-[3px] border border-line bg-card/95 px-1.5 py-0.5 font-mono text-[9px] text-muted-foreground">
+                    {mode === "actual" ? "ACTUAL · D3 当前状态" : "PLANNED · 标准路径"}
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="scrollbar-slim max-h-[586px] overflow-auto border-b border-line lg:border-r lg:border-b-0">
+                  <table className="w-full min-w-[620px] text-left text-[11px]">
+                    <thead className="sticky top-0 z-10 border-b border-line bg-card text-[10px] text-muted-foreground">
+                      <tr>
+                        <th className="px-3 py-2 font-medium">节点</th>
+                        <th className="px-3 py-2 font-medium">阶段</th>
+                        <th className="px-3 py-2 font-medium">状态</th>
+                        <th className="px-3 py-2 font-medium">角色</th>
+                        <th className="px-3 py-2 font-medium">时间约束</th>
+                        <th className="px-3 py-2 font-medium">证据</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {graph.nodes.map((node) => {
+                        const state = stateMap[node.nodeKey] ?? "pending";
+                        const meta = PATHWAY_STATE_META[state];
+                        return (
+                          <tr
+                            key={node.nodeKey}
+                            onClick={() => setSelectedKey(node.nodeKey)}
+                            className={cn(
+                              "cursor-pointer border-b border-line/60 last:border-0 hover:bg-secondary/40",
+                              selectedKey === node.nodeKey && "bg-accent/60",
+                              state === "not_selected" && "text-muted-foreground",
+                            )}
+                          >
+                            <td className="px-3 py-2"><span className="font-medium">{node.name}</span><span className="ml-1 font-mono text-[9px] text-muted-foreground">{node.nodeKey}</span></td>
+                            <td className="px-3 py-2 text-[10px] text-muted-foreground">{node.stage}</td>
+                            <td className="px-3 py-2"><span className={cn("inline-flex items-center gap-1 rounded-[3px] border px-1.5 py-px text-[9.5px]", meta.chipClass)}><span className={cn("size-1 rounded-full", meta.dotClass)} />{meta.label}</span></td>
+                            <td className="px-3 py-2 text-[10px]">{ROLE_LABELS[node.responsibleRole]}</td>
+                            <td className="px-3 py-2 text-[9.5px] text-muted-foreground">{constraintLabel(node)}</td>
+                            <td className="px-3 py-2 font-mono text-[9.5px]">{node.evidenceRefs?.length ?? 0}</td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              )}
 
-              <div className="scrollbar-slim max-h-[586px] overflow-y-auto">
+              {inspectorOpen && <div className="scrollbar-slim max-h-[640px] overflow-y-auto">
                 <div className="border-b border-line px-3.5 py-2.5">
                   <p className="label-micro">NODE INSPECTOR</p>
                   <p className="mt-1 text-[12px] font-semibold">节点检查器</p>
@@ -411,7 +507,7 @@ export default function PatientMapPage() {
                     <p className="text-[10px] text-muted-foreground">点击画布中的节点查看属性、时间约束与证据引用。</p>
                   </div>
                 )}
-              </div>
+              </div>}
             </div>
           </Card>
 
@@ -428,7 +524,7 @@ export default function PatientMapPage() {
           </div>
         </div>
 
-        <div className="space-y-4 xl:col-span-3">
+        <div className="space-y-4">
           <Card>
             <CardHeader className="pb-2">
               <SectionHead title="执行概览" description="实时状态与风险提示" />

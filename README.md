@@ -13,7 +13,7 @@
 | `front/` 前端高保真 | ✅ 已完成 | React 19 + Vite 8 + TypeScript + shadcn/ui + Tailwind CSS v4 + React Flow + Apache ECharts |
 | `back/` 后端服务 | ✅ S1–S3 完成（SQLite 开发） | FastAPI + SQLAlchemy + Alembic；路径/规则/入径/计划/任务/变异/随访/结局与聚合指标；75 项 pytest 通过；Playwright 6 个 server-mode 场景通过 |
 | `contracts/` 数据协议 | ✅ T02 完成 | OpenAPI 3.1（36 paths）、13 个 JSON Schema、HCC 合成验收病例，`python3 contracts/validate.py` 通过 |
-| V0.6.1 引擎强化 | 🚧 T20–T24/T27 完成，T25 基础，T26/T28/T29 部分 | 条件网关/执行 trace/审批指纹、时点快照/激活重评、三值单位边界、随访预警闭环、事件驱动重评、任务原子更新、唯一 ACTIVE 计划、Demo/Server 隔离、变异/随访/分析页、6 个 Playwright 场景、生产配置与登录限流已落地；T26 其余页面/T25 完整并发/CI runner 待完成 |
+| V0.6.1 引擎强化 | 🚧 T20–T24/T27 完成，T25 基础，T26/T28/T29 部分 | 条件网关/执行 trace/审批指纹、时点快照/激活重评、三值单位边界、随访预警闭环、事件驱动重评、任务原子更新、唯一 ACTIVE 计划、Demo/Server 隔离、变异/随访/分析页、6 个 Playwright 场景、生产配置与登录限流、DS01–DS03/DS05 基础与 5 步演示导览已落地；T26 其余页面/T25 完整并发/CI runner 待完成 |
 | V0.6 研发实施 | 🚧 S1–S3 完成，S4 进行中 | 后端契约 53/53 路径已实现；部署/备份/端到端/安全测试完成；前端登录 + 患者中心 + 患者详情 + 路径库 + 任务中心 + 规划页已接入真实 API，变异/随访/分析等页面仍待迁移 |
 
 ## 快速开始
@@ -36,6 +36,7 @@ npm run dev        # http://127.0.0.1:5173
 - [S4 部署与演示手册 · SQLite 备份/恢复、生产切换边界](docs/V0.6-S4-DEPLOYMENT.md)
 - [临床规则审阅清单（待签署）](docs/V0.6-CLINICAL-REVIEW.md)
 - [V0.6.1 引擎强化实施状态](docs/V0.6.1-HARDENING-STATUS.md)
+- [Design System V1.0 实施状态](docs/V1.0-DESIGN-SYSTEM-STATUS.md)
 - CI：`.github/workflows/ci.yml`（契约、后端测试、迁移重放、前端 typecheck/build）；本地命令见 `Makefile`
 
 ```bash

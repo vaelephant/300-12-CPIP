@@ -54,6 +54,18 @@ export const PATHWAY_STATE_META: Record<PathwayNodeVisualState, PathwayStateMeta
     dotClass: "bg-muted-foreground/40",
     chipClass: "border-line bg-secondary text-muted-foreground",
   },
+  unknown: {
+    label: "UNKNOWN",
+    description: "条件数据缺失或规则未知；下游禁止执行，等待补充",
+    dotClass: "bg-warn",
+    chipClass: "border-warn/30 bg-warn-wash text-warn",
+  },
+  not_selected: {
+    label: "未选路径",
+    description: "条件分支未选中；不生成可执行任务",
+    dotClass: "bg-muted-foreground/30",
+    chipClass: "border-dashed border-line bg-secondary text-muted-foreground",
+  },
 };
 
 const ANCHOR_LABELS: Record<TimeConstraint["anchor"], string> = {
@@ -86,6 +98,8 @@ const STATE_SURFACE: Record<PathwayNodeVisualState, string> = {
   variant: "border-dashed border-risk/55 bg-risk-wash/35",
   blocked: "border-risk/50 bg-risk-wash/30",
   pending: "border-line bg-card",
+  unknown: "border-warn/50 border-dashed bg-warn-wash/45",
+  not_selected: "border-dashed border-line bg-secondary/35 opacity-70",
 };
 
 function LivePathwayNodeCardImpl({ data }: NodeProps<LivePathwayNode>) {
@@ -96,6 +110,8 @@ function LivePathwayNodeCardImpl({ data }: NodeProps<LivePathwayNode>) {
   const timeLabel = formatConstraint(node.timeConstraint);
   const evidenceCount = showEvidence ? (node.evidenceRefs?.length ?? 0) : 0;
   const isRisk = state === "variant" || state === "blocked";
+  const isUnknown = state === "unknown";
+  const isNotSelected = state === "not_selected";
 
   return (
     <div
@@ -103,6 +119,7 @@ function LivePathwayNodeCardImpl({ data }: NodeProps<LivePathwayNode>) {
         "relative w-[200px] rounded-lg border shadow-card transition-shadow duration-150",
         STATE_SURFACE[state],
         selected && "shadow-pop ring-2 ring-primary/30",
+        isNotSelected && "border-dashed",
       )}
     >
       {/* 变异/阻塞红色提示条 */}
@@ -127,6 +144,8 @@ function LivePathwayNodeCardImpl({ data }: NodeProps<LivePathwayNode>) {
               </span>
             )}
             {isRisk && <TriangleAlert className="ml-auto size-3 shrink-0 text-risk" />}
+            {isUnknown && <TriangleAlert className="ml-auto size-3 shrink-0 text-warn" />}
+            {isNotSelected && <span className="ml-auto text-[9px] text-muted-foreground">未选</span>}
           </div>
           <p className="mt-0.5 line-clamp-2 text-[12px] leading-[1.35] font-medium text-foreground">{node.name}</p>
         </div>
@@ -165,6 +184,12 @@ function LivePathwayNodeCardImpl({ data }: NodeProps<LivePathwayNode>) {
           <span className="inline-flex items-center gap-1 rounded-[3px] border border-risk/20 bg-risk-wash px-1 py-px text-[9px] text-risk">
             <Lock className="size-2.5" />
             阻塞
+          </span>
+        )}
+        {state === "unknown" && (
+          <span className="inline-flex items-center gap-1 rounded-[3px] border border-warn/25 bg-warn-wash px-1 py-px text-[9px] text-warn">
+            <TriangleAlert className="size-2.5" />
+            待补充
           </span>
         )}
       </div>

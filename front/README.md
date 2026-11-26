@@ -106,6 +106,10 @@ npm run preview     # 预览生产构建
 - 配置示例见 `front/.env.example`（`VITE_HCC_API_URL`）。
 - 详见 `src/services/README.md`。
 
+## Design System V1.0
+
+视觉规范：[docs/V1.0-DESIGN-SYSTEM-STATUS.md](../docs/V1.0-DESIGN-SYSTEM-STATUS.md)；截图基线在 `front/docs/preview/design-system-v1/`。
+
 ## 浏览器 E2E（Playwright）
 
 ```bash
