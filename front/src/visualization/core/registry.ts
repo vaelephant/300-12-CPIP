@@ -1,0 +1,158 @@
+import type { VisualizationMeta } from "./types";
+
+// ---------------------------------------------------------------------------
+// Clinical Visualization Engine · 可视化注册表
+// 与开发说明书“12 种可视化 + 三期规划”对齐，用于产品内展示与导航。
+// ---------------------------------------------------------------------------
+
+export const VISUALIZATION_REGISTRY: VisualizationMeta[] = [
+  {
+    id: "VIS-001",
+    name: "动态临床路径图",
+    en: "Live Pathway Graph",
+    phase: 1,
+    status: "ready",
+    description: "以患者实例实时执行状态驱动路径图节点：已完成 / 执行中 / 变异 / 待执行，可切换计划与实际。",
+    href: "/patients/HCC-DEMO-001/map",
+  },
+  {
+    id: "VIS-002",
+    name: "患者全病程时间轴",
+    en: "Patient Journey Timeline",
+    phase: 1,
+    status: "ready",
+    description: "住院、检查、检验、手术、用药与随访统一时间坐标，支持日/周/月/年尺度切换。",
+    href: "/patients/HCC-DEMO-001/replay",
+  },
+  {
+    id: "VIS-003",
+    name: "计划与实际路径甘特",
+    en: "Clinical Pathway Gantt",
+    phase: 1,
+    status: "ready",
+    description: "任务依赖、关键路径、时间窗口与延迟原因对比，定位流程瓶颈。",
+    href: "/patients/HCC-DEMO-001/pathway",
+  },
+  {
+    id: "VIS-004",
+    name: "多模态临床指标联动",
+    en: "Multimodal Monitoring",
+    phase: 1,
+    status: "ready",
+    description: "检验、用药、手术与影像事件共用时间轴，观察治疗前后的指标变化。",
+    href: "/patients/HCC-DEMO-001",
+  },
+  {
+    id: "VIS-005",
+    name: "路径变异热力图",
+    en: "Variation Heatmap",
+    phase: 1,
+    status: "ready",
+    description: "科室 × 路径阶段变异率，支持下钻至变异类型与患者记录。",
+    href: "/variations",
+  },
+  {
+    id: "VIS-006",
+    name: "院长临床路径驾驶舱",
+    en: "Clinical Intelligence Dashboard",
+    phase: 1,
+    status: "ready",
+    description: "全院覆盖、入径、完成、变异与效率指标，从全院下钻至病区 / 治疗组、路径与执行事件。",
+    href: "/executive",
+  },
+  {
+    id: "VIS-007",
+    name: "患者疾病状态画像",
+    en: "Patient State Radar",
+    phase: 2,
+    status: "ready",
+    description: "将离散病历数据映射为统一状态向量，比较入院与当前状态。",
+    href: "/patients/HCC-DEMO-001",
+  },
+  {
+    id: "VIS-008",
+    name: "真实临床路径桑基图",
+    en: "Pathway Sankey",
+    phase: 2,
+    status: "ready",
+    description: "真实患者流向：标准执行、变异调整与退出路径。",
+    href: "/dashboard",
+  },
+  {
+    id: "VIS-009",
+    name: "临床流程挖掘",
+    en: "Process Mining",
+    phase: 2,
+    status: "ready",
+    description: "基于临床事件日志发现实际流程、合规偏差与等待瓶颈。",
+    href: "/process-mining",
+  },
+  {
+    id: "VIS-010",
+    name: "临床决策证据图谱",
+    en: "Decision Evidence Graph",
+    phase: 2,
+    status: "prototype",
+    description: "推荐建议 → 临床规则 → 证据条目 → 患者数据 的可解释链路。",
+  },
+  {
+    id: "VIS-011",
+    name: "患者病程回放",
+    en: "Journey Replay",
+    phase: 2,
+    status: "ready",
+    description: "时间滑块驱动路径图、状态画像、指标趋势、事件、预测与决策六视图同步回放。",
+    href: "/patients/HCC-DEMO-001/replay",
+  },
+  {
+    id: "VIS-012",
+    name: "多路径推演",
+    en: "Trajectory Simulation",
+    phase: 3,
+    status: "ready",
+    description: "候选路径 A/B/C 在不同时间尺度下的状态演化与不确定性区间。",
+    href: "/simulation",
+  },
+  {
+    id: "VIS-013",
+    name: "预测不确定性展示",
+    en: "Uncertainty Bands",
+    phase: 3,
+    status: "ready",
+    description: "P10–P90 区间、模型适用范围与非临床用途标识。",
+    href: "/simulation",
+  },
+  {
+    id: "VIS-014",
+    name: "患者疾病状态空间",
+    en: "Disease State Space",
+    phase: 3,
+    status: "planned",
+    description: "PCA / UMAP 投影的患者潜在状态空间（需真实数据与模型验证）。",
+  },
+  {
+    id: "VIS-015",
+    name: "预测与实际对比",
+    en: "Prediction vs Actual",
+    phase: 3,
+    status: "planned",
+    description: "历史预测轨迹与真实结局对齐，评估模型校准度。",
+  },
+  {
+    id: "VIS-016",
+    name: "影像与三维数字孪生",
+    en: "Imaging / Digital Twin",
+    phase: 3,
+    status: "planned",
+    description: "DICOM 影像、器官模型与患者数字孪生（后续集成）。",
+  },
+];
+
+export function registrySummary() {
+  return {
+    total: VISUALIZATION_REGISTRY.length,
+    ready: VISUALIZATION_REGISTRY.filter((v) => v.status === "ready").length,
+    prototype: VISUALIZATION_REGISTRY.filter((v) => v.status === "prototype").length,
+    phase1: VISUALIZATION_REGISTRY.filter((v) => v.phase === 1).length,
+  };
+}
