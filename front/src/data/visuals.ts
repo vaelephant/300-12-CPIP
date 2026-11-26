@@ -130,8 +130,8 @@ export const VARIATION_TREND_SERIES = [
   { key: "resource", label: "资源变异", color: "var(--chart-4)" },
   { key: "process", label: "流程变异", color: "var(--chart-2)" },
   { key: "patient", label: "患者变异", color: "var(--chart-5)" },
-  { key: "safety", label: "安全变异", color: "#b23b36" },
-  { key: "data", label: "数据变异", color: "#b3b6b1" },
+  { key: "safety", label: "安全变异", color: "var(--risk)" },
+  { key: "data", label: "数据变异", color: "var(--muted-foreground)" },
 ];
 
 /* --------------------------- 变异类型 × 严重度矩阵 --------------------------- */

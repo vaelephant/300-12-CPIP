@@ -1,8 +1,9 @@
 import { useEffect } from "react";
 import { useLocation, useNavigate, Navigate, Outlet } from "react-router-dom";
 import { useSessionStore } from "@/stores/session-store";
+import { AppSidebar } from "@/components/app-sidebar";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { crumbForPath } from "./nav-config";
-import { Sidebar } from "./sidebar";
 import { Topbar } from "./topbar";
 import { CommandPalette } from "./command-palette";
 import { DemoTour } from "./demo-tour";
@@ -45,25 +46,27 @@ export function AppShell() {
   const allowed = !rule || hasAny(rule.permissions);
 
   return (
-    <div className="flex min-h-screen bg-background">
-      <Sidebar />
-      <div className="flex min-w-0 flex-1 flex-col">
+    <SidebarProvider defaultOpen>
+      <AppSidebar />
+      <SidebarInset>
         <Topbar />
-        <main className="min-w-0 flex-1">{allowed ? <Outlet /> : <AccessDenied module={rule?.module ?? "该模块"} />}</main>
+        <div className="min-w-0 flex-1">{allowed ? <Outlet /> : <AccessDenied module={rule?.module ?? "该模块"} />}</div>
         {!location.pathname.endsWith("/studio") && (
-          <footer className="mt-auto border-t border-line px-6 py-3">
-            <div className="mx-auto flex max-w-[1560px] flex-wrap items-center justify-between gap-2 text-[10px] text-muted-foreground/70">
-              <span>HCC-CIP V0.6.1 · 肝癌全病程智能诊疗平台 · 研发演示版本</span>
+          <footer className="mt-auto border-t border-line px-4 py-1.5">
+            <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] text-muted-foreground">
+              <span>HCC-CIP 0.6.1 · 研发演示</span>
               <span className="flex items-center gap-3">
-                <span>所有数据均为合成演示数据</span>
-                <button onClick={() => navigate("/dashboard")} className="hover:text-foreground">工作台</button>
+                <span>合成数据 · 不用于临床</span>
+                <button onClick={() => navigate("/dashboard")} className="text-foreground hover:opacity-70">
+                  工作台
+                </button>
               </span>
             </div>
           </footer>
         )}
-      </div>
+      </SidebarInset>
       <CommandPalette />
       <DemoTour />
-    </div>
+    </SidebarProvider>
   );
 }

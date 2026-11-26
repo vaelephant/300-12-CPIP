@@ -41,15 +41,15 @@ export const NAV_GROUPS: NavGroup[] = [
     label: "临床路径",
     items: [
       { label: "路径库", to: "/pathways", icon: Route, permissions: ["pathway.view"], match: ["/pathways"] },
-      { label: "审核中心", to: "/approvals", icon: ShieldCheck, permissions: ["pathway.approve", "plan.approve", "variation.resolve"], badge: 4, tone: "warn" },
+      { label: "审核中心", to: "/approvals", icon: ShieldCheck, permissions: ["pathway.approve", "plan.approve", "variation.resolve"], badge: 4, tone: "neutral" },
     ],
   },
   {
     label: "患者与执行",
     items: [
       { label: "患者中心", to: "/patients", icon: Users, permissions: ["patient.view"], match: ["/patients", "/planning"] },
-      { label: "任务中心", to: "/tasks", icon: ClipboardList, permissions: ["task.view"], badge: 8, tone: "risk" },
-      { label: "变异管理", to: "/variations", icon: GitBranch, permissions: ["variation.view"], badge: 3, tone: "risk" },
+      { label: "任务中心", to: "/tasks", icon: ClipboardList, permissions: ["task.view"], badge: 8, tone: "neutral" },
+      { label: "变异管理", to: "/variations", icon: GitBranch, permissions: ["variation.view"], badge: 3, tone: "neutral" },
       { label: "随访管理", to: "/followups", icon: HeartPulse, permissions: ["patient.view"] },
     ],
   },

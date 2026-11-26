@@ -44,8 +44,8 @@ export function StatCard({
   return (
     <div
       className={cn(
-        "group relative flex flex-col justify-between overflow-hidden rounded-lg border border-line bg-card px-4 pt-3 pb-3.5 shadow-card transition-colors hover:border-line-strong",
-        inverted && "border-ink/10 bg-ink text-white",
+        "group relative flex flex-col justify-between overflow-hidden rounded-[10px] border border-line bg-card px-4 pt-3 pb-3.5 transition-colors hover:bg-secondary/30",
+        inverted && "border-transparent bg-ink text-white hover:bg-ink",
         className,
       )}
     >
@@ -80,29 +80,20 @@ export function StatCard({
           {unit && <span className={cn("text-[12px] font-medium", inverted ? "text-white/55" : "text-muted-foreground")}>{unit}</span>}
         </div>
         {delta !== undefined && (
-          <span
-            className={cn(
-              "inline-flex items-center gap-0.5 whitespace-nowrap rounded-[3px] px-1 py-0.5 text-[10.5px] font-medium tabular",
-              flat
-                ? inverted ? "bg-white/8 text-white/55" : "bg-secondary text-muted-foreground"
-                : improved
-                  ? inverted ? "bg-white/10 text-emerald-200" : "bg-ok-wash text-ok"
-                  : inverted ? "bg-white/10 text-rose-200" : "bg-risk-wash text-risk",
-            )}
-          >
+          <span className={cn("inline-flex items-center gap-0.5 whitespace-nowrap text-[11px] font-medium tabular text-muted-foreground")}>
             {flat ? <Minus className="size-2.5" /> : improved ? <ArrowUpRight className="size-2.5" /> : <ArrowDownRight className="size-2.5" />}
             {flat ? "持平" : `${Math.abs(delta).toFixed(1)}${deltaUnit}`}
-            {deltaLabel && <span className={cn("ml-0.5 font-normal", inverted ? "text-white/40" : "text-muted-foreground/70")}>{deltaLabel}</span>}
+            {deltaLabel && <span className="ml-0.5 font-normal opacity-70">{deltaLabel}</span>}
           </span>
         )}
       </div>
 
       {progress !== undefined && (
         <div className="mt-2.5 h-[3px] w-full overflow-hidden rounded-full bg-secondary">
-          <div className="h-full rounded-full bg-primary" style={{ width: `${progress}%` }} />
+          <div className="h-full rounded-full bg-foreground" style={{ width: `${progress}%` }} />
         </div>
       )}
-      {footer && <div className={cn("mt-2.5 border-t pt-2 text-[10.5px]", inverted ? "border-white/10 text-white/50" : "border-line text-muted-foreground")}>{footer}</div>}
+      {footer && <div className={cn("mt-2 text-[11px]", inverted ? "text-white/50" : "text-muted-foreground")}>{footer}</div>}
     </div>
   );
 }

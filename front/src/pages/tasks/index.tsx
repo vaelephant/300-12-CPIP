@@ -23,6 +23,7 @@ import { StatCard } from "@/components/app/stat-card";
 import { StatusBadge } from "@/components/app/status-badge";
 import { SearchInput, Toolbar, CountBadge } from "@/components/app/toolbar";
 import { Card } from "@/components/ui/card";
+import { CHART_COLOR, CHART_SEMANTIC } from "@/components/charts/chart-kit";
 import { DonutChart, GroupedBarChart } from "@/components/charts/advanced";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -360,11 +361,11 @@ function DemoTasksPage() {
           <div className="pt-3">
             <DonutChart
               data={[
-                { name: "待执行", value: stats.pending, color: "#c7c9c4" },
-                { name: "可执行", value: stats.ready, color: "var(--chart-4)" },
-                { name: "执行中", value: stats.inProgress, color: "var(--chart-3)" },
-                { name: "已完成", value: stats.completed, color: "var(--chart-1)" },
-                { name: "超时未完成", value: stats.overdue, color: "var(--risk)" },
+                { name: "待执行", value: stats.pending, color: CHART_SEMANTIC.muted },
+                { name: "可执行", value: stats.ready, color: CHART_COLOR["chart-4"] },
+                { name: "执行中", value: stats.inProgress, color: CHART_COLOR["chart-3"] },
+                { name: "已完成", value: stats.completed, color: CHART_COLOR["chart-1"] },
+                { name: "超时未完成", value: stats.overdue, color: CHART_SEMANTIC.risk },
               ]}
               height={128}
               centerLabel="任务"
@@ -391,9 +392,9 @@ function DemoTasksPage() {
                 };
               })}
               series={[
-                { key: "total", label: "任务总量", color: "var(--chart-2)" },
-                { key: "completed", label: "已完成", color: "var(--chart-1)" },
-                { key: "overdue", label: "超时", color: "var(--chart-5)" },
+                { key: "total", label: "任务总量", color: CHART_COLOR["chart-2"] },
+                { key: "completed", label: "已完成", color: CHART_COLOR["chart-1"] },
+                { key: "overdue", label: "超时", color: CHART_COLOR["chart-5"] },
               ]}
               height={152}
               unit="项"

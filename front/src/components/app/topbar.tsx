@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import {
   Bell,
@@ -29,8 +29,17 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Separator } from "@/components/ui/separator";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 import { crumbForPath } from "./nav-config";
-import { BrandMark } from "./brand-mark";
 import { IS_SERVER_MODE } from "@/lib/data-mode";
 
 export function Topbar() {
@@ -46,56 +55,61 @@ export function Topbar() {
   const unread = NOTIFICATIONS.filter((n) => n.level !== "INFO").length;
 
   return (
-    <header className="sticky top-0 z-20 flex h-[52px] shrink-0 items-center gap-4 border-b border-line bg-card/95 px-5 backdrop-blur">
-      {/* 面包屑 */}
+    <header className="sticky top-0 z-20 flex h-12 shrink-0 items-center gap-2 border-b border-line bg-card/90 px-3 backdrop-blur-md md:px-4">
+      <SidebarTrigger className="-ml-1" />
+      <Separator orientation="vertical" className="mr-1 hidden h-4 sm:block" />
       <div className="flex min-w-0 items-center gap-2">
-        <div className="flex size-6 items-center justify-center rounded-[4px] border border-line bg-brand-wash text-brand">
-          <BrandMark className="size-3.5" />
-        </div>
-        <nav className="flex min-w-0 items-center gap-1.5 text-[12px]">
-          {crumbs.map((c, i) => (
-            <span key={`${c.label}-${i}`} className="flex items-center gap-1.5">
-              {i > 0 && <span className="text-line-strong">/</span>}
-              {c.to ? (
-                <Link to={c.to} className="truncate text-muted-foreground transition-colors hover:text-foreground">
-                  {c.label}
-                </Link>
-              ) : (
-                <span className="truncate font-medium text-foreground">{c.label}</span>
-              )}
-            </span>
-          ))}
-        </nav>
+        <Breadcrumb>
+          <BreadcrumbList className="flex-nowrap text-[13px]">
+            {crumbs.map((c, i) => {
+              const last = i === crumbs.length - 1;
+              return (
+                <Fragment key={`${c.label}-${i}`}>
+                  {i > 0 && <BreadcrumbSeparator />}
+                  <BreadcrumbItem className="min-w-0">
+                    {c.to && !last ? (
+                      <BreadcrumbLink asChild>
+                        <Link to={c.to} className="truncate">
+                          {c.label}
+                        </Link>
+                      </BreadcrumbLink>
+                    ) : (
+                      <BreadcrumbPage className="truncate font-medium tracking-[-0.01em]">
+                        {c.label}
+                      </BreadcrumbPage>
+                    )}
+                  </BreadcrumbItem>
+                </Fragment>
+              );
+            })}
+          </BreadcrumbList>
+        </Breadcrumb>
       </div>
 
       {!IS_SERVER_MODE && (
         <button
           onClick={() => useUiStore.getState().openTour()}
-          className="ml-1 hidden h-8 shrink-0 items-center gap-1.5 rounded-md border border-brand/20 bg-brand-wash px-2.5 text-[11px] font-medium text-brand transition-colors hover:bg-brand/10 sm:flex"
+          className="ml-1 hidden h-7 shrink-0 items-center gap-1.5 rounded-md bg-secondary px-2.5 text-[12px] font-medium text-foreground transition-colors hover:bg-secondary/80 sm:flex"
         >
           <PlayCircle className="size-3.5" /> 演示导览
         </button>
       )}
 
-      {/* 全局搜索 */}
       <button
         onClick={() => setCommandOpen(true)}
-        className="ml-2 hidden h-8 w-[268px] items-center gap-2 rounded-md border border-line bg-card px-2.5 text-left text-[12px] text-muted-foreground/70 transition-colors hover:border-line-strong lg:flex"
+        className="ml-1 hidden h-7 w-[240px] items-center gap-2 rounded-md bg-secondary/80 px-2.5 text-left text-[12.5px] text-muted-foreground transition-colors hover:bg-secondary lg:flex"
       >
-        <Search className="size-3.5" />
-        <span className="flex-1">搜索患者、路径或任务…</span>
-        <kbd className="flex items-center gap-0.5 rounded border border-line bg-secondary px-1 py-px font-mono text-[9px]">
+        <Search className="size-3.5 opacity-70" />
+        <span className="flex-1">搜索…</span>
+        <kbd className="flex items-center gap-0.5 rounded bg-card px-1 py-px font-mono text-[10px] text-muted-foreground shadow-card">
           <CommandIcon className="size-2.5" />K
         </kbd>
       </button>
 
       <div className="ml-auto flex items-center gap-1.5">
-        <span className="hidden items-center gap-1.5 rounded-[4px] border border-line bg-card px-2 py-1 text-[10px] text-muted-foreground xl:flex">
-          <span className="relative flex size-1.5">
-            <span className="absolute size-full animate-ping rounded-full bg-ok/60" />
-            <span className="relative size-1.5 rounded-full bg-ok" />
-          </span>
-          数据同步 {fmtTime(LAST_SYNC)}
+        <span className="hidden items-center gap-1.5 rounded-md bg-secondary/80 px-2 py-1 text-[11px] text-muted-foreground xl:flex">
+          <span className="size-1.5 rounded-full bg-ok" />
+          同步 {fmtTime(LAST_SYNC)}
         </span>
 
         {/* 通知 */}

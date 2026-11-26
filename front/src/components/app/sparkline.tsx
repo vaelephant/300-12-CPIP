@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { CHART_COLOR, CHART_SEMANTIC } from "@/components/charts/chart-theme";
 
 interface SparklineProps {
   values: number[];
@@ -10,10 +11,10 @@ interface SparklineProps {
 }
 
 const TONE = {
-  ok: { stroke: "var(--chart-1)", fill: "var(--chart-1)" },
-  risk: { stroke: "var(--chart-5)", fill: "var(--chart-5)" },
-  info: { stroke: "var(--chart-4)", fill: "var(--chart-4)" },
-  neutral: { stroke: "var(--line-strong)", fill: "var(--line-strong)" },
+  ok: { stroke: CHART_COLOR["chart-1"], fill: CHART_COLOR["chart-1"] },
+  risk: { stroke: CHART_COLOR["chart-1"], fill: CHART_COLOR["chart-1"] },
+  info: { stroke: CHART_COLOR["chart-3"], fill: CHART_COLOR["chart-3"] },
+  neutral: { stroke: CHART_SEMANTIC.neutral, fill: CHART_SEMANTIC.neutral },
 };
 
 export function Sparkline({ values, width = 88, height = 26, tone = "ok", className, fill = true }: SparklineProps) {

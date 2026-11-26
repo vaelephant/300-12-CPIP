@@ -17,12 +17,12 @@ export function SectionHead({ title, count, description, action, className }: Se
     <div className={cn("flex items-start justify-between gap-3", className)}>
       <div className="min-w-0">
         <div className="flex items-center gap-2">
-          <h2 className="text-[13.5px] font-semibold tracking-tight">{title}</h2>
+          <h2 className="text-[13px] font-semibold tracking-[-0.015em]">{title}</h2>
           {count !== undefined && (
-            <span className="rounded-[3px] bg-secondary px-1 py-px font-mono text-[10px] text-muted-foreground">{count}</span>
+            <span className="rounded-md bg-secondary px-1.5 py-px text-[11px] font-medium text-muted-foreground">{count}</span>
           )}
         </div>
-        {description && <p className="mt-0.5 text-[11.5px] text-muted-foreground">{description}</p>}
+        {description && <p className="mt-0.5 text-[12px] text-muted-foreground">{description}</p>}
       </div>
       {action && <div className="flex shrink-0 items-center gap-1.5">{action}</div>}
     </div>
@@ -32,11 +32,11 @@ export function SectionHead({ title, count, description, action, className }: Se
 /* ------------------------------- 提示条 ------------------------------- */
 
 const CALLOUT = {
-  risk: { wrap: "border-risk/25 bg-risk-wash/70 text-risk", icon: XCircle },
-  warn: { wrap: "border-warn/30 bg-warn-wash/70 text-warn", icon: AlertTriangle },
-  info: { wrap: "border-info/25 bg-info-wash/70 text-info", icon: Info },
-  ok: { wrap: "border-ok/25 bg-ok-wash/70 text-ok", icon: ShieldCheck },
-  neutral: { wrap: "border-line bg-secondary/60 text-muted-foreground", icon: Info },
+  risk: { wrap: "border-line bg-card text-foreground", icon: XCircle },
+  warn: { wrap: "border-line bg-card text-foreground", icon: AlertTriangle },
+  info: { wrap: "border-line bg-card text-foreground", icon: Info },
+  ok: { wrap: "border-line bg-card text-foreground", icon: ShieldCheck },
+  neutral: { wrap: "border-line bg-card text-muted-foreground", icon: Info },
 };
 
 interface CalloutProps {
@@ -52,11 +52,11 @@ export function Callout({ tone = "info", title, children, action, className, ico
   const meta = CALLOUT[tone];
   const Icon = meta.icon;
   return (
-    <div className={cn("flex items-start gap-2.5 rounded-md border px-3 py-2.5", meta.wrap, className)}>
-      {icon && <Icon className="mt-px size-3.5 shrink-0" />}
+    <div className={cn("flex items-start gap-2.5 rounded-[10px] border px-3 py-2.5", meta.wrap, className)}>
+      {icon && <Icon className={cn("mt-px size-3.5 shrink-0", tone === "risk" ? "text-risk" : tone === "warn" ? "text-warn" : "text-muted-foreground")} />}
       <div className="min-w-0 flex-1">
-        <p className="text-[12.5px] font-medium">{title}</p>
-        {children && <div className="mt-0.5 text-[11.5px] leading-relaxed text-foreground/65">{children}</div>}
+        <p className="text-[13px] font-medium tracking-[-0.01em]">{title}</p>
+        {children && <div className="mt-0.5 text-[12px] leading-relaxed text-muted-foreground">{children}</div>}
       </div>
       {action && <div className="shrink-0">{action}</div>}
     </div>

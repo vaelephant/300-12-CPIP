@@ -34,7 +34,17 @@ import {
 } from "recharts";
 import type { SankeyNodeProps } from "recharts";
 import { cn } from "@/lib/utils";
-import { ChartBox, ChartTooltip, ChartTooltipCard } from "./chart-kit";
+import {
+  ChartBox,
+  ChartTooltip,
+  ChartTooltipCard,
+  CHART_COLOR,
+  CHART_SEMANTIC,
+  CHART_THEME,
+  heatFill,
+  heatLegendStops,
+  type HeatTone,
+} from "./chart-kit";
 
 /* ===========================================================================
  * 1. 环形构成图
@@ -84,7 +94,7 @@ export function DonutChart({
               isAnimationActive={false}
             >
               {data.map((d) => (
-                <Cell key={d.name} fill={d.color ?? "var(--chart-1)"} />
+                <Cell key={d.name} fill={d.color ?? CHART_COLOR["chart-1"]} />
               ))}
             </Pie>
             <Tooltip content={<ChartTooltip unit={unit} />} />
@@ -102,7 +112,7 @@ export function DonutChart({
         <div className="min-w-0 flex-1 space-y-1.5">
           {data.map((d) => (
             <div key={d.name} className="flex items-center gap-2 text-[11.5px]">
-              <span className="size-2 shrink-0 rounded-[2px]" style={{ background: d.color ?? "var(--chart-1)" }} />
+              <span className="size-2 shrink-0 rounded-[2px]" style={{ background: d.color ?? CHART_COLOR["chart-1"] }} />
               <span className="min-w-0 flex-1 truncate text-muted-foreground">{d.name}</span>
               <span className="tabular font-mono text-[11px] text-foreground/85">{d.value}</span>
               <span className="tabular w-9 text-right font-mono text-[9.5px] text-muted-foreground/70">
@@ -122,23 +132,23 @@ export function DonutChart({
  * ========================================================================= */
 
 const SANKEY_COLOR: Record<string, string> = {
-  筛查患者: "#aeb4bc",
-  符合准入: "var(--chart-4)",
-  未入径: "#c7c9c4",
-  待补充资料: "var(--warn)",
-  入径确认: "var(--chart-1)",
-  术前评估: "var(--chart-2)",
-  术前检查: "var(--chart-4)",
-  治疗方案确认: "var(--chart-3)",
-  手术及术后: "var(--chart-1)",
-  变异调整: "var(--warn)",
-  出院随访: "#5c7a94",
-  正常完成: "var(--ok)",
-  路径退出: "var(--risk)",
+  筛查患者: CHART_SEMANTIC.muted,
+  符合准入: CHART_COLOR["chart-4"],
+  未入径: CHART_SEMANTIC.neutral,
+  待补充资料: CHART_SEMANTIC.warn,
+  入径确认: CHART_COLOR["chart-1"],
+  术前评估: CHART_COLOR["chart-2"],
+  术前检查: CHART_COLOR["chart-4"],
+  治疗方案确认: CHART_COLOR["chart-3"],
+  手术及术后: CHART_COLOR["chart-1"],
+  变异调整: CHART_SEMANTIC.warn,
+  出院随访: CHART_COLOR["chart-2"],
+  正常完成: CHART_SEMANTIC.ok,
+  路径退出: CHART_SEMANTIC.risk,
 };
 
 function sankeyColor(name: string) {
-  return SANKEY_COLOR[name] ?? "var(--chart-1)";
+  return SANKEY_COLOR[name] ?? CHART_COLOR["chart-1"];
 }
 
 interface SankeyFlowProps {
@@ -182,7 +192,7 @@ export function SankeyFlow({ data, height = 300, className }: SankeyFlowProps) {
           y={y + h / 2 + (showValue ? -3.5 : 3)}
           textAnchor={labelLeft ? "end" : "start"}
           fontSize={10.5}
-          fill="var(--foreground)"
+          fill={CHART_THEME.textStrong}
         >
           {name}
         </text>
@@ -192,8 +202,8 @@ export function SankeyFlow({ data, height = 300, className }: SankeyFlowProps) {
             y={y + h / 2 + 8}
             textAnchor={labelLeft ? "end" : "start"}
             fontSize={9}
-            fontFamily="var(--font-mono)"
-            fill="var(--muted-foreground)"
+            fontFamily={CHART_THEME.fontMono}
+            fill={CHART_THEME.text}
           >
             {value} 例
           </text>
@@ -212,7 +222,7 @@ export function SankeyFlow({ data, height = 300, className }: SankeyFlowProps) {
           linkCurvature={0.5}
           iterations={48}
           node={renderNode}
-          link={{ stroke: "var(--line-strong)", strokeOpacity: 0.32 }}
+          link={{ stroke: CHART_THEME.gridStrong, strokeOpacity: 0.32 }}
           margin={{ top: 8, right: 96, bottom: 8, left: 4 }}
         />
       </ResponsiveContainer>
@@ -268,14 +278,14 @@ export function QualityRadar({ data, series, height = 236, domain = [60, 100], c
     <div className={className}>
       <ChartBox height={height}>
         <RadarChart data={data} outerRadius="72%" margin={{ top: 8, right: 20, bottom: 4, left: 20 }}>
-          <PolarGrid stroke="var(--line)" strokeDasharray="2 3" />
-          <PolarAngleAxis dataKey="dimension" tick={{ fontSize: 10, fill: "var(--muted-foreground)" }} />
+          <PolarGrid stroke={CHART_THEME.grid} strokeDasharray="2 3" />
+          <PolarAngleAxis dataKey="dimension" tick={{ fontSize: 10, fill: CHART_THEME.text }} />
           <PolarRadiusAxis
             angle={90}
             domain={domain}
             tickCount={4}
             axisLine={false}
-            tick={{ fontSize: 8.5, fill: "var(--muted-foreground)", fontFamily: "var(--font-mono)" }}
+            tick={{ fontSize: 8.5, fill: CHART_THEME.text, fontFamily: CHART_THEME.fontMono }}
           />
           {series.map((s) => (
             <Radar
@@ -342,22 +352,22 @@ export function StackedAreaTrend({
     <div className={className}>
       <ChartBox height={height}>
         <AreaChart data={flat} margin={{ top: 8, right: 18, bottom: 0, left: 0 }} stackOffset="none">
-          <CartesianGrid vertical={false} stroke="var(--line)" strokeDasharray="2 4" />
+          <CartesianGrid vertical={false} stroke={CHART_THEME.grid} strokeDasharray="2 4" />
           <XAxis
             dataKey="label"
             axisLine={false}
             tickLine={false}
             tickMargin={7}
             interval="preserveStartEnd"
-            tick={{ fontSize: 10, fill: "var(--muted-foreground)", fontFamily: "var(--font-mono)" }}
+            tick={{ fontSize: 10, fill: CHART_THEME.text, fontFamily: CHART_THEME.fontMono }}
           />
           <YAxis
             axisLine={false}
             tickLine={false}
             width={34}
-            tick={{ fontSize: 10, fill: "var(--muted-foreground)", fontFamily: "var(--font-mono)" }}
+            tick={{ fontSize: 10, fill: CHART_THEME.text, fontFamily: CHART_THEME.fontMono }}
           />
-          <Tooltip content={<ChartTooltip unit={unit} />} cursor={{ stroke: "var(--line-strong)", strokeWidth: 1 }} />
+          <Tooltip content={<ChartTooltip unit={unit} />} cursor={{ stroke: CHART_THEME.cursor, strokeWidth: 1 }} />
           {series.map((s) => (
             <Area
               key={s.key}
@@ -392,17 +402,11 @@ export function StackedAreaTrend({
  * 5. 热力图
  * ========================================================================= */
 
-const HEAT_HUE = {
-  warn: { l: 0.72, c: 0.13, h: 78, text: "var(--warn)" },
-  risk: { l: 0.56, c: 0.19, h: 27, text: "var(--risk)" },
-  primary: { l: 0.33, c: 0.04, h: 255, text: "var(--primary)" },
-};
-
 interface HeatmapGridProps {
   rows: string[];
   cols: string[];
   values: number[][];
-  tone?: keyof typeof HEAT_HUE;
+  tone?: HeatTone;
   unit?: string;
   rowWidth?: number;
   className?: string;
@@ -419,9 +423,9 @@ export function HeatmapGrid({
   className,
   footnote,
 }: HeatmapGridProps) {
-  const palette = HEAT_HUE[tone];
   const max = Math.max(...values.flat(), 1);
   const gridTemplate = `${rowWidth}px repeat(${cols.length}, minmax(0, 1fr))`;
+  const legend = heatLegendStops(tone);
   return (
     <div className={className}>
       <div className="grid items-center gap-1" style={{ gridTemplateColumns: gridTemplate }}>
@@ -436,15 +440,20 @@ export function HeatmapGrid({
             <span className="truncate pr-1 text-[10.5px] text-muted-foreground">{row}</span>
             {cols.map((col, ci) => {
               const value = values[ri]?.[ci] ?? 0;
-              const alpha = value === 0 ? 0.04 : 0.1 + (value / max) * 0.72;
+              const intensity = value / max;
               return (
                 <div
                   key={`${row}-${col}`}
                   title={`${row} · ${col}：${value} ${unit}`}
                   className="flex h-7 items-center justify-center rounded-[3px] font-mono text-[10px] tabular transition-colors"
                   style={{
-                    background: `oklch(${palette.l} ${palette.c} ${palette.h} / ${alpha})`,
-                    color: alpha > 0.5 ? "#ffffff" : value === 0 ? "var(--muted-foreground)" : "var(--foreground)",
+                    background: heatFill(tone, intensity),
+                    color:
+                      intensity > 0.55
+                        ? CHART_SEMANTIC.white
+                        : value === 0
+                          ? CHART_THEME.text
+                          : CHART_THEME.textStrong,
                   }}
                 >
                   {value}
@@ -457,12 +466,8 @@ export function HeatmapGrid({
       <div className="mt-2 flex items-center justify-between gap-3">
         <div className="flex items-center gap-1.5 text-[9.5px] text-muted-foreground">
           <span>低</span>
-          {[0.12, 0.28, 0.46, 0.64, 0.82].map((a) => (
-            <span
-              key={a}
-              className="size-2.5 rounded-[1px]"
-              style={{ background: `oklch(${palette.l} ${palette.c} ${palette.h} / ${a})` }}
-            />
+          {legend.map((bg) => (
+            <span key={bg} className="size-2.5 rounded-[1px]" style={{ background: bg }} />
           ))}
           <span>高</span>
           <span className="ml-1 font-mono">max {max} {unit}</span>
@@ -701,21 +706,21 @@ export function FanChart({ data, series, height = 220, unit = "%", yDomain = [0,
     <div className={className}>
       <ChartBox height={height}>
         <AreaChart data={data} margin={{ top: 8, right: 20, bottom: 0, left: 0 }}>
-          <CartesianGrid vertical={false} stroke="var(--line)" strokeDasharray="2 4" />
+          <CartesianGrid vertical={false} stroke={CHART_THEME.grid} strokeDasharray="2 4" />
           <XAxis
             dataKey="label"
             axisLine={false}
             tickLine={false}
             tickMargin={7}
             interval={1}
-            tick={{ fontSize: 9.5, fill: "var(--muted-foreground)", fontFamily: "var(--font-mono)" }}
+            tick={{ fontSize: 9.5, fill: CHART_THEME.text, fontFamily: CHART_THEME.fontMono }}
           />
           <YAxis
             axisLine={false}
             tickLine={false}
             width={38}
             domain={yDomain}
-            tick={{ fontSize: 9.5, fill: "var(--muted-foreground)", fontFamily: "var(--font-mono)" }}
+            tick={{ fontSize: 9.5, fill: CHART_THEME.text, fontFamily: CHART_THEME.fontMono }}
             tickFormatter={(v: number) => `${v}${unit}`}
           />
           <Tooltip content={<ChartTooltip unit={unit} />} />
@@ -764,11 +769,11 @@ export function FanChart({ data, series, height = 220, unit = "%", yDomain = [0,
  * ========================================================================= */
 
 const GAUGE_TONE = {
-  primary: "var(--primary)",
-  ok: "var(--ok)",
-  warn: "var(--warn)",
-  risk: "var(--risk)",
-  info: "var(--info)",
+  primary: CHART_SEMANTIC.primary,
+  ok: CHART_SEMANTIC.ok,
+  warn: CHART_SEMANTIC.warn,
+  risk: CHART_SEMANTIC.risk,
+  info: CHART_SEMANTIC.info,
 };
 
 interface GaugeRingProps {
@@ -800,7 +805,7 @@ export function GaugeRing({
     <div className={cn("flex flex-col items-center justify-center", className)}>
       <div className="relative" style={{ width: size, height: size }}>
         <svg viewBox="0 0 120 120" className="size-full -rotate-90">
-          <circle cx="60" cy="60" r={radius} fill="none" stroke="var(--secondary)" strokeWidth="9" />
+          <circle cx="60" cy="60" r={radius} fill="none" stroke={CHART_THEME.secondary} strokeWidth="9" />
           <circle
             cx="60"
             cy="60"
@@ -818,7 +823,7 @@ export function GaugeRing({
             const y1 = 60 + Math.sin(angle) * 63;
             const x2 = 60 + Math.cos(angle) * 66;
             const y2 = 60 + Math.sin(angle) * 66;
-            return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="var(--line-strong)" strokeWidth="0.8" />;
+            return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke={CHART_THEME.gridStrong} strokeWidth="0.8" />;
           })}
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
@@ -870,14 +875,14 @@ export function CostEffectScatter({
     <div className={className}>
       <ChartBox height={height}>
         <ScatterChart margin={{ top: 12, right: 24, bottom: 8, left: 6 }}>
-          <CartesianGrid stroke="var(--line)" strokeDasharray="2 4" />
+          <CartesianGrid stroke={CHART_THEME.grid} strokeDasharray="2 4" />
           <XAxis
             type="number"
             dataKey="cost"
             name="次均费用"
             domain={["dataMin - 2000", "dataMax + 2000"]}
             tickFormatter={(v: number) => `¥${Math.round(v / 1000)}k`}
-            tick={{ fontSize: 9.5, fill: "var(--muted-foreground)", fontFamily: "var(--font-mono)" }}
+            tick={{ fontSize: 9.5, fill: CHART_THEME.text, fontFamily: CHART_THEME.fontMono }}
             axisLine={false}
             tickLine={false}
           />
@@ -887,7 +892,7 @@ export function CostEffectScatter({
             name="完成率"
             domain={[88, 95]}
             tickFormatter={(v: number) => `${v}%`}
-            tick={{ fontSize: 9.5, fill: "var(--muted-foreground)", fontFamily: "var(--font-mono)" }}
+            tick={{ fontSize: 9.5, fill: CHART_THEME.text, fontFamily: CHART_THEME.fontMono }}
             axisLine={false}
             tickLine={false}
             width={38}
@@ -895,18 +900,18 @@ export function CostEffectScatter({
           <ZAxis type="number" dataKey="cohort" range={[70, 150]} />
           <ReferenceLine
             x={targetCost ?? avgCost}
-            stroke="var(--line-strong)"
+            stroke={CHART_THEME.gridStrong}
             strokeDasharray="3 4"
-            label={{ value: "目标费用", position: "insideTopRight", fontSize: 9, fill: "var(--muted-foreground)" }}
+            label={{ value: "目标费用", position: "insideTopRight", fontSize: 9, fill: CHART_THEME.text }}
           />
           <ReferenceLine
             y={targetCompletion ?? avgCompletion}
-            stroke="var(--line-strong)"
+            stroke={CHART_THEME.gridStrong}
             strokeDasharray="3 4"
-            label={{ value: "目标完成率", position: "insideBottomLeft", fontSize: 9, fill: "var(--muted-foreground)" }}
+            label={{ value: "目标完成率", position: "insideBottomLeft", fontSize: 9, fill: CHART_THEME.text }}
           />
           <Tooltip
-            cursor={{ strokeDasharray: "3 3", stroke: "var(--line-strong)" }}
+            cursor={{ strokeDasharray: "3 3", stroke: CHART_THEME.cursor }}
             content={({ active, payload }) => {
               if (!active || !payload?.length) return null;
               const point = payload[0].payload as CostEffectPoint;
@@ -923,16 +928,16 @@ export function CostEffectScatter({
               );
             }}
           />
-          <Scatter data={normal} fill="var(--chart-4)" fillOpacity={0.85} stroke="var(--card)" strokeWidth={1.5} isAnimationActive={false} />
-          <Scatter data={recommended} fill="var(--chart-1)" stroke="var(--card)" strokeWidth={2} isAnimationActive={false} />
+          <Scatter data={normal} fill={CHART_COLOR["chart-4"]} fillOpacity={0.85} stroke={CHART_THEME.surface} strokeWidth={1.5} isAnimationActive={false} />
+          <Scatter data={recommended} fill={CHART_COLOR["chart-1"]} stroke={CHART_THEME.surface} strokeWidth={2} isAnimationActive={false} />
         </ScatterChart>
       </ChartBox>
       <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-[10px] text-muted-foreground">
         <span className="flex items-center gap-1.5">
-          <span className="size-2 rounded-full bg-[var(--chart-1)]" /> 推荐候选
+          <span className="size-2 rounded-full bg-chart-1" /> 推荐候选
         </span>
         <span className="flex items-center gap-1.5">
-          <span className="size-2 rounded-full bg-[var(--chart-4)]" /> 其他候选
+          <span className="size-2 rounded-full bg-chart-4" /> 其他候选
         </span>
         <span className="ml-auto font-mono text-[9px] text-muted-foreground/60">气泡 = 合成队列规模 · 虚线 = 目标基线</span>
       </div>
@@ -964,21 +969,21 @@ export function GroupedBarChart({ data, series, height = 200, stacked = false, u
     <div className={className}>
       <ChartBox height={height}>
         <BarChart data={data} margin={{ top: 8, right: 12, bottom: 0, left: 0 }} barGap={2}>
-          <CartesianGrid vertical={false} stroke="var(--line)" strokeDasharray="2 4" />
+          <CartesianGrid vertical={false} stroke={CHART_THEME.grid} strokeDasharray="2 4" />
           <XAxis
             dataKey="label"
             axisLine={false}
             tickLine={false}
             tickMargin={7}
-            tick={{ fontSize: 9.5, fill: "var(--muted-foreground)", fontFamily: "var(--font-mono)" }}
+            tick={{ fontSize: 9.5, fill: CHART_THEME.text, fontFamily: CHART_THEME.fontMono }}
           />
           <YAxis
             axisLine={false}
             tickLine={false}
             width={30}
-            tick={{ fontSize: 9.5, fill: "var(--muted-foreground)", fontFamily: "var(--font-mono)" }}
+            tick={{ fontSize: 9.5, fill: CHART_THEME.text, fontFamily: CHART_THEME.fontMono }}
           />
-          <Tooltip content={<ChartTooltip unit={unit} />} cursor={{ fill: "var(--secondary)", opacity: 0.4 }} />
+          <Tooltip content={<ChartTooltip unit={unit} />} cursor={{ fill: CHART_THEME.secondary, opacity: 0.4 }} />
           {series.map((s) => (
             <Bar
               key={s.key}
@@ -1057,7 +1062,7 @@ export function ClinicalTrendChart({
     <div className={className}>
       <ChartBox height={height}>
         <ComposedChart data={data} margin={{ top: 10, right: hasRight ? 8 : 18, bottom: 0, left: 0 }}>
-          <CartesianGrid vertical={false} stroke="var(--line)" strokeDasharray="2 4" />
+          <CartesianGrid vertical={false} stroke={CHART_THEME.grid} strokeDasharray="2 4" />
           <XAxis
             dataKey={xKey ?? "label"}
             type={xKey ? "number" : "category"}
@@ -1068,7 +1073,7 @@ export function ClinicalTrendChart({
             tickMargin={7}
             interval="preserveStartEnd"
             tickFormatter={xKey ? xTickFormatter : undefined}
-            tick={{ fontSize: 9.5, fill: "var(--muted-foreground)", fontFamily: "var(--font-mono)" }}
+            tick={{ fontSize: 9.5, fill: CHART_THEME.text, fontFamily: CHART_THEME.fontMono }}
           />
           <YAxis
             yAxisId="left"
@@ -1076,7 +1081,7 @@ export function ClinicalTrendChart({
             tickLine={false}
             width={40}
             domain={yDomain}
-            tick={{ fontSize: 9.5, fill: "var(--muted-foreground)", fontFamily: "var(--font-mono)" }}
+            tick={{ fontSize: 9.5, fill: CHART_THEME.text, fontFamily: CHART_THEME.fontMono }}
           />
           {hasRight && (
             <YAxis
@@ -1086,7 +1091,7 @@ export function ClinicalTrendChart({
               tickLine={false}
               width={36}
               domain={yRightDomain}
-              tick={{ fontSize: 9.5, fill: "var(--muted-foreground)", fontFamily: "var(--font-mono)" }}
+              tick={{ fontSize: 9.5, fill: CHART_THEME.text, fontFamily: CHART_THEME.fontMono }}
             />
           )}
           {bands.map((band, i) => (
@@ -1095,7 +1100,7 @@ export function ClinicalTrendChart({
               yAxisId="left"
               y1={band.low}
               y2={band.high}
-              fill={band.color ?? "var(--ok)"}
+              fill={band.color ?? CHART_SEMANTIC.ok}
               fillOpacity={0.07}
               stroke="none"
               ifOverflow="extendDomain"
@@ -1146,7 +1151,7 @@ export function ClinicalTrendChart({
         ))}
         {bands.map((band, i) => (
           <span key={i} className="flex items-center gap-1.5">
-            <span className="h-2 w-4 rounded-[1px]" style={{ background: band.color ?? "var(--ok)", opacity: 0.15 }} />
+            <span className="h-2 w-4 rounded-[1px]" style={{ background: band.color ?? CHART_SEMANTIC.ok, opacity: 0.15 }} />
             {band.label ?? `参考区间 ${band.low}–${band.high}`}
           </span>
         ))}

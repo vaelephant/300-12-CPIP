@@ -1,8 +1,10 @@
 import * as echarts from "echarts";
+import { CHART_COLORS, CHART_SEMANTIC, CHART_THEME } from "@/components/charts/chart-theme";
 
 // ---------------------------------------------------------------------------
-// Clinical Visualization Engine · 主题与色板
-// 统一 ECharts 主题：画布取色从 CSS 设计令牌解析，避免 ECharts canvas 无法使用 var()。
+// Clinical Visualization Engine · ECharts 主题
+// Canvas 无法直接使用 CSS var()，因此从 document 解析 token；
+// 回退值与 Design System V1.0 / chart-theme 保持一致。
 // ---------------------------------------------------------------------------
 
 type ResolvedPalette = {
@@ -21,20 +23,21 @@ type ResolvedPalette = {
   chart: [string, string, string, string, string];
 };
 
+/** V1.0 字面量回退（仅 SSR / 解析失败时使用，禁止作为页面主色源） */
 const FALLBACK: ResolvedPalette = {
-  primary: "#263343",
-  primarySoft: "#edf1f5",
-  risk: "#b23b36",
-  warn: "#a5772f",
-  ok: "#4c6f63",
-  info: "#4a6a8b",
-  ink: "#1b2430",
-  muted: "#68717d",
-  line: "#e3e3de",
-  lineStrong: "#d2d4cf",
+  primary: "#111113",
+  primarySoft: "#efeff1",
+  risk: "#c23b3b",
+  warn: "#9a7b2f",
+  ok: "#3d7a5a",
+  info: "#5e6ad2",
+  ink: "#111113",
+  muted: "#8b8b93",
+  line: "#e8e8eb",
+  lineStrong: "#d8d8de",
   card: "#ffffff",
-  paper: "#f6f6f4",
-  chart: ["#2e4057", "#5c7a94", "#b08a4f", "#4d6e90", "#a9544e"],
+  paper: "#f7f7f8",
+  chart: ["#111113", "#5e6ad2", "#6b6b73", "#9a9aa3", "#c4c4cb"],
 };
 
 let cache: ResolvedPalette | null = null;
@@ -48,7 +51,6 @@ function resolve(raw: string, fallback: string) {
     if (!ctx) return fallback;
     ctx.fillStyle = value;
     const normalized = ctx.fillStyle;
-    // 无效颜色时 canvas 会保留默认黑色，此处回退到设计值
     return normalized === "#000000" && !value.startsWith("rgb(0") ? fallback : normalized;
   } catch {
     return fallback;
@@ -86,6 +88,13 @@ export function vizPalette(): ResolvedPalette {
 
 export const VIZ_FALLBACK = FALLBACK;
 
+/** 供排查：图表层仍应优先用 chart-theme 的 CSS var；此处仅暴露 token 名映射 */
+export const VIZ_TOKEN_REF = {
+  colors: CHART_COLORS,
+  semantic: CHART_SEMANTIC,
+  theme: CHART_THEME,
+} as const;
+
 const themeName = "cpip-clinical";
 let registered = false;
 
@@ -121,7 +130,7 @@ export function registerClinicalTheme() {
         axisPointer: {
           lineStyle: { color: p.lineStrong, type: "dashed" },
           crossStyle: { color: p.lineStrong, type: "dashed" },
-          shadowStyle: { color: "rgba(47,109,92,0.04)" },
+          shadowStyle: { color: "rgba(24,24,27,0.04)" },
         },
       },
       grid: { left: 34, right: 16, top: 28, bottom: 26, containLabel: true },

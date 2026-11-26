@@ -17,7 +17,7 @@ import { Callout, SectionHead, SyntheticTag } from "@/components/app/section";
 import { StatCard } from "@/components/app/stat-card";
 import { StatusBadge } from "@/components/app/status-badge";
 import { Sparkline } from "@/components/app/sparkline";
-import { HBarChart, TrendChart, VBarChart } from "@/components/charts/chart-kit";
+import { CHART_COLOR, CHART_COLORS, HBarChart, TrendChart, VBarChart } from "@/components/charts/chart-kit";
 import { GaugeRing, HeatmapGrid, QualityRadar, StackedAreaTrend } from "@/components/charts/advanced";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -68,25 +68,25 @@ import { cn, fmt, fmtDate, fmtTime, pct } from "@/lib/utils";
  * ========================================================================= */
 
 const TREND_SERIES_DEF = [
-  { key: "enrollment", label: "入径率", color: "var(--chart-1)" },
-  { key: "completion", label: "完成率", color: "var(--chart-2)" },
-  { key: "variation", label: "变异率", color: "var(--chart-5)" },
+  { key: "enrollment", label: "入径率", color: CHART_COLOR["chart-1"] },
+  { key: "completion", label: "完成率", color: CHART_COLOR["chart-2"] },
+  { key: "variation", label: "变异率", color: CHART_COLOR["chart-5"] },
 ];
 
 const LOS_SERIES_DEF = [
-  { key: "eras", label: "ERAS 路径", color: "var(--chart-1)" },
-  { key: "standard", label: "院内标准", color: "var(--chart-2)" },
-  { key: "national", label: "国家基线", color: "var(--chart-4)", dashed: true },
+  { key: "eras", label: "ERAS 路径", color: CHART_COLOR["chart-1"] },
+  { key: "standard", label: "院内标准", color: CHART_COLOR["chart-2"] },
+  { key: "national", label: "国家基线", color: CHART_COLOR["chart-4"], dashed: true },
 ];
 
 const VARIATION_CHART_COLORS = [
-  "var(--chart-3)",
-  "var(--chart-2)",
-  "var(--chart-1)",
-  "var(--chart-4)",
-  "var(--chart-5)",
-  "var(--chart-5)",
-  "var(--chart-4)",
+  CHART_COLORS[2],
+  CHART_COLORS[1],
+  CHART_COLORS[0],
+  CHART_COLORS[3],
+  CHART_COLORS[4],
+  CHART_COLORS[4],
+  CHART_COLORS[3],
 ];
 
 function DefRow({ label, value }: { label: string; value?: string }) {
@@ -227,7 +227,7 @@ function DemoAnalyticsPage() {
         label: item.label.replace("变异", ""),
         value: item.count,
         display: `${item.count} · ${item.pct}%`,
-        color: VARIATION_CHART_COLORS[i] ?? "var(--chart-1)",
+        color: VARIATION_CHART_COLORS[i] ?? CHART_COLOR["chart-1"],
       })),
     [],
   );

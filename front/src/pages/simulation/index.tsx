@@ -20,7 +20,7 @@ import { TrajectorySimulator } from "@/visualization/simulation/TrajectorySimula
 import { VisualFrame } from "@/visualization/core/VisualFrame";
 import { StatCard } from "@/components/app/stat-card";
 import { StatusBadge } from "@/components/app/status-badge";
-import { TrendChart } from "@/components/charts/chart-kit";
+import { CHART_COLOR, TrendChart } from "@/components/charts/chart-kit";
 import { CostEffectScatter, FanChart, type FanSeries } from "@/components/charts/advanced";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -57,14 +57,14 @@ const RESOURCE_PROFILES = [
 ];
 
 const TRAJECTORY_SERIES = [
-  { key: "standard", label: "标准路径", color: "var(--chart-1)", unit: "%" },
-  { key: "eras", label: "ERAS 加速路径", color: "var(--chart-2)", unit: "%" },
-  { key: "national", label: "国家基线", color: "var(--chart-4)", unit: "%", dashed: true },
+  { key: "standard", label: "标准路径", color: CHART_COLOR["chart-1"], unit: "%" },
+  { key: "eras", label: "ERAS 加速路径", color: CHART_COLOR["chart-2"], unit: "%" },
+  { key: "national", label: "国家基线", color: CHART_COLOR["chart-4"], unit: "%", dashed: true },
 ];
 
 const FAN_SERIES: FanSeries[] = [
-  { key: "standard", bandKey: "standardBand", label: "标准路径", color: "var(--chart-1)" },
-  { key: "eras", bandKey: "erasBand", label: "ERAS 加速路径", color: "var(--chart-2)" },
+  { key: "standard", bandKey: "standardBand", label: "标准路径", color: CHART_COLOR["chart-1"] },
+  { key: "eras", bandKey: "erasBand", label: "ERAS 加速路径", color: CHART_COLOR["chart-2"] },
 ];
 
 const PREDICTION_STATUS_META: Record<

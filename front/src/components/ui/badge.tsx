@@ -3,18 +3,18 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const badgeVariants = cva(
-  "inline-flex items-center gap-1 rounded-[4px] border px-1.5 py-px text-[11px] font-medium leading-[17px] whitespace-nowrap [&_svg]:size-3",
+  "inline-flex items-center gap-1 rounded-md border px-1.5 py-px text-[11px] font-medium leading-[17px] tracking-[-0.01em] whitespace-nowrap [&_svg]:size-3",
   {
     variants: {
       variant: {
-        default: "border-transparent bg-primary/10 text-primary",
-        secondary: "border-transparent bg-secondary text-secondary-foreground",
-        outline: "border-line-strong bg-transparent text-muted-foreground",
-        risk: "border-risk/20 bg-risk-wash text-risk",
-        warn: "border-warn/25 bg-warn-wash text-warn",
-        ok: "border-ok/20 bg-ok-wash text-ok",
-        info: "border-info/20 bg-info-wash text-info",
-        ink: "border-transparent bg-ink text-white/85",
+        default: "border-transparent bg-secondary text-foreground",
+        secondary: "border-transparent bg-secondary text-muted-foreground",
+        outline: "border-line bg-transparent text-muted-foreground",
+        risk: "border-transparent bg-secondary text-risk",
+        warn: "border-transparent bg-secondary text-warn",
+        ok: "border-transparent bg-secondary text-ok",
+        info: "border-transparent bg-secondary text-info",
+        ink: "border-transparent bg-foreground text-background",
         dot: "border-line bg-card text-muted-foreground",
       },
     },

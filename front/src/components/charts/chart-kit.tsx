@@ -14,22 +14,16 @@ import {
 } from "recharts";
 import type { TooltipContentProps } from "recharts";
 import { cn } from "@/lib/utils";
+import { CHART_COLOR, CHART_THEME } from "./chart-theme";
+
+export { CHART_COLOR, CHART_COLORS, CHART_SEMANTIC, CHART_THEME, chartColor, chartMix, heatFill, heatLegendStops } from "./chart-theme";
+export type { ChartTone, ChartSemanticTone, HeatTone } from "./chart-theme";
 
 /* ---------------------------------------------------------------------------
  * 图表基础组件（全站共用）
- * 规范：细描边、发丝网格（--line）、等宽数字、无 3D / 无重填充。
- * 颜色一律使用 CSS 变量 --chart-1..5，禁止硬编码 hex。
+ * 规范：细描边、发丝网格、等宽数字、无 3D / 无重填充。
+ * 颜色一律经 chart-theme token，禁止硬编码 hex / oklch。
  * ------------------------------------------------------------------------- */
-
-export type ChartTone = "chart-1" | "chart-2" | "chart-3" | "chart-4" | "chart-5";
-
-export const CHART_COLOR: Record<ChartTone, string> = {
-  "chart-1": "var(--chart-1)",
-  "chart-2": "var(--chart-2)",
-  "chart-3": "var(--chart-3)",
-  "chart-4": "var(--chart-4)",
-  "chart-5": "var(--chart-5)",
-};
 
 /** 固定高度容器：ResponsiveContainer 必须有显式高度的父级，避免溢出错位。 */
 export function ChartBox({
@@ -196,26 +190,26 @@ export function TrendChart({
     <div className={className}>
       <ChartBox height={height}>
         <LineChart data={flat} margin={{ top: 8, right: 22, bottom: 0, left: 0 }}>
-          <CartesianGrid vertical={false} stroke="var(--line)" strokeDasharray="2 4" />
+          <CartesianGrid {...CHART_THEME.cartesianGrid} />
           <XAxis
             dataKey="label"
             axisLine={false}
             tickLine={false}
             tickMargin={7}
             interval="preserveStartEnd"
-            tick={{ fontSize: 10, fill: "var(--muted-foreground)", fontFamily: "var(--font-mono)" }}
+            tick={CHART_THEME.tick}
           />
           <YAxis
             axisLine={false}
             tickLine={false}
             width={42}
             domain={yDomain}
-            tick={{ fontSize: 10, fill: "var(--muted-foreground)", fontFamily: "var(--font-mono)" }}
+            tick={CHART_THEME.tick}
             tickFormatter={(value: number) => `${value}${unit}`}
           />
           <Tooltip
             content={<ChartTooltip unit={unit} digits={digits} footnote={footnote} />}
-            cursor={{ stroke: "var(--line-strong)", strokeWidth: 1 }}
+            cursor={{ stroke: CHART_THEME.cursor, strokeWidth: 1 }}
           />
           {series.map((s) => (
             <Line
@@ -286,19 +280,19 @@ export function HBarChart({
             width={labelWidth}
             axisLine={false}
             tickLine={false}
-            tick={{ fontSize: 10.5, fill: "var(--muted-foreground)" }}
+            tick={{ fontSize: 10.5, fill: CHART_THEME.text }}
           />
-          <Tooltip content={<ChartTooltip unit={unit} />} cursor={{ fill: "var(--secondary)", opacity: 0.45 }} />
+          <Tooltip content={<ChartTooltip unit={unit} />} cursor={{ fill: CHART_THEME.secondary, opacity: 0.45 }} />
           <Bar dataKey="value" name="数量" barSize={barSize} radius={[0, 2, 2, 0]} isAnimationActive={false}>
             {data.map((d, i) => (
-              <Cell key={i} fill={d.color ?? "var(--chart-1)"} />
+              <Cell key={i} fill={d.color ?? CHART_COLOR["chart-1"]} />
             ))}
             <LabelList
               dataKey="display"
               position="right"
-              fill="var(--muted-foreground)"
+              fill={CHART_THEME.text}
               fontSize={10}
-              fontFamily="var(--font-mono)"
+              fontFamily={CHART_THEME.fontMono}
             />
           </Bar>
         </BarChart>
@@ -332,7 +326,7 @@ export function VBarChart({
   data,
   height = 180,
   unit,
-  color = "var(--chart-1)",
+  color = CHART_COLOR["chart-1"],
   maxBarSize = 30,
   showLabels = true,
   footnote,
@@ -342,23 +336,23 @@ export function VBarChart({
     <div className={className}>
       <ChartBox height={height}>
         <BarChart data={data} margin={{ top: 16, right: 8, bottom: 0, left: 0 }}>
-          <CartesianGrid vertical={false} stroke="var(--line)" strokeDasharray="2 4" />
+          <CartesianGrid {...CHART_THEME.cartesianGrid} />
           <XAxis
             dataKey="label"
             axisLine={false}
             tickLine={false}
             tickMargin={7}
             interval={0}
-            tick={{ fontSize: 10, fill: "var(--muted-foreground)", fontFamily: "var(--font-mono)" }}
+            tick={CHART_THEME.tick}
           />
           <YAxis
             axisLine={false}
             tickLine={false}
             width={38}
-            tick={{ fontSize: 10, fill: "var(--muted-foreground)", fontFamily: "var(--font-mono)" }}
+            tick={CHART_THEME.tick}
             tickFormatter={(value: number) => `${value}${unit ?? ""}`}
           />
-          <Tooltip content={<ChartTooltip unit={unit} />} cursor={{ fill: "var(--secondary)", opacity: 0.45 }} />
+          <Tooltip content={<ChartTooltip unit={unit} />} cursor={{ fill: CHART_THEME.secondary, opacity: 0.45 }} />
           <Bar dataKey="value" name="数量" fill={color} radius={[2, 2, 0, 0]} maxBarSize={maxBarSize} isAnimationActive={false}>
             {data.map((d, i) => (
               <Cell key={i} fill={d.color ?? color} />
@@ -367,9 +361,9 @@ export function VBarChart({
               <LabelList
                 dataKey="value"
                 position="top"
-                fill="var(--muted-foreground)"
+                fill={CHART_THEME.text}
                 fontSize={9.5}
-                fontFamily="var(--font-mono)"
+                fontFamily={CHART_THEME.fontMono}
               />
             )}
           </Bar>

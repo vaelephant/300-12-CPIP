@@ -26,7 +26,7 @@ import { Callout, EmptyState, Field, SectionHead, SyntheticTag } from "@/compone
 import { StatCard } from "@/components/app/stat-card";
 import { StatusBadge } from "@/components/app/status-badge";
 import { FilterPill, SearchInput, Toolbar } from "@/components/app/toolbar";
-import { HBarChart } from "@/components/charts/chart-kit";
+import { HBarChart, CHART_COLOR, CHART_SEMANTIC, heatFill, heatLegendStops } from "@/components/charts/chart-kit";
 import { HeatmapGrid, StackedAreaTrend } from "@/components/charts/advanced";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -243,19 +243,19 @@ function DemoVariationsPage() {
   const typeChart = useMemo(() => {
     const total = VARIATION_BY_TYPE.reduce((acc, t) => acc + t.count, 0) || 1;
     const colors: Record<string, string> = {
-      TIME: "var(--chart-3)",
-      CLINICAL: "var(--chart-2)",
-      RESOURCE: "var(--chart-1)",
-      PROCESS: "var(--chart-4)",
-      PATIENT: "var(--chart-5)",
-      SAFETY: "var(--chart-5)",
-      DATA: "var(--chart-4)",
+      TIME: CHART_COLOR["chart-3"],
+      CLINICAL: CHART_COLOR["chart-2"],
+      RESOURCE: CHART_COLOR["chart-1"],
+      PROCESS: CHART_COLOR["chart-4"],
+      PATIENT: CHART_COLOR["chart-5"],
+      SAFETY: CHART_SEMANTIC.risk,
+      DATA: CHART_SEMANTIC.muted,
     };
     return VARIATION_BY_TYPE.map((t) => ({
       label: t.label.replace("变异", ""),
       value: t.count,
       display: `${t.count} · ${Math.round((t.count / total) * 1000) / 10}%`,
-      color: colors[t.type] ?? "var(--chart-1)",
+      color: colors[t.type] ?? CHART_COLOR["chart-1"],
     }));
   }, []);
 
@@ -686,7 +686,7 @@ function DemoVariationsPage() {
                   <span className="pr-2 text-[10.5px] text-muted-foreground">{row}</span>
                   {DEPT_STAGE_HEATMAP.cols.map((col, ci) => {
                     const value = DEPT_STAGE_HEATMAP.values[ri][ci];
-                    const alpha = 0.1 + (value / 24) * 0.78;
+                    const intensity = value / 24;
                     const active = heatCell?.row === row && heatCell?.col === col;
                     return (
                       <button
@@ -698,8 +698,8 @@ function DemoVariationsPage() {
                           active ? "ring-2 ring-primary ring-offset-1 ring-offset-card" : "hover:opacity-80",
                         )}
                         style={{
-                          background: `oklch(0.56 0.19 27 / ${alpha})`,
-                          color: alpha > 0.55 ? "#ffffff" : "var(--foreground)",
+                          background: heatFill("risk", intensity),
+                          color: intensity > 0.55 ? "var(--primary-foreground)" : "var(--foreground)",
                         }}
                       >
                         {value}%
@@ -712,8 +712,8 @@ function DemoVariationsPage() {
             <div className="mt-3 flex items-center justify-between gap-3 border-t border-line pt-2">
               <div className="flex items-center gap-1.5 text-[9.5px] text-muted-foreground">
                 <span>低</span>
-                {[0.12, 0.28, 0.46, 0.64, 0.82].map((a) => (
-                  <span key={a} className="size-2.5 rounded-[1px]" style={{ background: `oklch(0.56 0.19 27 / ${a})` }} />
+                {heatLegendStops("risk").map((bg) => (
+                  <span key={bg} className="size-2.5 rounded-[1px]" style={{ background: bg }} />
                 ))}
                 <span>高</span>
               </div>

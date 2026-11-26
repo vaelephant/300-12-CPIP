@@ -30,7 +30,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { FlagChips, Pagination } from "@/components/patient/ui";
 import { DonutChart } from "@/components/charts/advanced";
-import { HBarChart } from "@/components/charts/chart-kit";
+import { CHART_COLOR, CHART_SEMANTIC, HBarChart } from "@/components/charts/chart-kit";
 import { EnrollmentMatchDialog } from "@/components/patient/enrollment-dialog";
 import { usePatientDirectory } from "@/queries/patient-directory";
 
@@ -212,9 +212,9 @@ export default function PatientsPage() {
           <div className="pt-3">
             <DonutChart
               data={[
-                { name: "低风险", value: patients.filter((p) => p.riskLevel === "LOW").length, color: "var(--chart-1)" },
-                { name: "中风险", value: patients.filter((p) => p.riskLevel === "MEDIUM").length, color: "var(--chart-3)" },
-                { name: "高风险", value: patients.filter((p) => p.riskLevel === "HIGH").length, color: "var(--chart-5)" },
+                { name: "低风险", value: patients.filter((p) => p.riskLevel === "LOW").length, color: CHART_COLOR["chart-1"] },
+                { name: "中风险", value: patients.filter((p) => p.riskLevel === "MEDIUM").length, color: CHART_COLOR["chart-3"] },
+                { name: "高风险", value: patients.filter((p) => p.riskLevel === "HIGH").length, color: CHART_SEMANTIC.risk },
               ]}
               height={132}
               centerLabel="合成病例"
@@ -232,12 +232,12 @@ export default function PatientsPage() {
           <div className="pt-2">
             <HBarChart
               data={[
-                { label: "正常路径", value: scenarioCount("NORMAL"), display: `${scenarioCount("NORMAL")} 例`, color: "var(--chart-1)" },
-                { label: "病情变异", value: scenarioCount("CLINICAL_VARIATION"), display: `${scenarioCount("CLINICAL_VARIATION")} 例`, color: "var(--chart-3)" },
-                { label: "任务超时", value: scenarioCount("OVERDUE"), display: `${scenarioCount("OVERDUE")} 例`, color: "var(--chart-5)" },
-                { label: "不符合入径", value: scenarioCount("NOT_ELIGIBLE"), display: `${scenarioCount("NOT_ELIGIBLE")} 例`, color: "var(--chart-4)" },
-                { label: "数据缺失", value: scenarioCount("MISSING_DATA"), display: `${scenarioCount("MISSING_DATA")} 例`, color: "var(--chart-2)" },
-                { label: "患者退出", value: scenarioCount("EXITED"), display: `${scenarioCount("EXITED")} 例`, color: "#b3b6b1" },
+                { label: "正常路径", value: scenarioCount("NORMAL"), display: `${scenarioCount("NORMAL")} 例`, color: CHART_COLOR["chart-1"] },
+                { label: "病情变异", value: scenarioCount("CLINICAL_VARIATION"), display: `${scenarioCount("CLINICAL_VARIATION")} 例`, color: CHART_COLOR["chart-3"] },
+                { label: "任务超时", value: scenarioCount("OVERDUE"), display: `${scenarioCount("OVERDUE")} 例`, color: CHART_SEMANTIC.risk },
+                { label: "不符合入径", value: scenarioCount("NOT_ELIGIBLE"), display: `${scenarioCount("NOT_ELIGIBLE")} 例`, color: CHART_COLOR["chart-4"] },
+                { label: "数据缺失", value: scenarioCount("MISSING_DATA"), display: `${scenarioCount("MISSING_DATA")} 例`, color: CHART_COLOR["chart-2"] },
+                { label: "患者退出", value: scenarioCount("EXITED"), display: `${scenarioCount("EXITED")} 例`, color: CHART_SEMANTIC.muted },
               ]}
               height={172}
               labelWidth={86}

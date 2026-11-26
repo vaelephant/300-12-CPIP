@@ -311,7 +311,7 @@ export const PROCESS_STATS = {
     { name: "跳过 MDT", count: 12, color: "var(--chart-3)" },
     { name: "延长等待", count: 9, color: "var(--chart-4)" },
     { name: "转肿瘤科", count: 6, color: "var(--chart-5)" },
-    { name: "其他", count: 5, color: "#b3b6b1" },
+    { name: "其他", count: 5, color: "var(--muted-foreground)" },
   ],
 };
 
@@ -409,7 +409,7 @@ export const EXECUTIVE_VARIATION_REASONS = [
   { name: "检查等待", value: 26, color: "var(--chart-3)" },
   { name: "病情变化", value: 19, color: "var(--chart-5)" },
   { name: "资源限制", value: 14, color: "var(--chart-2)" },
-  { name: "其他", value: 9, color: "#b3b6b1" },
+  { name: "其他", value: 9, color: "var(--muted-foreground)" },
 ];
 
 export const EXECUTIVE_BOTTLENECKS = [

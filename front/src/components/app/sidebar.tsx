@@ -27,13 +27,19 @@ function NavRow({ item, collapsed }: { item: NavItem; collapsed: boolean }) {
       to={item.to}
       title={collapsed ? item.label : undefined}
       className={cn(
-        "group relative flex h-8 items-center gap-2.5 rounded-[5px] px-2.5 text-[12.5px] font-medium transition-colors",
-        active ? "bg-secondary text-foreground" : "text-muted-foreground hover:bg-secondary/70 hover:text-foreground",
+        "group relative flex h-8 items-center gap-2.5 rounded-md px-2.5 text-[13px] font-medium transition-colors duration-150",
+        active
+          ? "bg-secondary text-foreground"
+          : "text-muted-foreground hover:bg-secondary/70 hover:text-foreground",
         collapsed && "justify-center px-0",
       )}
     >
-      {active && <span className="absolute top-1/2 left-0 h-3.5 w-[2px] -translate-y-1/2 rounded-r-full bg-brand" />}
-      <Icon className={cn("size-[15px] shrink-0", active ? "text-foreground" : "text-muted-foreground group-hover:text-foreground")} />
+      <Icon
+        className={cn(
+          "size-[15px] shrink-0 transition-colors",
+          active ? "text-foreground" : "text-muted-foreground group-hover:text-foreground",
+        )}
+      />
       {!collapsed && <span className="truncate">{item.label}</span>}
       {!collapsed && item.badge !== undefined && (
         <span className="ml-auto">
@@ -56,41 +62,39 @@ export function Sidebar() {
     <aside
       className={cn(
         "sticky top-0 z-30 flex h-screen shrink-0 flex-col border-r border-line bg-card text-foreground transition-[width] duration-200",
-        collapsed ? "w-[56px]" : "w-[216px]",
+        collapsed ? "w-[56px]" : "w-[220px]",
       )}
     >
-      {/* 品牌 */}
-      <div className={cn("flex h-[52px] items-center gap-2.5 border-b border-line px-4", collapsed && "justify-center px-0")}>
-        <div className="flex size-8 shrink-0 items-center justify-center rounded-[7px] bg-brand-wash text-brand ring-1 ring-brand/15">
-          <BrandMark className="size-[19px]" />
+      <div className={cn("flex h-12 items-center gap-2.5 px-3.5", collapsed && "justify-center px-0")}>
+        <div className="flex size-7 shrink-0 items-center justify-center rounded-[6px] bg-brand text-white">
+          <BrandMark className="size-[16px]" />
         </div>
         {!collapsed && (
           <div className="min-w-0">
             <div className="flex items-baseline gap-1.5">
-              <span className="text-[15px] leading-none font-semibold tracking-[0.05em]">HCC-CIP</span>
-              <span className="font-mono text-[8.5px] text-muted-foreground">V0.6.1</span>
+              <span className="text-[13.5px] leading-none font-semibold tracking-[-0.02em]">HCC-CIP</span>
+              <span className="text-[10px] text-muted-foreground">0.6.1</span>
             </div>
-            <p className="mt-1 truncate text-[8.5px] tracking-[0.04em] text-muted-foreground">肝癌全病程智能诊疗平台</p>
           </div>
         )}
       </div>
 
-      {/* 组织 */}
       {!collapsed && (
-        <div className="border-b border-line px-3 py-2.5">
-          <button className="flex w-full items-center gap-2 rounded-[5px] px-1.5 py-1 text-left transition-colors hover:bg-secondary">
-            <span className="flex size-5 items-center justify-center rounded-[3px] bg-secondary font-mono text-[9px] text-muted-foreground">RH</span>
+        <div className="px-2.5 pb-2">
+          <button className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-secondary">
+            <span className="flex size-5 items-center justify-center rounded-[4px] bg-secondary text-[10px] font-medium text-muted-foreground">
+              RH
+            </span>
             <span className="min-w-0 flex-1">
-              <span className="block truncate text-[11.5px] font-medium text-foreground">{ORGANIZATION.name}</span>
-              <span className="block text-[9.5px] text-muted-foreground">{ORGANIZATION.level} · 私有化部署</span>
+              <span className="block truncate text-[12.5px] font-medium text-foreground">{ORGANIZATION.name}</span>
+              <span className="block text-[11px] text-muted-foreground">私有化 · 演示环境</span>
             </span>
             <ChevronsLeft className="size-3 rotate-[-90deg] text-muted-foreground/70" />
           </button>
         </div>
       )}
 
-      {/* 导航 */}
-      <nav className={cn("scrollbar-slim flex-1 space-y-4 overflow-y-auto py-3", collapsed ? "px-2" : "px-2.5")}>
+      <nav className={cn("scrollbar-slim flex-1 space-y-5 overflow-y-auto py-1", collapsed ? "px-2" : "px-2.5")}>
         {NAV_GROUPS.map((group) => {
           const visibleItems = group.items.filter((i) => {
             const has = useSessionStore.getState().has;
@@ -102,7 +106,7 @@ export function Sidebar() {
           return (
             <div key={group.label}>
               {!collapsed && (
-                <p className="mb-1.5 px-2 font-mono text-[9px] tracking-[0.16em] text-muted-foreground uppercase">{group.label}</p>
+                <p className="mb-1 px-2.5 text-[11px] font-medium text-muted-foreground/80">{group.label}</p>
               )}
               <div className="space-y-0.5">
                 {visibleItems.map((item) => (
@@ -114,44 +118,41 @@ export function Sidebar() {
         })}
       </nav>
 
-      {/* 底部 */}
-      <div className={cn("border-t border-line p-2.5", collapsed && "px-2")}>
+      <div className={cn("p-2.5", collapsed && "px-2")}>
         {!collapsed ? (
           <>
-            <div className="rounded-[6px] border border-line bg-secondary/60 px-2.5 py-2">
+            <div className="rounded-md bg-secondary/70 px-2.5 py-2">
               <div className="flex items-center gap-1.5">
                 <CircleDot className="size-2.5 text-ok" />
-                <span className="text-[10px] font-medium text-foreground/70">演示环境 · 合成数据</span>
+                <span className="text-[11px] font-medium text-foreground/80">演示环境</span>
               </div>
-              <p className="mt-1 text-[9px] leading-relaxed text-muted-foreground">
-                不连接真实医院数据，不用于临床决策。
-              </p>
+              <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">合成数据 · 不用于临床决策</p>
             </div>
             <button
               onClick={toggle}
-              className="mt-2 flex w-full items-center gap-2 rounded-[5px] px-2 py-1.5 text-[10.5px] text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground/70"
+              className="mt-1.5 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-[12px] text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
             >
               <PanelLeftClose className="size-3.5" />
-              收起侧边栏
+              收起
             </button>
           </>
         ) : (
           <button
             onClick={toggle}
-            className="flex h-8 w-full items-center justify-center rounded-[5px] text-muted-foreground hover:bg-secondary hover:text-foreground"
+            className="flex h-8 w-full items-center justify-center rounded-md text-muted-foreground hover:bg-secondary hover:text-foreground"
             title="展开侧边栏"
           >
             <PanelLeftOpen className="size-4" />
           </button>
         )}
         {!collapsed && user && (
-          <div className="mt-2 flex items-center gap-2 rounded-[5px] px-1 py-1">
-            <span className="flex size-6 items-center justify-center rounded-full bg-secondary text-[10px] font-medium text-foreground/80">
+          <div className="mt-1.5 flex items-center gap-2 rounded-md px-1.5 py-1.5">
+            <span className="flex size-6 items-center justify-center rounded-full bg-brand-wash text-[10px] font-medium text-brand">
               {user.name.slice(-2)}
             </span>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-[10.5px] text-foreground/70">{user.name}</p>
-              <p className="truncate text-[9px] text-muted-foreground">{user.title}</p>
+              <p className="truncate text-[12px] font-medium text-foreground">{user.name}</p>
+              <p className="truncate text-[11px] text-muted-foreground">{user.title}</p>
             </div>
           </div>
         )}

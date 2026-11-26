@@ -28,6 +28,7 @@ import AboutPage from "@/pages/about";
 import UsersPage from "@/pages/settings/users";
 import RolesPage from "@/pages/settings/roles";
 import AuditPage from "@/pages/settings/audit";
+import VizGalleryPage from "@/dev/desgin/Gallery";
 import { useSessionStore } from "@/stores/session-store";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -88,6 +89,7 @@ export default function App() {
           <SessionEffects />
           <Routes>
             <Route path="/login" element={<LoginRoute />} />
+            <Route path="/dev/desgin" element={<VizGalleryPage />} />
             <Route element={<AppShell />}>
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
               <Route path="/dashboard" element={<DashboardPage />} />

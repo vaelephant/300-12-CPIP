@@ -57,15 +57,13 @@ export function FilterPill({
       className={cn(
         "inline-flex h-7 items-center gap-1.5 rounded-md border px-2.5 text-[12px] font-medium transition-colors",
         active
-          ? "border-primary/25 bg-accent text-accent-foreground"
+          ? "border-transparent bg-secondary text-foreground"
           : "border-transparent text-muted-foreground hover:bg-secondary/70 hover:text-foreground",
       )}
     >
       {children}
       {count !== undefined && (
-        <span className={cn("tabular rounded-[3px] px-1 font-mono text-[9.5px]", active ? "bg-primary/10 text-primary" : "bg-secondary text-muted-foreground")}>
-          {count}
-        </span>
+        <span className="tabular rounded-md bg-card px-1 text-[10px] text-muted-foreground">{count}</span>
       )}
     </button>
   );
@@ -75,10 +73,8 @@ export function CountBadge({ count, tone = "neutral" }: { count: number; tone?: 
   return (
     <span
       className={cn(
-        "tabular inline-flex h-[16px] min-w-[16px] items-center justify-center rounded-[3px] px-1 font-mono text-[9.5px] font-medium",
-        tone === "neutral" && "bg-secondary text-muted-foreground",
-        tone === "risk" && "bg-risk-wash text-risk",
-        tone === "warn" && "bg-warn-wash text-warn",
+        "tabular inline-flex h-[16px] min-w-[16px] items-center justify-center rounded-md px-1 text-[10px] font-medium bg-secondary text-muted-foreground",
+        (tone === "risk" || tone === "warn") && "text-foreground",
       )}
     >
       {count}
