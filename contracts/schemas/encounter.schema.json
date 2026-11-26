@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hcc-cip.local/schemas/0.6.0/encounter.schema.json",
+  "title": "encounter",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "encounter_id",
+    "patient_id",
+    "type",
+    "department_name",
+    "status",
+    "admitted_at",
+    "source_system"
+  ],
+  "properties": {
+    "encounter_id": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 128
+    },
+    "patient_id": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 128
+    },
+    "type": {
+      "enum": [
+        "INPATIENT",
+        "OUTPATIENT",
+        "FOLLOWUP"
+      ]
+    },
+    "department_name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "ward": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "bed": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "attending_name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "admitted_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "discharged_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "status": {
+      "enum": [
+        "ADMITTED",
+        "DISCHARGED",
+        "CANCELLED"
+      ]
+    },
+    "source_system": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    }
+  },
+  "description": "Patient and encounter are separated; encounter may be null on community follow-up."
+}

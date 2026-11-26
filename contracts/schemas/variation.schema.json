@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hcc-cip.local/schemas/0.6.0/variation.schema.json",
+  "title": "variation",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "variation_id",
+    "instance_id",
+    "patient_id",
+    "type",
+    "severity",
+    "title",
+    "detected_at",
+    "status",
+    "affected_nodes",
+    "evidence_refs"
+  ],
+  "properties": {
+    "variation_id": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 128
+    },
+    "instance_id": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 128
+    },
+    "patient_id": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 128
+    },
+    "type": {
+      "enum": [
+        "CLINICAL",
+        "TIME",
+        "SAFETY",
+        "RESOURCE",
+        "PROCESS",
+        "PATIENT",
+        "DATA"
+      ]
+    },
+    "severity": {
+      "enum": [
+        "LOW",
+        "MEDIUM",
+        "HIGH"
+      ]
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "detected_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "source": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "status": {
+      "enum": [
+        "OPEN",
+        "ASSESSING",
+        "REPLAN_PENDING",
+        "RESOLVED",
+        "CLOSED"
+      ]
+    },
+    "affected_nodes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 160
+      }
+    },
+    "rule_ref": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "impact": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "evidence_refs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 160
+      }
+    },
+    "resolution": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "resolved_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    }
+  },
+  "description": "Replanning preserves the original plan and completed tasks."
+}

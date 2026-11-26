@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hcc-cip.local/schemas/0.6.0/patient.schema.json",
+  "title": "patient",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "patient_id",
+    "synthetic",
+    "source_system",
+    "diagnosis_code",
+    "diagnosis_name",
+    "sex",
+    "status",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "patient_id": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 128
+    },
+    "synthetic": {
+      "type": "boolean"
+    },
+    "source_system": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "external_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 128
+    },
+    "display_name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "sex": {
+      "enum": [
+        "M",
+        "F",
+        "OTHER",
+        "UNKNOWN"
+      ]
+    },
+    "birth_date": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date"
+    },
+    "diagnosis_code": {
+      "const": "C22.0"
+    },
+    "diagnosis_name": {
+      "const": "肝细胞癌"
+    },
+    "status": {
+      "enum": [
+        "ACTIVE",
+        "INACTIVE",
+        "DECEASED",
+        "UNKNOWN"
+      ]
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "description": "Synthetic patient identity; no real PHI may be stored."
+}

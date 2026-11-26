@@ -1,0 +1,201 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hcc-cip.local/schemas/0.6.0/followup.schema.json",
+  "title": "followup",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "followup_id",
+    "patient_id",
+    "window_start",
+    "window_end",
+    "channel",
+    "consent_status",
+    "status",
+    "owner",
+    "risk_level",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "followup_id": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 128
+    },
+    "patient_id": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 128
+    },
+    "instance_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "treatment_event_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "window_start": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "window_end": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "channel": {
+      "enum": [
+        "PHONE",
+        "OUTPATIENT",
+        "ONLINE"
+      ]
+    },
+    "consent_status": {
+      "enum": [
+        "GRANTED",
+        "DECLINED",
+        "UNKNOWN"
+      ]
+    },
+    "status": {
+      "enum": [
+        "WAITING_CONTACT",
+        "CONTACTING",
+        "COLLECTED",
+        "PENDING_REVIEW",
+        "PENDING_ACTION",
+        "CLOSED",
+        "DECLINED",
+        "LOST_TO_FOLLOWUP",
+        "RESCHEDULED"
+      ]
+    },
+    "owner": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "risk_level": {
+      "enum": [
+        "LOW",
+        "MEDIUM",
+        "HIGH"
+      ]
+    },
+    "structured_record": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": true
+    },
+    "escalation": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "required": {
+          "type": "boolean"
+        },
+        "reason": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "notified_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "acknowledged_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "resolved_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        }
+      }
+    },
+    "contacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "contact_id",
+          "attempted_at",
+          "channel",
+          "outcome"
+        ],
+        "properties": {
+          "contact_id": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 128
+          },
+          "attempted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "channel": {
+            "enum": [
+              "PHONE",
+              "OUTPATIENT",
+              "ONLINE"
+            ]
+          },
+          "outcome": {
+            "enum": [
+              "REACHED",
+              "NO_ANSWER",
+              "RESCHEDULED",
+              "DECLINED"
+            ]
+          },
+          "raw_patient_text": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "structured_extract": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "additionalProperties": true
+          },
+          "confirmed_by_human": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "description": "Failed contact must be retried, rescheduled, or recorded as lost-to-follow-up; never auto-completed."
+}

@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hcc-cip.local/schemas/0.6.0/observation.schema.json",
+  "title": "observation",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "observation_id",
+    "patient_id",
+    "category",
+    "code",
+    "display",
+    "value_status",
+    "occurred_at",
+    "recorded_at",
+    "source_system"
+  ],
+  "properties": {
+    "observation_id": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 128
+    },
+    "patient_id": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 128
+    },
+    "encounter_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "category": {
+      "enum": [
+        "LAB",
+        "IMAGING",
+        "ASSESSMENT",
+        "FUNCTION",
+        "VITAL"
+      ]
+    },
+    "code": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "display": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "value_num": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "value_text": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "unit": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "value_status": {
+      "enum": [
+        "KNOWN",
+        "UNKNOWN"
+      ]
+    },
+    "reference_range": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "interpretation": {
+      "enum": [
+        "NORMAL",
+        "ABNORMAL",
+        "CRITICAL",
+        "UNKNOWN"
+      ]
+    },
+    "occurred_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "recorded_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "source_system": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    }
+  },
+  "description": "Occurred time and recorded time are distinct; missing values must be UNKNOWN rather than zero/false."
+}

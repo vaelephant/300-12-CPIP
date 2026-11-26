@@ -11,8 +11,9 @@
 | 部分 | 状态 | 说明 |
 | --- | --- | --- |
 | `front/` 前端高保真 | ✅ 已完成 | React 19 + Vite 8 + TypeScript + shadcn/ui + Tailwind CSS v4 + React Flow + Apache ECharts |
-| `back/` 后端服务 | ⏳ 待开发 | 预留 FastAPI 工程目录，按说明书第 12 章 API 契约实现 |
-| `contracts/` 数据协议 | ⏳ 待补充 | 路径 Schema / 临床事件 / 患者状态 / 预测协议 JSON Schema |
+| `back/` 后端服务 | ⏳ V0.6 待启动 | 按 V0.6 清单 S1 起实施 FastAPI + SQLAlchemy + Alembic + PostgreSQL；当前为空目录 |
+| `contracts/` 数据协议 | ✅ T02 完成 | OpenAPI 3.1（35 paths）、13 个 JSON Schema、HCC 合成验收病例，`python3 contracts/validate.py` 通过 |
+| V0.6 研发实施 | 🚧 T01/T02 完成 | T01 基线报告、T02 领域契约已冻结；T03–T05 后端骨架待启动 |
 
 ## 快速开始
 
@@ -23,6 +24,19 @@ npm run dev        # http://127.0.0.1:5173
 ```
 
 演示账号见 [front/README.md](front/README.md)，登录页支持一键切换 6 种角色（临床医生 / 临床专家 / 医务处 / 院级管理 / 护理 / 系统管理员），并展示产品定义与六项能力。
+
+## V0.6 研发基线
+
+- [V0.6 功能调整与研发实施清单](docs/HCC-CIP-V0.6-IMPLEMENTATION-CHECKLIST.md)
+- [T01 基线报告 · 干净检出构建结果与已知缺口](docs/V0.6-T01-BASELINE.md)
+- [T02 领域契约 · 三值逻辑、状态机、验收病例](docs/V0.6-T02-DOMAIN-CONTRACTS.md)
+- [契约目录 · OpenAPI / JSON Schema / 校验脚本](contracts/README.md)
+
+```bash
+python3 contracts/validate.py   # 契约与合成病例校验
+```
+
+> V0.6 仍处于研发规划/契约阶段：后端、数据库、服务端授权与真实随访闭环尚未实现。所有 P0 验收项未完成前，不得视为可上线产品。
 
 ## 文档
 

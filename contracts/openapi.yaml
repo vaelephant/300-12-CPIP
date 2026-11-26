@@ -1,0 +1,1625 @@
+openapi: 3.1.0
+info:
+  title: HCC-CIP API
+  version: 0.6.0
+  description: HCC-CIP V0.6 拟议契约，仅覆盖肝细胞癌（C22.0）首个端到端闭环。不是临床验证或上线许可。
+  contact:
+    name: HCC-CIP 研发组
+servers:
+- url: http://127.0.0.1:8000/api/v1
+  description: 本地开发
+tags:
+- name: auth
+- name: patients
+- name: pathways
+- name: enrollment
+- name: instances
+- name: plans
+- name: tasks
+- name: variations
+- name: followups
+- name: outcomes
+- name: rules
+- name: knowledge
+- name: predictions
+- name: analytics
+- name: audit
+- name: system
+security:
+- bearerAuth: []
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Patient:
+      $ref: ./schemas/patient.schema.json
+    Encounter:
+      $ref: ./schemas/encounter.schema.json
+    Observation:
+      $ref: ./schemas/observation.schema.json
+    Snapshot:
+      $ref: ./schemas/snapshot.schema.json
+    PathwayVersion:
+      $ref: ./schemas/pathway_version.schema.json
+    EnrollmentEvaluation:
+      $ref: ./schemas/enrollment_evaluation.schema.json
+    Instance:
+      $ref: ./schemas/instance.schema.json
+    Plan:
+      $ref: ./schemas/plan.schema.json
+    Variation:
+      $ref: ./schemas/variation.schema.json
+    Followup:
+      $ref: ./schemas/followup.schema.json
+    Outcome:
+      $ref: ./schemas/outcome.schema.json
+    AuditEvent:
+      $ref: ./schemas/audit_event.schema.json
+    ErrorResponse:
+      $ref: ./schemas/error.schema.json
+    LoginRequest:
+      type: object
+      additionalProperties: false
+      required:
+      - employee_no
+      - password
+      properties:
+        employee_no:
+          type: string
+        password:
+          type: string
+          format: password
+    TokenResponse:
+      type: object
+      required:
+      - access_token
+      - token_type
+      - expires_in
+      - user
+      properties:
+        access_token:
+          type: string
+        token_type:
+          const: Bearer
+        expires_in:
+          type: integer
+        user:
+          $ref: '#/components/schemas/User'
+    User:
+      type: object
+      required:
+      - user_id
+      - name
+      - role
+      - data_scope
+      properties:
+        user_id:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+        data_scope:
+          enum:
+          - OWN
+          - DEPT
+          - ORG
+          - ALL_NO_RECORD
+    PageMeta:
+      type: object
+      required:
+      - page
+      - page_size
+      - total
+      properties:
+        page:
+          type: integer
+        page_size:
+          type: integer
+        total:
+          type: integer
+    PatientList:
+      type: object
+      required:
+      - items
+      - meta
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Patient'
+        meta:
+          $ref: '#/components/schemas/PageMeta'
+    ObservationList:
+      type: object
+      required:
+      - items
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Observation'
+    ClinicalEventImport:
+      type: object
+      required:
+      - source_system
+      - events
+      properties:
+        source_system:
+          type: string
+        idempotency_key:
+          type: string
+        events:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+    ImportResult:
+      type: object
+      required:
+      - imported
+      - duplicates
+      - request_id
+      properties:
+        imported:
+          type: integer
+        duplicates:
+          type: integer
+        request_id:
+          type: string
+    ValidationResult:
+      type: object
+      required:
+      - valid
+      - errors
+      - warnings
+      properties:
+        valid:
+          type: boolean
+        errors:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+        warnings:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+        content_hash:
+          type:
+          - string
+          - 'null'
+    EvaluateRequest:
+      type: object
+      required:
+      - patient_id
+      - snapshot_id
+      - pathway_version_id
+      properties:
+        patient_id:
+          type: string
+        snapshot_id:
+          type: string
+        pathway_version_id:
+          type: string
+    InstanceCreate:
+      type: object
+      required:
+      - patient_id
+      - pathway_version_id
+      - enrollment_evaluation_id
+      properties:
+        patient_id:
+          type: string
+        pathway_version_id:
+          type: string
+        enrollment_evaluation_id:
+          type: string
+        idempotency_key:
+          type: string
+        doctor_confirmed:
+          type: boolean
+    PlanCreate:
+      type: object
+      required:
+      - instance_id
+      - snapshot_id
+      - ruleset_version
+      properties:
+        instance_id:
+          type: string
+        snapshot_id:
+          type: string
+        ruleset_version:
+          type: string
+        template_plan_id:
+          type:
+          - string
+          - 'null'
+    Task:
+      type: object
+      required:
+      - task_id
+      - instance_id
+      - name
+      - status
+      properties:
+        task_id:
+          type: string
+        instance_id:
+          type: string
+        name:
+          type: string
+        status:
+          enum:
+          - PENDING
+          - READY
+          - IN_PROGRESS
+          - COMPLETED
+          - BLOCKED
+          - SKIPPED
+          - CANCELLED
+    TaskList:
+      type: object
+      required:
+      - items
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Task'
+    TaskTransitionRequest:
+      type: object
+      required:
+      - to_status
+      - expected_version
+      properties:
+        to_status:
+          enum:
+          - PENDING
+          - READY
+          - IN_PROGRESS
+          - COMPLETED
+          - BLOCKED
+          - SKIPPED
+          - CANCELLED
+        expected_version:
+          type: integer
+        result_summary:
+          type:
+          - string
+          - 'null'
+        source_system:
+          type:
+          - string
+          - 'null'
+        idempotency_key:
+          type: string
+    VariationCreate:
+      type: object
+      required:
+      - instance_id
+      - patient_id
+      - type
+      - severity
+      - title
+      - description
+      properties:
+        instance_id:
+          type: string
+        patient_id:
+          type: string
+        type:
+          enum:
+          - CLINICAL
+          - TIME
+          - SAFETY
+          - RESOURCE
+          - PROCESS
+          - PATIENT
+          - DATA
+        severity:
+          enum:
+          - LOW
+          - MEDIUM
+          - HIGH
+        title:
+          type: string
+        description:
+          type: string
+        affected_nodes:
+          type: array
+          items:
+            type: string
+    FollowupCreate:
+      type: object
+      required:
+      - patient_id
+      - window_start
+      - window_end
+      - channel
+      - consent_status
+      - owner
+      properties:
+        patient_id:
+          type: string
+        instance_id:
+          type:
+          - string
+          - 'null'
+        window_start:
+          type: string
+          format: date-time
+        window_end:
+          type: string
+          format: date-time
+        channel:
+          enum:
+          - PHONE
+          - OUTPATIENT
+          - ONLINE
+        consent_status:
+          enum:
+          - GRANTED
+          - DECLINED
+          - UNKNOWN
+        owner:
+          type: string
+    ContactCreate:
+      type: object
+      required:
+      - channel
+      - outcome
+      properties:
+        channel:
+          enum:
+          - PHONE
+          - OUTPATIENT
+          - ONLINE
+        outcome:
+          enum:
+          - REACHED
+          - NO_ANSWER
+          - RESCHEDULED
+          - DECLINED
+        raw_patient_text:
+          type:
+          - string
+          - 'null'
+        structured_extract:
+          type:
+          - object
+          - 'null'
+          additionalProperties: true
+        confirmed_by_human:
+          type: boolean
+    OutcomeCreate:
+      type: object
+      required:
+      - treatment_type
+      - evaluation_standard
+      - observed_at
+      - recurrence
+      - response
+      properties:
+        treatment_type:
+          type: string
+        evaluation_standard:
+          enum:
+          - RECIST
+          - mRECIST
+        observed_at:
+          type: string
+          format: date-time
+        recurrence:
+          enum:
+          - NONE
+          - LOCAL
+          - DISTANT
+          - UNKNOWN
+        response:
+          enum:
+          - CR
+          - PR
+          - SD
+          - PD
+          - UNKNOWN
+    RuleEvaluateRequest:
+      type: object
+      required:
+      - rule_id
+      - rule_version
+      - patient_id
+      - snapshot_id
+      properties:
+        rule_id:
+          type: string
+        rule_version:
+          type: string
+        patient_id:
+          type: string
+        snapshot_id:
+          type: string
+    RuleEvaluation:
+      type: object
+      required:
+      - rule_id
+      - rule_version
+      - result
+      - missing_fields
+      properties:
+        rule_id:
+          type: string
+        rule_version:
+          type: string
+        result:
+          enum:
+          - 'TRUE'
+          - 'FALSE'
+          - UNKNOWN
+        missing_fields:
+          type: array
+          items:
+            type: string
+        reasons:
+          type: array
+          items:
+            type: string
+    EvidenceList:
+      type: object
+      required:
+      - items
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+    PredictionRequest:
+      type: object
+      required:
+      - patient_snapshot
+      - prediction_target
+      - horizon_days
+      properties:
+        patient_snapshot:
+          type: object
+        prediction_target:
+          type: string
+        horizon_days:
+          type: integer
+    Prediction:
+      type: object
+      required:
+      - model_id
+      - model_version
+      - prediction_target
+      - horizon_days
+      - result
+      - uncertainty
+      - clinical_use
+      - model_status
+      properties:
+        model_id:
+          type: string
+        model_version:
+          type: string
+        prediction_target:
+          type: string
+        horizon_days:
+          type: integer
+        result:
+          type: object
+        uncertainty:
+          type: object
+        clinical_use:
+          const: false
+        model_status:
+          enum:
+          - RESEARCH
+          - SHADOW
+          - VALIDATED
+        applicable_population:
+          type:
+          - string
+          - 'null'
+    AnalyticsSummary:
+      type: object
+      required:
+      - period
+      - metrics
+      properties:
+        period:
+          type: object
+        metrics:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+    AuditEventList:
+      type: object
+      required:
+      - items
+      - meta
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditEvent'
+        meta:
+          $ref: '#/components/schemas/PageMeta'
+    Health:
+      type: object
+      required:
+      - status
+      - version
+      properties:
+        status:
+          const: ok
+        version:
+          type: string
+        database:
+          type: string
+        external_services:
+          type: object
+paths:
+  /health:
+    get:
+      tags:
+      - system
+      summary: Health check
+      operationId: get_health
+      parameters: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Health'
+      '400': &id002
+        description: Bad request
+        content:
+          application/json:
+            schema: &id001
+              $ref: '#/components/schemas/ErrorResponse'
+      '401': &id003
+        description: Unauthenticated
+        content:
+          application/json:
+            schema: *id001
+      '403': &id004
+        description: Forbidden (object-level authorization)
+        content:
+          application/json:
+            schema: *id001
+      '409': &id005
+        description: Version conflict / invalid state transition
+        content:
+          application/json:
+            schema: *id001
+      '422': &id006
+        description: Validation error
+        content:
+          application/json:
+            schema: *id001
+  /auth/login:
+    post:
+      tags:
+      - auth
+      summary: Login with hospital account
+      operationId: login
+      parameters: []
+      responses:
+        '200':
+          description: Authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+      '400': *id002
+      '401': *id003
+      '403': *id004
+      '409': *id005
+      '422': *id006
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+  /me:
+    get:
+      tags:
+      - auth
+      summary: Current user and data scope
+      operationId: get_me
+      parameters: []
+      responses:
+        '200':
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+      '400': *id002
+      '401': *id003
+      '403': *id004
+      '409': *id005
+      '422': *id006
+  /patients:
+    get:
+      tags:
+      - patients
+      summary: List accessible patients
+      operationId: list_patients
+      parameters:
+      - name: page
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+      - name: page_size
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+      - name: query
+        in: query
+        schema:
+          type: string
+      - name: status
+        in: query
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Patients
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatientList'
+      '400': *id002
+      '401': *id003
+      '403': *id004
+      '409': *id005
+      '422': *id006
+    post:
+      tags:
+      - patients
+      summary: Create patient and encounter
+      operationId: create_patient
+      parameters: []
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Patient'
+      '400': *id002
+      '401': *id003
+      '403': *id004
+      '409': *id005
+      '422': *id006
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Patient'
+  /patients/{patient_id}:
+    get:
+      tags:
+      - patients
+      summary: Get patient longitudinal profile
+      operationId: get_patient
+      parameters:
+      - name: patient_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Patient
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Patient'
+      '400': *id002
+      '401': *id003
+      '403': *id004
+      '409': *id005
+      '422': *id006
+  /patients/{patient_id}/observations:
+    get:
+      tags:
+      - patients
+      summary: List observations
+      operationId: list_observations
+      parameters:
+      - name: patient_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Observations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObservationList'
+      '400': *id002
+      '401': *id003
+      '403': *id004
+      '409': *id005
+      '422': *id006
+  /clinical-events/import:
+    post:
+      tags:
+      - patients
+      summary: Idempotent import of clinical events
+      operationId: import_clinical_events
+      parameters: []
+      responses:
+        '200':
+          description: Import result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportResult'
+      '400': *id002
+      '401': *id003
+      '403': *id004
+      '409': *id005
+      '422': *id006
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClinicalEventImport'
+  /patients/{patient_id}/snapshots:
+    post:
+      tags:
+      - patients
+      summary: Create immutable patient state snapshot
+      operationId: create_snapshot
+      parameters:
+      - name: patient_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: Snapshot
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Snapshot'
+      '400': *id002
+      '401': *id003
+      '403': *id004
+      '409': *id005
+      '422': *id006
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Snapshot'
+  /pathways:
+    get:
+      tags:
+      - pathways
+      summary: List pathway templates
+      operationId: list_pathways
+      parameters: []
+      responses:
+        '200':
+          description: Pathways
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - items
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PathwayVersion'
+      '400': *id002
+      '401': *id003
+      '403': *id004
+      '409': *id005
+      '422': *id006
+    post:
+      tags:
+      - pathways
+      summary: Create pathway template and draft version
+      operationId: create_pathway
+      parameters: []
+      responses:
+        '201':
+          description: Draft version
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PathwayVersion'
+      '400': *id002
+      '401': *id003
+      '403': *id004
+      '409': *id005
+      '422': *id006
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PathwayVersion'
+  /pathways/{pathway_id}/versions:
+    post:
+      tags:
+      - pathways
+      summary: Create derived pathway version
+      operationId: create_pathway_version
+      parameters:
+      - name: pathway_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: Draft version
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PathwayVersion'
+      '400': *id002
+      '401': *id003
+      '403': *id004
+      '409': *id005
+      '422': *id006
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PathwayVersion'
+  /pathway-versions/{version_id}/validate:
+    post:
+      tags:
+      - pathways
+      summary: Validate graph, rules, roles and evidence
+      operationId: validate_pathway_version
+      parameters:
+      - name: version_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Validation result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationResult'
+      '400': *id002
+      '401': *id003
+      '403': *id004
+      '409': *id005
+      '422': *id006
+  /pathway-versions/{version_id}/submit:
+    post:
+      tags:
+      - pathways
+      summary: Submit version for review
+      operationId: submit_pathway_version
+      parameters:
+      - name: version_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Version
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PathwayVersion'
+      '400': *id002
+      '401': *id003
+      '403': *id004
+      '409': *id005
+      '422': *id006
+  /pathway-versions/{version_id}/publish:
+    post:
+      tags:
+      - pathways
+      summary: Publish approved version and freeze content
+      operationId: publish_pathway_version
+      parameters:
+      - name: version_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Version
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PathwayVersion'
+      '400': *id002
+      '401': *id003
+      '403': *id004
+      '409': *id005
+      '422': *id006
+  /enrollment/evaluate:
+    post:
+      tags:
+      - enrollment
+      summary: Evaluate HCC enrollment with three-valued rules
+      operationId: evaluate_enrollment
+      parameters: []
+      responses:
+        '200':
+          description: Evaluation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnrollmentEvaluation'
+      '400': *id002
+      '401': *id003
+      '403': *id004
+      '409': *id005
+      '422': *id006
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EvaluateRequest'
+  /instances:
+    post:
+      tags:
+      - instances
+      summary: Create pathway instance after eligible evaluation
+      operationId: create_instance
+      parameters: []
+      responses:
+        '201':
+          description: Instance
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Instance'
+      '400': *id002
+      '401': *id003
+      '403': *id004
+      '409': *id005
+      '422': *id006
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InstanceCreate'
+  /instances/{instance_id}:
+    get:
+      tags:
+      - instances
+      summary: Get instance and active plan
+      operationId: get_instance
+      parameters:
+      - name: instance_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Instance
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Instance'
+      '400': *id002
+      '401': *id003
+      '403': *id004
+      '409': *id005
+      '422': *id006
+  /instances/{instance_id}/plans:
+    post:
+      tags:
+      - plans
+      summary: Generate plan from rules and snapshot
+      operationId: generate_plan
+      parameters:
+      - name: instance_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: Plan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Plan'
+      '400': *id002
+      '401': *id003
+      '403': *id004
+      '409': *id005
+      '422': *id006
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlanCreate'
+  /plans/{plan_id}/submit:
+    post:
+      tags:
+      - plans
+      summary: Submit plan for approval
+      operationId: submit_plan
+      parameters:
+      - name: plan_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Plan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Plan'
+      '400': *id002
+      '401': *id003
+      '403': *id004
+      '409': *id005
+      '422': *id006
+  /plans/{plan_id}/approve:
+    post:
+      tags:
+      - plans
+      summary: Approve plan
+      operationId: approve_plan
+      parameters:
+      - name: plan_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Plan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Plan'
+      '400': *id002
+      '401': *id003
+      '403': *id004
+      '409': *id005
+      '422': *id006
+  /plans/{plan_id}/activate:
+    post:
+      tags:
+      - plans
+      summary: Activate approved plan after revalidation
+      operationId: activate_plan
+      parameters:
+      - name: plan_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Plan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Plan'
+      '400': *id002
+      '401': *id003
+      '403': *id004
+      '409': *id005
+      '422': *id006
+  /tasks:
+    get:
+      tags:
+      - tasks
+      summary: List tasks scoped to current user
+      operationId: list_tasks
+      parameters:
+      - name: instance_id
+        in: query
+        schema:
+          type: string
+      - name: status
+        in: query
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Tasks
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskList'
+      '400': *id002
+      '401': *id003
+      '403': *id004
+      '409': *id005
+      '422': *id006
+  /tasks/{task_id}/transition:
+    post:
+      tags:
+      - tasks
+      summary: Transition task with dependency and permission checks
+      operationId: transition_task
+      parameters:
+      - name: task_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Task
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+      '400': *id002
+      '401': *id003
+      '403': *id004
+      '409': *id005
+      '422': *id006
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskTransitionRequest'
+  /variations:
+    get:
+      tags:
+      - variations
+      summary: List variations
+      operationId: list_variations
+      parameters: []
+      responses:
+        '200':
+          description: Variations
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - items
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Variation'
+      '400': *id002
+      '401': *id003
+      '403': *id004
+      '409': *id005
+      '422': *id006
+    post:
+      tags:
+      - variations
+      summary: Register variation
+      operationId: create_variation
+      parameters: []
+      responses:
+        '201':
+          description: Variation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Variation'
+      '400': *id002
+      '401': *id003
+      '403': *id004
+      '409': *id005
+      '422': *id006
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VariationCreate'
+  /variations/{variation_id}/resolve:
+    post:
+      tags:
+      - variations
+      summary: Resolve variation without overwriting history
+      operationId: resolve_variation
+      parameters:
+      - name: variation_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Variation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Variation'
+      '400': *id002
+      '401': *id003
+      '403': *id004
+      '409': *id005
+      '422': *id006
+  /variations/{variation_id}/replan:
+    post:
+      tags:
+      - variations
+      summary: Create replan draft preserving completed tasks
+      operationId: replan_variation
+      parameters:
+      - name: variation_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: Plan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Plan'
+      '400': *id002
+      '401': *id003
+      '403': *id004
+      '409': *id005
+      '422': *id006
+  /followups:
+    get:
+      tags:
+      - followups
+      summary: List follow-up worklist and risk queue
+      operationId: list_followups
+      parameters: []
+      responses:
+        '200':
+          description: Followups
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - items
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Followup'
+      '400': *id002
+      '401': *id003
+      '403': *id004
+      '409': *id005
+      '422': *id006
+    post:
+      tags:
+      - followups
+      summary: Create follow-up plan
+      operationId: create_followup
+      parameters: []
+      responses:
+        '201':
+          description: Followup
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Followup'
+      '400': *id002
+      '401': *id003
+      '403': *id004
+      '409': *id005
+      '422': *id006
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FollowupCreate'
+  /followups/{followup_id}/contacts:
+    post:
+      tags:
+      - followups
+      summary: Record contact and structured extract
+      operationId: record_followup_contact
+      parameters:
+      - name: followup_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Followup
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Followup'
+      '400': *id002
+      '401': *id003
+      '403': *id004
+      '409': *id005
+      '422': *id006
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContactCreate'
+  /followups/{followup_id}/escalate:
+    post:
+      tags:
+      - followups
+      summary: Escalate dangerous signal to human queue
+      operationId: escalate_followup
+      parameters:
+      - name: followup_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Followup
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Followup'
+      '400': *id002
+      '401': *id003
+      '403': *id004
+      '409': *id005
+      '422': *id006
+  /followups/{followup_id}/close:
+    post:
+      tags:
+      - followups
+      summary: Close follow-up with auditable reason
+      operationId: close_followup
+      parameters:
+      - name: followup_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Followup
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Followup'
+      '400': *id002
+      '401': *id003
+      '403': *id004
+      '409': *id005
+      '422': *id006
+  /patients/{patient_id}/outcomes:
+    get:
+      tags:
+      - outcomes
+      summary: List outcomes
+      operationId: list_outcomes
+      parameters:
+      - name: patient_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Outcomes
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - items
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Outcome'
+      '400': *id002
+      '401': *id003
+      '403': *id004
+      '409': *id005
+      '422': *id006
+    post:
+      tags:
+      - outcomes
+      summary: Record outcome
+      operationId: create_outcome
+      parameters:
+      - name: patient_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: Outcome
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Outcome'
+      '400': *id002
+      '401': *id003
+      '403': *id004
+      '409': *id005
+      '422': *id006
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OutcomeCreate'
+  /rules/evaluate:
+    post:
+      tags:
+      - rules
+      summary: Evaluate registered rule version
+      operationId: evaluate_rule
+      parameters: []
+      responses:
+        '200':
+          description: Rule evaluation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RuleEvaluation'
+      '400': *id002
+      '401': *id003
+      '403': *id004
+      '409': *id005
+      '422': *id006
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RuleEvaluateRequest'
+  /knowledge/retrieve:
+    post:
+      tags:
+      - knowledge
+      summary: Retrieve evidence refs from KEE adapter
+      operationId: retrieve_knowledge
+      parameters: []
+      responses:
+        '200':
+          description: Evidence
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvidenceList'
+      '400': *id002
+      '401': *id003
+      '403': *id004
+      '409': *id005
+      '422': *id006
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - query
+              properties:
+                query:
+                  type: string
+                pathway_version_id:
+                  type: string
+  /predictions:
+    post:
+      tags:
+      - predictions
+      summary: Research-only prediction endpoint
+      operationId: create_prediction
+      parameters: []
+      responses:
+        '200':
+          description: Prediction
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Prediction'
+      '400': *id002
+      '401': *id003
+      '403': *id004
+      '409': *id005
+      '422': *id006
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PredictionRequest'
+  /analytics/summary:
+    get:
+      tags:
+      - analytics
+      summary: Get analytics summary with denominator definitions
+      operationId: get_analytics_summary
+      parameters:
+      - name: period
+        in: query
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Summary
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalyticsSummary'
+      '400': *id002
+      '401': *id003
+      '403': *id004
+      '409': *id005
+      '422': *id006
+  /audit-events:
+    get:
+      tags:
+      - audit
+      summary: List audit events with object filter
+      operationId: list_audit_events
+      parameters:
+      - name: object_type
+        in: query
+        schema:
+          type: string
+      - name: object_id
+        in: query
+        schema:
+          type: string
+      - name: page
+        in: query
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Audit events
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuditEventList'
+      '400': *id002
+      '401': *id003
+      '403': *id004
+      '409': *id005
+      '422': *id006

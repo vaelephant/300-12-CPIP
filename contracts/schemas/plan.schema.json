@@ -1,0 +1,247 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hcc-cip.local/schemas/0.6.0/plan.schema.json",
+  "title": "plan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "plan_id",
+    "instance_id",
+    "patient_id",
+    "version",
+    "status",
+    "snapshot_id",
+    "ruleset_version",
+    "created_by",
+    "created_at",
+    "tasks",
+    "warnings",
+    "evidence_refs"
+  ],
+  "properties": {
+    "plan_id": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 128
+    },
+    "instance_id": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 128
+    },
+    "patient_id": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 128
+    },
+    "version": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "status": {
+      "enum": [
+        "DRAFT",
+        "PENDING_APPROVAL",
+        "APPROVED",
+        "ACTIVE",
+        "SUPERSEDED",
+        "COMPLETED"
+      ]
+    },
+    "snapshot_id": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 128
+    },
+    "ruleset_version": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "created_by": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "submitted_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "approved_by": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "approved_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "activated_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "tasks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "task_id",
+          "node_key",
+          "name",
+          "stage",
+          "role",
+          "required",
+          "depends_on",
+          "status",
+          "overdue"
+        ],
+        "properties": {
+          "task_id": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 128
+          },
+          "node_key": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "stage": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "role": {
+            "enum": [
+              "DOCTOR",
+              "SURGEON",
+              "NURSE",
+              "ANESTHESIOLOGIST",
+              "COORDINATOR"
+            ]
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "depends_on": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          },
+          "earliest_start_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "due_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "status": {
+            "enum": [
+              "PENDING",
+              "READY",
+              "IN_PROGRESS",
+              "COMPLETED",
+              "BLOCKED",
+              "SKIPPED",
+              "CANCELLED"
+            ]
+          },
+          "assignee": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "completed_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "result_summary": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "overdue": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "level",
+          "message"
+        ],
+        "properties": {
+          "level": {
+            "enum": [
+              "WARN",
+              "RISK",
+              "UNKNOWN"
+            ]
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          }
+        }
+      }
+    },
+    "evidence_refs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 160
+      }
+    },
+    "differences": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": true
+    }
+  },
+  "description": "Approval is required before activation; completed tasks must not be deleted during replan."
+}

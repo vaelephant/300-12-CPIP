@@ -1,0 +1,120 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hcc-cip.local/schemas/0.6.0/outcome.schema.json",
+  "title": "outcome",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "outcome_id",
+    "patient_id",
+    "instance_id",
+    "treatment_type",
+    "evaluation_standard",
+    "observed_at",
+    "recurrence",
+    "response",
+    "lost_to_followup",
+    "recorded_by",
+    "recorded_at"
+  ],
+  "properties": {
+    "outcome_id": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 128
+    },
+    "patient_id": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 128
+    },
+    "instance_id": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 128
+    },
+    "treatment_type": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "evaluation_standard": {
+      "enum": [
+        "RECIST",
+        "mRECIST"
+      ]
+    },
+    "observed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "recurrence": {
+      "enum": [
+        "NONE",
+        "LOCAL",
+        "DISTANT",
+        "UNKNOWN"
+      ]
+    },
+    "progression": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "response": {
+      "enum": [
+        "CR",
+        "PR",
+        "SD",
+        "PD",
+        "UNKNOWN"
+      ]
+    },
+    "adverse_events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "term",
+          "grade",
+          "attribution"
+        ],
+        "properties": {
+          "term": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "grade": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "attribution": {
+            "enum": [
+              "UNRELATED",
+              "POSSIBLE",
+              "PROBABLE",
+              "DEFINITE"
+            ]
+          }
+        }
+      }
+    },
+    "lost_to_followup": {
+      "type": "boolean"
+    },
+    "recorded_by": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "recorded_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "description": "Outcome must reference treatment and observation time."
+}

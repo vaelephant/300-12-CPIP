@@ -1,0 +1,141 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hcc-cip.local/schemas/0.6.0/enrollment_evaluation.schema.json",
+  "title": "enrollment_evaluation",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "evaluation_id",
+    "patient_id",
+    "snapshot_id",
+    "pathway_version_id",
+    "evaluated_at",
+    "rule_version",
+    "admission_tri_state",
+    "exclusion_tri_state",
+    "completeness_tri_state",
+    "decision",
+    "auto_enroll_allowed",
+    "missing_fields",
+    "rule_results"
+  ],
+  "properties": {
+    "evaluation_id": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 128
+    },
+    "patient_id": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 128
+    },
+    "snapshot_id": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 128
+    },
+    "pathway_version_id": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 128
+    },
+    "evaluated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "rule_version": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "admission_tri_state": {
+      "enum": [
+        "TRUE",
+        "FALSE",
+        "UNKNOWN"
+      ]
+    },
+    "exclusion_tri_state": {
+      "enum": [
+        "TRUE",
+        "FALSE",
+        "UNKNOWN"
+      ]
+    },
+    "completeness_tri_state": {
+      "enum": [
+        "TRUE",
+        "FALSE",
+        "UNKNOWN"
+      ]
+    },
+    "decision": {
+      "enum": [
+        "ELIGIBLE",
+        "PENDING_SUPPLEMENT",
+        "NOT_ELIGIBLE"
+      ]
+    },
+    "auto_enroll_allowed": {
+      "type": "boolean"
+    },
+    "missing_fields": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 160
+      }
+    },
+    "reasons": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 160
+      }
+    },
+    "rule_results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "rule_id",
+          "version",
+          "result",
+          "missing_fields"
+        ],
+        "properties": {
+          "rule_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "version": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "result": {
+            "enum": [
+              "TRUE",
+              "FALSE",
+              "UNKNOWN"
+            ]
+          },
+          "missing_fields": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          }
+        }
+      }
+    }
+  },
+  "description": "auto_enroll_allowed MUST be false when admission or exclusion is UNKNOWN."
+}

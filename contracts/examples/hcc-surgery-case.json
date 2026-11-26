@@ -1,0 +1,819 @@
+{
+  "case_version": "0.6.0",
+  "case_id": "HCC-ACC-001",
+  "synthetic": true,
+  "scenario": "肝细胞癌 · 肝切除围术期及术后随访端到端验收病例",
+  "clinical_boundary": "仅用于研发验收；不是临床方案，不得用于患者诊疗。",
+  "patient": {
+    "patient_id": "HCC-DEMO-001",
+    "synthetic": true,
+    "source_system": "SYNTHETIC",
+    "external_id": null,
+    "display_name": "陈志远",
+    "sex": "M",
+    "birth_date": "1968-03-12",
+    "diagnosis_code": "C22.0",
+    "diagnosis_name": "肝细胞癌",
+    "status": "ACTIVE",
+    "created_at": "2026-11-23T05:20:00+08:00",
+    "updated_at": "2026-11-26T10:30:00+08:00"
+  },
+  "encounter": {
+    "encounter_id": "ENC-HCC-001",
+    "patient_id": "HCC-DEMO-001",
+    "type": "INPATIENT",
+    "department_name": "肝胆外科 · 肝癌中心",
+    "ward": "肝胆外科 3 病区",
+    "bed": "03-12",
+    "attending_name": "张启明",
+    "admitted_at": "2026-11-23T14:20:00+08:00",
+    "discharged_at": null,
+    "status": "ADMITTED",
+    "source_system": "SYNTHETIC-HIS"
+  },
+  "observations": [
+    {
+      "observation_id": "OBS-AFP-001",
+      "patient_id": "HCC-DEMO-001",
+      "encounter_id": "ENC-HCC-001",
+      "category": "LAB",
+      "code": "AFP",
+      "display": "甲胎蛋白 AFP",
+      "value_num": 86.4,
+      "value_text": null,
+      "unit": "ng/mL",
+      "value_status": "KNOWN",
+      "reference_range": "< 20 ng/mL",
+      "interpretation": "ABNORMAL",
+      "occurred_at": "2026-11-24T08:00:00+08:00",
+      "recorded_at": "2026-11-24T10:00:00+08:00",
+      "source_system": "SYNTHETIC-LIS"
+    },
+    {
+      "observation_id": "OBS-INR-001",
+      "patient_id": "HCC-DEMO-001",
+      "encounter_id": "ENC-HCC-001",
+      "category": "LAB",
+      "code": "INR",
+      "display": "国际标准化比值 INR",
+      "value_num": 1.12,
+      "value_text": null,
+      "unit": "1",
+      "value_status": "KNOWN",
+      "reference_range": "0.8–1.2",
+      "interpretation": "NORMAL",
+      "occurred_at": "2026-11-24T08:00:00+08:00",
+      "recorded_at": "2026-11-24T10:00:00+08:00",
+      "source_system": "SYNTHETIC-LIS"
+    },
+    {
+      "observation_id": "OBS-PLT-001",
+      "patient_id": "HCC-DEMO-001",
+      "encounter_id": "ENC-HCC-001",
+      "category": "LAB",
+      "code": "PLT",
+      "display": "血小板计数",
+      "value_num": 168,
+      "value_text": null,
+      "unit": "10^9/L",
+      "value_status": "KNOWN",
+      "reference_range": "125–350 ×10^9/L",
+      "interpretation": "NORMAL",
+      "occurred_at": "2026-11-24T08:00:00+08:00",
+      "recorded_at": "2026-11-24T10:00:00+08:00",
+      "source_system": "SYNTHETIC-LIS"
+    },
+    {
+      "observation_id": "OBS-ALB-001",
+      "patient_id": "HCC-DEMO-001",
+      "encounter_id": "ENC-HCC-001",
+      "category": "LAB",
+      "code": "ALB",
+      "display": "白蛋白",
+      "value_num": 38.1,
+      "value_text": null,
+      "unit": "g/L",
+      "value_status": "KNOWN",
+      "reference_range": "35–55 g/L",
+      "interpretation": "NORMAL",
+      "occurred_at": "2026-11-24T08:00:00+08:00",
+      "recorded_at": "2026-11-24T10:00:00+08:00",
+      "source_system": "SYNTHETIC-LIS"
+    },
+    {
+      "observation_id": "OBS-ICG-001",
+      "patient_id": "HCC-DEMO-001",
+      "encounter_id": "ENC-HCC-001",
+      "category": "FUNCTION",
+      "code": "ICG_R15",
+      "display": "ICG R15",
+      "value_num": 12.4,
+      "value_text": null,
+      "unit": "%",
+      "value_status": "KNOWN",
+      "reference_range": "< 10%",
+      "interpretation": "ABNORMAL",
+      "occurred_at": "2026-11-25T10:00:00+08:00",
+      "recorded_at": "2026-11-25T10:20:00+08:00",
+      "source_system": "SYNTHETIC-LIS"
+    },
+    {
+      "observation_id": "OBS-MRI-001",
+      "patient_id": "HCC-DEMO-001",
+      "encounter_id": "ENC-HCC-001",
+      "category": "IMAGING",
+      "code": "MRI_LIVER",
+      "display": "上腹部增强 MRI",
+      "value_num": 32,
+      "value_text": "肝右叶 S6 段异常强化灶，最大径 32mm；未见门静脉癌栓及肝外转移。",
+      "unit": "mm",
+      "value_status": "KNOWN",
+      "reference_range": null,
+      "interpretation": "ABNORMAL",
+      "occurred_at": "2026-11-24T10:45:00+08:00",
+      "recorded_at": "2026-11-24T14:00:00+08:00",
+      "source_system": "SYNTHETIC-PACS"
+    },
+    {
+      "observation_id": "OBS-NRS-001",
+      "patient_id": "HCC-DEMO-001",
+      "encounter_id": "ENC-HCC-001",
+      "category": "ASSESSMENT",
+      "code": "NRS2002",
+      "display": "营养风险筛查 NRS 2002",
+      "value_num": null,
+      "value_text": null,
+      "unit": null,
+      "value_status": "UNKNOWN",
+      "reference_range": "0–7",
+      "interpretation": "UNKNOWN",
+      "occurred_at": "2026-11-25T09:00:00+08:00",
+      "recorded_at": "2026-11-25T09:00:00+08:00",
+      "source_system": "SYNTHETIC-NURSING"
+    },
+    {
+      "observation_id": "OBS-NRS-002",
+      "patient_id": "HCC-DEMO-001",
+      "encounter_id": "ENC-HCC-001",
+      "category": "ASSESSMENT",
+      "code": "NRS2002",
+      "display": "营养风险筛查 NRS 2002",
+      "value_num": 2,
+      "value_text": "评分 2 分，低风险；由责任医生补充并签名。",
+      "unit": "分",
+      "value_status": "KNOWN",
+      "reference_range": "0–7",
+      "interpretation": "NORMAL",
+      "occurred_at": "2026-11-26T11:05:00+08:00",
+      "recorded_at": "2026-11-26T11:08:00+08:00",
+      "source_system": "SYNTHETIC-NURSING"
+    },
+    {
+      "observation_id": "OBS-TEMP-001",
+      "patient_id": "HCC-DEMO-001",
+      "encounter_id": "ENC-HCC-001",
+      "category": "VITAL",
+      "code": "TEMP",
+      "display": "体温",
+      "value_num": 37.6,
+      "value_text": null,
+      "unit": "°C",
+      "value_status": "KNOWN",
+      "reference_range": "36.0–37.2 °C",
+      "interpretation": "ABNORMAL",
+      "occurred_at": "2026-11-27T09:40:00+08:00",
+      "recorded_at": "2026-11-27T09:41:00+08:00",
+      "source_system": "SYNTHETIC-NURSING"
+    }
+  ],
+  "snapshot": {
+    "snapshot_id": "SNAP-HCC-001",
+    "patient_id": "HCC-DEMO-001",
+    "as_of": "2026-11-26T10:30:00+08:00",
+    "synthetic": true,
+    "staging": {
+      "system": "CNLC",
+      "version": "2024",
+      "value": "Ⅰb"
+    },
+    "liver_reserve": {
+      "child_pugh": "A",
+      "child_pugh_version": "2023",
+      "albi": -2.41
+    },
+    "performance_status": {
+      "ecog": 0
+    },
+    "tumor": {
+      "max_diameter_mm": 32,
+      "number": 1,
+      "location": "肝右叶 S6 段",
+      "vascular_invasion": false,
+      "extrahepatic_metastasis": false
+    },
+    "biomarkers": {
+      "afp_ng_ml": 86.4
+    },
+    "hepatitis": {
+      "hbv": true
+    },
+    "treatment_history": [],
+    "observation_refs": [
+      "OBS-AFP-001",
+      "OBS-INR-001",
+      "OBS-PLT-001",
+      "OBS-ALB-001",
+      "OBS-ICG-001",
+      "OBS-MRI-001",
+      "OBS-NRS-001"
+    ],
+    "missing_fields": [
+      "assessment.nrs2002"
+    ],
+    "ruleset_version": "HCC-RULES-0.6.0"
+  },
+  "pathway_version": {
+    "version_id": "PV-HCC-130",
+    "template_id": "PW-HCC-001",
+    "name": "肝癌手术临床路径",
+    "disease_code": "C22.0",
+    "version": "1.3.0",
+    "status": "PUBLISHED",
+    "graph": {
+      "nodes": [
+        {
+          "node_key": "start",
+          "type": "START",
+          "name": "开始",
+          "stage": "术前评估",
+          "required": true,
+          "responsible_role": "COORDINATOR",
+          "time_window": null
+        },
+        {
+          "node_key": "admission",
+          "type": "ASSESSMENT",
+          "name": "入院评估与病史采集",
+          "stage": "术前评估",
+          "required": true,
+          "responsible_role": "DOCTOR",
+          "time_window": {
+            "earliest_hour": 0,
+            "latest_hour": 4
+          }
+        },
+        {
+          "node_key": "imaging",
+          "type": "EXAMINATION",
+          "name": "上腹部增强 MRI",
+          "stage": "术前检查",
+          "required": true,
+          "responsible_role": "DOCTOR",
+          "time_window": {
+            "earliest_hour": 4,
+            "latest_hour": 24
+          },
+          "evidence_refs": [
+            "EV-001"
+          ]
+        },
+        {
+          "node_key": "icg",
+          "type": "LAB_TEST",
+          "name": "ICG 清除试验",
+          "stage": "术前检查",
+          "required": true,
+          "responsible_role": "DOCTOR",
+          "time_window": {
+            "earliest_hour": 12,
+            "latest_hour": 36
+          }
+        },
+        {
+          "node_key": "mdt",
+          "type": "CONSULTATION",
+          "name": "MDT 讨论",
+          "stage": "治疗方案确认",
+          "required": true,
+          "responsible_role": "DOCTOR",
+          "time_window": {
+            "earliest_hour": 24,
+            "latest_hour": 48
+          },
+          "evidence_refs": [
+            "EV-007"
+          ]
+        },
+        {
+          "node_key": "decision",
+          "type": "DECISION",
+          "name": "手术指征判断",
+          "stage": "治疗方案确认",
+          "required": true,
+          "responsible_role": "SURGEON",
+          "time_window": null
+        },
+        {
+          "node_key": "surgery",
+          "type": "SURGERY",
+          "name": "肝段切除术",
+          "stage": "手术及术后",
+          "required": true,
+          "responsible_role": "SURGEON",
+          "time_window": {
+            "earliest_hour": 48,
+            "latest_hour": 96
+          },
+          "evidence_refs": [
+            "EV-002"
+          ]
+        },
+        {
+          "node_key": "discharge",
+          "type": "ASSESSMENT",
+          "name": "出院标准评估",
+          "stage": "出院与随访",
+          "required": true,
+          "responsible_role": "DOCTOR",
+          "time_window": null
+        },
+        {
+          "node_key": "end",
+          "type": "END",
+          "name": "结束",
+          "stage": "出院与随访",
+          "required": true,
+          "responsible_role": "COORDINATOR",
+          "time_window": null
+        }
+      ],
+      "edges": [
+        {
+          "source": "start",
+          "target": "admission",
+          "kind": "SEQUENCE"
+        },
+        {
+          "source": "admission",
+          "target": "imaging",
+          "kind": "SEQUENCE"
+        },
+        {
+          "source": "admission",
+          "target": "icg",
+          "kind": "SEQUENCE"
+        },
+        {
+          "source": "imaging",
+          "target": "mdt",
+          "kind": "SEQUENCE"
+        },
+        {
+          "source": "icg",
+          "target": "mdt",
+          "kind": "SEQUENCE"
+        },
+        {
+          "source": "mdt",
+          "target": "decision",
+          "kind": "SEQUENCE"
+        },
+        {
+          "source": "decision",
+          "target": "surgery",
+          "kind": "CONDITIONAL",
+          "condition": "RULE-004 = TRUE"
+        },
+        {
+          "source": "surgery",
+          "target": "discharge",
+          "kind": "SEQUENCE"
+        },
+        {
+          "source": "discharge",
+          "target": "end",
+          "kind": "SEQUENCE"
+        }
+      ]
+    },
+    "rules": [
+      {
+        "rule_id": "RULE-001",
+        "version": "1.2.0",
+        "binding": "ADMISSION"
+      },
+      {
+        "rule_id": "RULE-002",
+        "version": "1.1.0",
+        "binding": "EXCLUSION"
+      },
+      {
+        "rule_id": "RULE-003",
+        "version": "1.0.3",
+        "binding": "COMPLETENESS"
+      },
+      {
+        "rule_id": "RULE-005",
+        "version": "1.0.0",
+        "binding": "SAFETY"
+      }
+    ],
+    "content_hash": "sha256:4c9b81aad027",
+    "created_by": "张启明",
+    "created_at": "2026-10-05T09:00:00+08:00",
+    "published_at": "2026-10-12T09:00:00+08:00",
+    "approval": {
+      "reviewer": "周敏",
+      "reviewed_at": "2026-10-11T09:00:00+08:00",
+      "comment": "证据与安全约束完整，同意发布。"
+    },
+    "validation": {
+      "errors": 0,
+      "warnings": 1,
+      "passed": true
+    }
+  },
+  "enrollment_evaluations": [
+    {
+      "evaluation_id": "EVAL-HCC-001",
+      "patient_id": "HCC-DEMO-001",
+      "snapshot_id": "SNAP-HCC-001",
+      "pathway_version_id": "PV-HCC-130",
+      "evaluated_at": "2026-11-26T10:32:00+08:00",
+      "rule_version": "HCC-RULES-0.6.0",
+      "admission_tri_state": "TRUE",
+      "exclusion_tri_state": "FALSE",
+      "completeness_tri_state": "UNKNOWN",
+      "decision": "PENDING_SUPPLEMENT",
+      "auto_enroll_allowed": false,
+      "missing_fields": [
+        "assessment.nrs2002"
+      ],
+      "reasons": [
+        "营养风险筛查结果缺失，必需条件为 UNKNOWN，不允许自动入径。"
+      ],
+      "rule_results": [
+        {
+          "rule_id": "RULE-001",
+          "version": "1.2.0",
+          "result": "TRUE",
+          "missing_fields": []
+        },
+        {
+          "rule_id": "RULE-002",
+          "version": "1.1.0",
+          "result": "FALSE",
+          "missing_fields": []
+        },
+        {
+          "rule_id": "RULE-003",
+          "version": "1.0.3",
+          "result": "UNKNOWN",
+          "missing_fields": [
+            "assessment.nrs2002"
+          ]
+        }
+      ]
+    },
+    {
+      "evaluation_id": "EVAL-HCC-002",
+      "patient_id": "HCC-DEMO-001",
+      "snapshot_id": "SNAP-HCC-002",
+      "pathway_version_id": "PV-HCC-130",
+      "evaluated_at": "2026-11-26T11:10:00+08:00",
+      "rule_version": "HCC-RULES-0.6.0",
+      "admission_tri_state": "TRUE",
+      "exclusion_tri_state": "FALSE",
+      "completeness_tri_state": "TRUE",
+      "decision": "ELIGIBLE",
+      "auto_enroll_allowed": true,
+      "missing_fields": [],
+      "reasons": [
+        "NRS 2002 由医生补充并签名，必需条件均为 TRUE。"
+      ],
+      "rule_results": [
+        {
+          "rule_id": "RULE-001",
+          "version": "1.2.0",
+          "result": "TRUE",
+          "missing_fields": []
+        },
+        {
+          "rule_id": "RULE-002",
+          "version": "1.1.0",
+          "result": "FALSE",
+          "missing_fields": []
+        },
+        {
+          "rule_id": "RULE-003",
+          "version": "1.0.3",
+          "result": "TRUE",
+          "missing_fields": []
+        }
+      ]
+    }
+  ],
+  "instance": {
+    "instance_id": "INST-HCC-001",
+    "patient_id": "HCC-DEMO-001",
+    "pathway_version_id": "PV-HCC-130",
+    "status": "ACTIVE",
+    "enrolled_at": "2026-11-26T11:12:00+08:00",
+    "active_plan_id": "PLAN-HCC-P1",
+    "current_stage": "术前检查",
+    "data_completeness": 100
+  },
+  "plan": {
+    "plan_id": "PLAN-HCC-P1",
+    "instance_id": "INST-HCC-001",
+    "patient_id": "HCC-DEMO-001",
+    "version": "P1",
+    "status": "ACTIVE",
+    "snapshot_id": "SNAP-HCC-002",
+    "ruleset_version": "HCC-RULES-0.6.0",
+    "created_by": "李文博",
+    "created_at": "2026-11-26T11:15:00+08:00",
+    "submitted_at": "2026-11-26T11:20:00+08:00",
+    "approved_by": "张启明",
+    "approved_at": "2026-11-26T11:30:00+08:00",
+    "activated_at": "2026-11-26T11:32:00+08:00",
+    "tasks": [
+      {
+        "task_id": "T-101",
+        "node_key": "admission",
+        "name": "入院评估与病史采集",
+        "stage": "术前评估",
+        "role": "DOCTOR",
+        "required": true,
+        "depends_on": [],
+        "earliest_start_at": "2026-11-23T15:00:00+08:00",
+        "due_at": "2026-11-23T19:00:00+08:00",
+        "status": "COMPLETED",
+        "assignee": "张启明",
+        "completed_at": "2026-11-23T17:05:00+08:00",
+        "result_summary": "评估记录已签名归档",
+        "overdue": false
+      },
+      {
+        "task_id": "T-102",
+        "node_key": "imaging",
+        "name": "上腹部增强 MRI",
+        "stage": "术前检查",
+        "role": "DOCTOR",
+        "required": true,
+        "depends_on": [
+          "T-101"
+        ],
+        "earliest_start_at": "2026-11-24T08:00:00+08:00",
+        "due_at": "2026-11-24T18:00:00+08:00",
+        "status": "COMPLETED",
+        "assignee": "李文博",
+        "completed_at": "2026-11-24T14:00:00+08:00",
+        "result_summary": "报告已归档并关联路径节点",
+        "overdue": false
+      },
+      {
+        "task_id": "T-103",
+        "node_key": "icg",
+        "name": "ICG 清除试验",
+        "stage": "术前检查",
+        "role": "DOCTOR",
+        "required": true,
+        "depends_on": [
+          "T-101"
+        ],
+        "earliest_start_at": "2026-11-25T08:00:00+08:00",
+        "due_at": "2026-11-26T08:00:00+08:00",
+        "status": "IN_PROGRESS",
+        "assignee": "李文博",
+        "completed_at": null,
+        "result_summary": null,
+        "overdue": false
+      },
+      {
+        "task_id": "T-104",
+        "node_key": "mdt",
+        "name": "MDT 讨论",
+        "stage": "治疗方案确认",
+        "role": "DOCTOR",
+        "required": true,
+        "depends_on": [
+          "T-102",
+          "T-103"
+        ],
+        "earliest_start_at": "2026-11-26T14:00:00+08:00",
+        "due_at": "2026-11-26T18:00:00+08:00",
+        "status": "PENDING",
+        "assignee": "张启明",
+        "completed_at": null,
+        "result_summary": null,
+        "overdue": false
+      }
+    ],
+    "warnings": [
+      {
+        "level": "UNKNOWN",
+        "message": "NRS 2002 已由医生补充；历史计划保留 UNKNOWN 记录。"
+      }
+    ],
+    "evidence_refs": [
+      "EV-001",
+      "EV-002",
+      "EV-005"
+    ]
+  },
+  "variation": {
+    "variation_id": "VAR-HCC-001",
+    "instance_id": "INST-HCC-001",
+    "patient_id": "HCC-DEMO-001",
+    "type": "CLINICAL",
+    "severity": "MEDIUM",
+    "title": "术后第 2 天体温 37.6°C",
+    "description": "护理记录体温 37.6°C，高于阈值 37.3°C；未达病情变异标准，需复测并观察感染指标。",
+    "detected_at": "2026-11-27T09:40:00+08:00",
+    "source": "护理系统 · 体温记录",
+    "status": "ASSESSING",
+    "affected_nodes": [
+      "surgery",
+      "discharge"
+    ],
+    "rule_ref": "RULE-006@1.0.1",
+    "impact": "可能推迟出院评估；不自动修改计划。",
+    "evidence_refs": [
+      "OBS-TEMP-001"
+    ],
+    "resolution": null,
+    "resolved_at": null
+  },
+  "followup": {
+    "followup_id": "FU-HCC-001",
+    "patient_id": "HCC-DEMO-001",
+    "instance_id": "INST-HCC-001",
+    "treatment_event_id": "EVT-SURGERY-001",
+    "window_start": "2026-12-20T00:00:00+08:00",
+    "window_end": "2026-12-31T23:59:59+08:00",
+    "channel": "PHONE",
+    "consent_status": "GRANTED",
+    "status": "PENDING_ACTION",
+    "owner": "赵倩",
+    "risk_level": "HIGH",
+    "structured_record": {
+      "symptoms": [
+        "乏力"
+      ],
+      "temperature_c": 37.1,
+      "weight_kg": 68.2,
+      "afp_ng_ml": 46.8,
+      "adverse_event": "无新发严重不良事件"
+    },
+    "escalation": {
+      "required": true,
+      "reason": "AFP 较术后基线升高，需人工复核",
+      "notified_at": "2026-12-24T10:20:00+08:00",
+      "acknowledged_at": "2026-12-24T10:25:00+08:00",
+      "resolved_at": null
+    },
+    "contacts": [
+      {
+        "contact_id": "FC-HCC-001",
+        "attempted_at": "2026-12-24T10:05:00+08:00",
+        "channel": "PHONE",
+        "outcome": "REACHED",
+        "raw_patient_text": "最近有点乏力，没有发热，吃饭还可以。",
+        "structured_extract": {
+          "symptoms": [
+            "乏力"
+          ],
+          "temperature_c": 37.1
+        },
+        "confirmed_by_human": true
+      }
+    ],
+    "created_at": "2026-12-01T09:00:00+08:00",
+    "updated_at": "2026-12-24T10:25:00+08:00"
+  },
+  "outcome": {
+    "outcome_id": "OUT-HCC-001",
+    "patient_id": "HCC-DEMO-001",
+    "instance_id": "INST-HCC-001",
+    "treatment_type": "肝段切除术",
+    "evaluation_standard": "RECIST",
+    "observed_at": "2026-12-24T10:30:00+08:00",
+    "recurrence": "UNKNOWN",
+    "progression": null,
+    "response": "UNKNOWN",
+    "adverse_events": [],
+    "lost_to_followup": false,
+    "recorded_by": "张启明",
+    "recorded_at": "2026-12-24T11:00:00+08:00"
+  },
+  "audit_events": [
+    {
+      "event_id": "AUD-HCC-001",
+      "request_id": "req-acc-001",
+      "actor_id": "U-004",
+      "actor_role": "CLINICIAN",
+      "action": "ENROLLMENT_EVALUATE",
+      "object_type": "PATIENT",
+      "object_id": "HCC-DEMO-001",
+      "result": "SUCCESS",
+      "occurred_at": "2026-11-26T10:32:00+08:00",
+      "ip_masked": "10.20.33.x",
+      "detail": "首次评估为 PENDING_SUPPLEMENT"
+    },
+    {
+      "event_id": "AUD-HCC-002",
+      "request_id": "req-acc-002",
+      "actor_id": "U-004",
+      "actor_role": "CLINICIAN",
+      "action": "PLAN_APPROVE",
+      "object_type": "PLAN",
+      "object_id": "PLAN-HCC-P1",
+      "result": "SUCCESS",
+      "occurred_at": "2026-11-26T11:30:00+08:00",
+      "ip_masked": "10.20.33.x",
+      "detail": "专家审核通过"
+    },
+    {
+      "event_id": "AUD-HCC-003",
+      "request_id": "req-acc-003",
+      "actor_id": "U-001",
+      "actor_role": "ADMIN",
+      "action": "PATIENT_VIEW",
+      "object_type": "PATIENT",
+      "object_id": "HCC-DEMO-001",
+      "result": "DENIED",
+      "occurred_at": "2026-11-26T11:40:00+08:00",
+      "ip_masked": "10.20.5.x",
+      "detail": "系统管理员无病历访问权限，对象级授权拒绝"
+    },
+    {
+      "event_id": "AUD-HCC-004",
+      "request_id": "req-acc-004",
+      "actor_id": "U-005",
+      "actor_role": "NURSE",
+      "action": "FOLLOWUP_ESCALATE",
+      "object_type": "FOLLOWUP",
+      "object_id": "FU-HCC-001",
+      "result": "SUCCESS",
+      "occurred_at": "2026-12-24T10:20:00+08:00",
+      "ip_masked": "10.20.36.x",
+      "detail": "风险升 HIGH，进入人工队列"
+    }
+  ],
+  "expected": {
+    "first_enrollment_decision": "PENDING_SUPPLEMENT",
+    "auto_enroll_when_unknown": false,
+    "final_enrollment_decision": "ELIGIBLE",
+    "plan_activation_requires_approval": true,
+    "variation_does_not_auto_change_plan": true,
+    "followup_danger_signal_creates_human_escalation": true,
+    "clinical_use": false,
+    "synthetic": true
+  },
+  "snapshot_after_supplement": {
+    "snapshot_id": "SNAP-HCC-002",
+    "patient_id": "HCC-DEMO-001",
+    "as_of": "2026-11-26T11:08:00+08:00",
+    "synthetic": true,
+    "staging": {
+      "system": "CNLC",
+      "version": "2024",
+      "value": "Ⅰb"
+    },
+    "liver_reserve": {
+      "child_pugh": "A",
+      "child_pugh_version": "2023",
+      "albi": -2.41
+    },
+    "performance_status": {
+      "ecog": 0
+    },
+    "tumor": {
+      "max_diameter_mm": 32,
+      "number": 1,
+      "location": "肝右叶 S6 段",
+      "vascular_invasion": false,
+      "extrahepatic_metastasis": false
+    },
+    "biomarkers": {
+      "afp_ng_ml": 86.4
+    },
+    "hepatitis": {
+      "hbv": true
+    },
+    "treatment_history": [],
+    "observation_refs": [
+      "OBS-AFP-001",
+      "OBS-INR-001",
+      "OBS-PLT-001",
+      "OBS-ALB-001",
+      "OBS-ICG-001",
+      "OBS-MRI-001",
+      "OBS-NRS-001",
+      "OBS-NRS-002"
+    ],
+    "missing_fields": [],
+    "ruleset_version": "HCC-RULES-0.6.0"
+  }
+}

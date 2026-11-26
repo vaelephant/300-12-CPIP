@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hcc-cip.local/schemas/0.6.0/audit_event.schema.json",
+  "title": "audit_event",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "event_id",
+    "request_id",
+    "actor_id",
+    "actor_role",
+    "action",
+    "object_type",
+    "object_id",
+    "result",
+    "occurred_at"
+  ],
+  "properties": {
+    "event_id": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 128
+    },
+    "request_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "actor_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "actor_role": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "action": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "object_type": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "object_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "result": {
+      "enum": [
+        "SUCCESS",
+        "DENIED",
+        "FAILED"
+      ]
+    },
+    "occurred_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "ip_masked": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "detail": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "description": "Audit must record denied object-level access too; no secrets or raw PHI."
+}

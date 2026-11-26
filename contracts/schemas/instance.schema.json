@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hcc-cip.local/schemas/0.6.0/instance.schema.json",
+  "title": "instance",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "instance_id",
+    "patient_id",
+    "pathway_version_id",
+    "status",
+    "enrolled_at",
+    "current_stage",
+    "data_completeness"
+  ],
+  "properties": {
+    "instance_id": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 128
+    },
+    "patient_id": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 128
+    },
+    "pathway_version_id": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 128
+    },
+    "status": {
+      "enum": [
+        "PENDING",
+        "ACTIVE",
+        "REPLAN_REQUIRED",
+        "COMPLETED",
+        "EXITED"
+      ]
+    },
+    "enrolled_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "active_plan_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "current_stage": {
+      "type": "string"
+    },
+    "data_completeness": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100
+    }
+  },
+  "description": "Pathway instance is created only after an eligible enrollment evaluation; status changes are server-authoritative."
+}

@@ -1,0 +1,203 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hcc-cip.local/schemas/0.6.0/snapshot.schema.json",
+  "title": "snapshot",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "snapshot_id",
+    "patient_id",
+    "as_of",
+    "synthetic",
+    "staging",
+    "liver_reserve",
+    "performance_status",
+    "tumor",
+    "observation_refs",
+    "missing_fields",
+    "ruleset_version"
+  ],
+  "properties": {
+    "snapshot_id": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 128
+    },
+    "patient_id": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 128
+    },
+    "as_of": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "synthetic": {
+      "type": "boolean"
+    },
+    "staging": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "system",
+        "version",
+        "value"
+      ],
+      "properties": {
+        "system": {
+          "enum": [
+            "CNLC",
+            "BCLC"
+          ]
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "value": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        }
+      }
+    },
+    "liver_reserve": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "child_pugh",
+        "albi"
+      ],
+      "properties": {
+        "child_pugh": {
+          "enum": [
+            "A",
+            "B",
+            "C",
+            "UNKNOWN"
+          ]
+        },
+        "child_pugh_version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "albi": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      }
+    },
+    "performance_status": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ecog"
+      ],
+      "properties": {
+        "ecog": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 5
+        }
+      }
+    },
+    "tumor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "max_diameter_mm",
+        "number",
+        "vascular_invasion",
+        "extrahepatic_metastasis"
+      ],
+      "properties": {
+        "max_diameter_mm": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "number": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "location": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "vascular_invasion": {
+          "type": "boolean"
+        },
+        "extrahepatic_metastasis": {
+          "type": "boolean"
+        }
+      }
+    },
+    "biomarkers": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "afp_ng_ml": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      }
+    },
+    "hepatitis": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "hbv": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        }
+      }
+    },
+    "treatment_history": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 160
+      }
+    },
+    "observation_refs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 3,
+        "maxLength": 128
+      }
+    },
+    "missing_fields": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 160
+      }
+    },
+    "ruleset_version": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    }
+  },
+  "description": "Immutable state snapshot. UNKNOWN values are listed in missing_fields; never inferred by an LLM."
+}
