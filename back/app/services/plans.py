@@ -5,6 +5,8 @@ import uuid
 from datetime import datetime, timedelta
 from typing import Any
 
+from sqlalchemy import update
+
 from app.domain.models import PathwayInstance, PathwayVersion, Plan, Task
 
 
@@ -14,6 +16,7 @@ def generate_plan_tasks(
     instance: PathwayInstance,
     version: PathwayVersion,
     snapshot_missing_fields: list[str],
+    selected_nodes: set[str] | None = None,
 ) -> list[Task]:
     graph = json.loads(version.graph_json)
     nodes = {node["node_key"]: node for node in graph.get("nodes", []) if "node_key" in node}
@@ -23,7 +26,11 @@ def generate_plan_tasks(
         if source in nodes and target in nodes:
             incoming.setdefault(target, []).append(source)
 
-    included = [key for key, node in nodes.items() if node.get("type") not in {"START", "END"}]
+    included = [
+        key
+        for key, node in nodes.items()
+        if node.get("type") not in {"START", "END"} and (selected_nodes is None or key in selected_nodes)
+    ]
     node_to_task: dict[str, str] = {key: f"T-{uuid.uuid4().hex[:12].upper()}" for key in included}
     tasks: list[Task] = []
     for node_key in included:
@@ -64,3 +71,27 @@ def plan_summary(version: PathwayVersion, task_count: int, missing_fields: list[
     if missing_fields:
         base += f" 快照缺失字段 {len(missing_fields)} 项，按 UNKNOWN 处理。"
     return base
+
+
+def next_plan_version(db: Session, instance_id: str) -> str:
+    """Atomically allocate a per-instance plan version.
+
+    The counter lives on the instance row so concurrent plan creation cannot
+    assign the same P-number merely because both requests read the same list.
+    """
+    from app.domain.models import PathwayInstance
+
+    value = db.execute(
+        update(PathwayInstance)
+        .where(PathwayInstance.id == instance_id)
+        .values(plan_counter=PathwayInstance.plan_counter + 1)
+        .returning(PathwayInstance.plan_counter)
+    ).scalar_one()
+    return f"P{value}"
+
+
+def execution_fingerprint(graph_content_hash: str | None, snapshot_id: str, trace_json: str) -> str:
+    import hashlib
+
+    payload = f"{graph_content_hash or ''}|{snapshot_id}|{trace_json}".encode("utf-8")
+    return "fp:" + hashlib.sha256(payload).hexdigest()

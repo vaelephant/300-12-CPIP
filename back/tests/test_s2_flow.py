@@ -2,7 +2,9 @@ from __future__ import annotations
 
 import copy
 
+from app.db import SessionLocal
 from app.domain.hcc_pathway import HCC_SURGERY_GRAPH, HCC_SURGERY_RULES
+from app.domain.models import Observation
 from tests.conftest import login
 
 PATHWAY_VERSION = "PV-HCC-130"
@@ -10,7 +12,7 @@ PATHWAY_VERSION = "PV-HCC-130"
 
 def _snapshot(missing: list[str], observation_refs: list[str] | None = None) -> dict:
     return {
-        "as_of": "2026-11-26T10:30:00+08:00",
+        "as_of": "2026-11-26T12:30:00+08:00",
         "staging": {"system": "CNLC", "version": "2024", "value": "Ⅰb"},
         "liver_reserve": {"child_pugh": "A", "albi": -2.41},
         "performance_status": {"ecog": 0},
@@ -263,3 +265,49 @@ def test_plan_list_is_available_for_planning_page(client):
     listed = client.get(f"/api/v1/instances/{instance['instance_id']}/plans", headers=headers)
     assert listed.status_code == 200, listed.text
     assert any(item["plan_id"] == plan["plan_id"] for item in listed.json())
+
+
+def test_plan_is_blocked_when_conditional_branch_is_unknown(client):
+    headers = login(client, "RH0236")
+    instance, _ = _make_instance(client, headers)
+    with SessionLocal() as db:
+        icg = db.get(Observation, "OBS-ICG-001")
+        icg.unit = "mg"
+        db.commit()
+    snapshot = _create_snapshot(client, headers, [], ["OBS-AFP-001", "OBS-INR-001", "OBS-PLT-001", "OBS-ICG-001", "OBS-MRI-001", "OBS-NRS-002"])
+    plan = client.post(
+        f"/api/v1/instances/{instance['instance_id']}/plans",
+        headers=headers,
+        json={"snapshot_id": snapshot["snapshot_id"], "ruleset_version": "HCC-RULES-0.6.0"},
+    )
+    assert plan.status_code == 201, plan.text
+    body = plan.json()
+    assert body["execution_blocked"] is True
+    assert "surgery" not in {task["node_key"] for task in body["tasks"]}
+    submitted = client.post(f"/api/v1/plans/{body['plan_id']}/submit", headers=headers)
+    assert submitted.status_code == 409
+    assert submitted.json()["error"]["code"] == "EXECUTION_BLOCKED"
+
+
+def test_plan_activation_detects_trace_tampering(client):
+    from app.db import SessionLocal
+    from app.domain.models import Plan
+
+    headers = login(client, "RH0236")
+    instance, snapshot = _make_instance(client, headers)
+    plan = client.post(
+        f"/api/v1/instances/{instance['instance_id']}/plans",
+        headers=headers,
+        json={"snapshot_id": snapshot["snapshot_id"], "ruleset_version": "HCC-RULES-0.6.0"},
+    ).json()
+    assert plan["execution_fingerprint"]
+    client.post(f"/api/v1/plans/{plan['plan_id']}/submit", headers=headers)
+    expert = login(client, "RH0218")
+    client.post(f"/api/v1/plans/{plan['plan_id']}/approve", headers=expert, json={"comment": "ok"})
+    with SessionLocal() as db:
+        row = db.get(Plan, plan["plan_id"])
+        row.execution_trace_json = row.execution_trace_json.replace("graph_hash", "graph_hash_tampered")
+        db.commit()
+    activated = client.post(f"/api/v1/plans/{plan['plan_id']}/activate", headers=headers)
+    assert activated.status_code == 409
+    assert activated.json()["error"]["code"] == "PLAN_FINGERPRINT_MISMATCH"

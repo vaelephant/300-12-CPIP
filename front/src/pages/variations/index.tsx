@@ -1,3 +1,5 @@
+import { IS_SERVER_MODE } from "@/lib/data-mode";
+import ServerVariationsPage from "./index-server";
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
@@ -181,7 +183,7 @@ const EMPTY_FORM: RegisterForm = {
   description: "",
 };
 
-export default function VariationsPage() {
+function DemoVariationsPage() {
   const [rows, setRows] = useState<Variation[]>(VARIATIONS);
   const [type, setType] = useState<VariationType | "ALL">("ALL");
   const [severity, setSeverity] = useState<Variation["severity"] | "ALL">("ALL");
@@ -1210,4 +1212,10 @@ export default function VariationsPage() {
       </Dialog>
     </Page>
   );
+}
+
+
+export default function VariationsPage() {
+  if (IS_SERVER_MODE) return <ServerVariationsPage />;
+  return <DemoVariationsPage />;
 }

@@ -1,5 +1,6 @@
+import { useEffect } from "react";
 import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-router-dom";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider, useQueryClient } from "@tanstack/react-query";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
 import { AppShell } from "@/components/app/app-shell";
@@ -16,6 +17,7 @@ import PatientDetailPage from "@/pages/patients/detail";
 import PatientPathwayPage from "@/pages/patients/pathway";
 import PlanningPage from "@/pages/planning";
 import TasksPage from "@/pages/tasks";
+import FollowupsPage from "@/pages/followups";
 import VariationsPage from "@/pages/variations";
 import SimulationPage from "@/pages/simulation";
 import KnowledgePage from "@/pages/knowledge";
@@ -50,6 +52,29 @@ function NotFound() {
   );
 }
 
+function SessionEffects() {
+  const queryClient = useQueryClient();
+  const user = useSessionStore((state) => state.user);
+  const logout = useSessionStore((state) => state.logout);
+
+  useEffect(() => {
+    const handler = () => {
+      logout();
+      queryClient.clear();
+      if (window.location.pathname !== "/login") window.location.assign("/login");
+    };
+    window.addEventListener("hcc:unauthorized", handler);
+    return () => window.removeEventListener("hcc:unauthorized", handler);
+  }, [logout, queryClient]);
+
+  useEffect(() => {
+    // Logout / 401 must not leave patient or task data in the query cache.
+    if (!user) queryClient.clear();
+  }, [user, queryClient]);
+
+  return null;
+}
+
 function LoginRoute() {
   const user = useSessionStore((s) => s.user);
   return user ? <Navigate to="/dashboard" replace /> : <LoginPage />;
@@ -60,6 +85,7 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider delayDuration={180}>
         <BrowserRouter>
+          <SessionEffects />
           <Routes>
             <Route path="/login" element={<LoginRoute />} />
             <Route element={<AppShell />}>
@@ -77,6 +103,7 @@ export default function App() {
               <Route path="/planning/:instanceId" element={<PlanningPage />} />
               <Route path="/tasks" element={<TasksPage />} />
               <Route path="/variations" element={<VariationsPage />} />
+              <Route path="/followups" element={<FollowupsPage />} />
               <Route path="/simulation" element={<SimulationPage />} />
               <Route path="/knowledge" element={<KnowledgePage />} />
               <Route path="/analytics" element={<AnalyticsPage />} />

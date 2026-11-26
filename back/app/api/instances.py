@@ -6,6 +6,7 @@ from datetime import UTC, datetime
 
 from fastapi import APIRouter, Depends, Request
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.api.approvals import decide_approval
@@ -27,7 +28,8 @@ from app.domain.models import (
 from app.errors import conflict, forbidden, not_found
 from app.services.audit import record_audit
 from app.services.authz import ensure_patient_access
-from app.services.plans import generate_plan_tasks, plan_summary
+from app.services.plans import execution_fingerprint, generate_plan_tasks, next_plan_version, plan_summary
+from app.services.graph_execution import select_execution
 from app.services.rules import build_context, evaluate_rule, Tri
 
 router = APIRouter(tags=["instances"])
@@ -164,13 +166,15 @@ def generate_plan(
         id=f"PLAN-{uuid.uuid4().hex[:12].upper()}",
         instance_id=instance.id,
         patient_id=patient.id,
-        version=f"P{len(plans) + 1}",
+        version=next_plan_version(db, instance.id),
         status="DRAFT",
         snapshot_id=snapshot.id,
         ruleset_version=body.ruleset_version,
         created_by=user.id,
     )
     snapshot_payload = json.loads(snapshot.payload_json)
+    selection = select_execution(json.loads(version.graph_json), build_context(db, patient, snapshot_payload))
+    selection.trace["graph_hash"] = version.content_hash
     db.add(plan)
     db.flush()
     tasks = generate_plan_tasks(
@@ -178,13 +182,18 @@ def generate_plan(
         instance=instance,
         version=version,
         snapshot_missing_fields=snapshot_payload.get("missing_fields", []),
+        selected_nodes=selection.selected_nodes,
     )
+    plan.graph_content_hash = version.content_hash
+    plan.execution_trace_json = json.dumps(selection.trace, ensure_ascii=False)
+    plan.execution_blocked = selection.blocked
+    plan.execution_fingerprint = execution_fingerprint(version.content_hash, snapshot.id, plan.execution_trace_json)
     db.add_all(tasks)
     plan.summary = plan_summary(version, len(tasks), snapshot_payload.get("missing_fields", []))
-    plan.warnings_json = json.dumps(
-        [{"level": "UNKNOWN", "message": f"缺失字段：{field}"} for field in snapshot_payload.get("missing_fields", [])],
-        ensure_ascii=False,
-    )
+    warnings = [{"level": "UNKNOWN", "message": f"缺失字段：{field}"} for field in snapshot_payload.get("missing_fields", [])]
+    if selection.blocked:
+        warnings.append({"level": "RISK", "message": f"执行分支阻断：{selection.block_reason}"})
+    plan.warnings_json = json.dumps(warnings, ensure_ascii=False)
     evidence = sorted({ref for node in json.loads(version.graph_json).get("nodes", []) for ref in node.get("evidence_refs", [])})
     plan.evidence_refs_json = json.dumps(evidence, ensure_ascii=False)
     db.commit()
@@ -231,6 +240,10 @@ def submit_plan(
         raise forbidden("仅临床医生或专家可以提交计划")
     if plan.status != "DRAFT":
         raise conflict("INVALID_PLAN_STATE", "仅草稿计划可以提交审核")
+    if plan.execution_blocked:
+        raise conflict("EXECUTION_BLOCKED", "执行分支存在 UNKNOWN/冲突，不能提交审核")
+    if plan.execution_fingerprint is None:
+        plan.execution_fingerprint = execution_fingerprint(plan.graph_content_hash, plan.snapshot_id, plan.execution_trace_json)
     approval = Approval(
         id=f"AP-{uuid.uuid4().hex[:12].upper()}",
         object_type="PLAN",
@@ -238,11 +251,11 @@ def submit_plan(
         status="PENDING",
         risk="HIGH" if plan.warnings_json != "[]" else "MEDIUM",
         requested_by=user.id,
+        subject_fingerprint=plan.execution_fingerprint,
     )
     plan.status = "PENDING_APPROVAL"
     plan.submitted_at = datetime.now(UTC)
     db.add(approval)
-    db.commit()
     record_audit(
         request=request,
         actor=user,
@@ -251,7 +264,9 @@ def submit_plan(
         object_id=plan.id,
         result="SUCCESS",
         detail=f"approval={approval.id}",
+        db=db,
     )
+    db.commit()
     return plan_out(plan, _plan_tasks(db, plan_id))
 
 
@@ -301,11 +316,33 @@ def activate_plan(
         raise forbidden("仅临床医生或专家可以激活计划")
     if plan.status != "APPROVED":
         raise conflict("PLAN_NOT_APPROVED", "计划必须先审核通过才能激活")
+    if plan.execution_blocked:
+        raise conflict("EXECUTION_BLOCKED", "执行分支已被阻断，不能激活计划")
+    approval = latest_approval(db, "PLAN", plan.id)
+    if approval is None or approval.status != "APPROVED":
+        raise conflict("APPROVAL_REQUIRED", "计划缺少有效审批")
+    current_fingerprint = execution_fingerprint(plan.graph_content_hash, plan.snapshot_id, plan.execution_trace_json)
+    if approval.subject_fingerprint != current_fingerprint or plan.execution_fingerprint != current_fingerprint:
+        raise conflict("PLAN_FINGERPRINT_MISMATCH", "计划执行轨迹与审批指纹不一致，需重新审核")
     instance = _instance_or_404(db, plan.instance_id)
     version = db.get(PathwayVersion, instance.pathway_version_id)
     snapshot = db.get(PatientSnapshot, plan.snapshot_id)
     if version is None or snapshot is None:
         raise conflict("PLAN_CONTEXT_MISSING", "计划缺少路径版本或快照")
+    latest_snapshot = db.scalar(
+        select(PatientSnapshot).where(PatientSnapshot.patient_id == patient.id).order_by(PatientSnapshot.as_of.desc(), PatientSnapshot.created_at.desc())
+    )
+    if latest_snapshot is None or latest_snapshot.id != snapshot.id:
+        record_audit(
+            request=request,
+            actor=user,
+            action="PLAN_ACTIVATION_BLOCKED",
+            object_type="PLAN",
+            object_id=plan.id,
+            result="DENIED",
+            detail="计划快照不是该患者最新快照，需重评",
+        )
+        raise conflict("PLAN_REASSESSMENT_REQUIRED", "患者已有更新快照，计划必须重新评估后才能激活")
     payload = json.loads(snapshot.payload_json)
     ctx = build_context(db, patient, payload)
     for rule in json.loads(version.rules_json):
@@ -321,6 +358,8 @@ def activate_plan(
     ).all()
     for previous in previous_active:
         previous.status = "SUPERSEDED"
+    if previous_active:
+        db.flush()
     plan.status = "ACTIVE"
     plan.activated_at = datetime.now(UTC)
     instance.active_plan_id = plan.id
@@ -329,7 +368,6 @@ def activate_plan(
     stages = [node.get("stage") for node in graph.get("nodes", []) if node.get("type") not in {"START", "END"}]
     if stages:
         instance.current_stage = stages[0]
-    db.commit()
     record_audit(
         request=request,
         actor=user,
@@ -338,5 +376,7 @@ def activate_plan(
         object_id=plan.id,
         result="SUCCESS",
         detail=f"instance={instance.id}",
+        db=db,
     )
+    db.commit()
     return plan_out(plan, _plan_tasks(db, plan.id))

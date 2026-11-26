@@ -29,7 +29,7 @@ def latest_assessment(
     patient = _get_patient_or_404(db, patient_id)
     ensure_patient_access(request, user, patient)
     snapshot = db.scalar(
-        select(PatientSnapshot).where(PatientSnapshot.patient_id == patient.id).order_by(PatientSnapshot.as_of.desc())
+        select(PatientSnapshot).where(PatientSnapshot.patient_id == patient.id).order_by(PatientSnapshot.as_of.desc(), PatientSnapshot.created_at.desc())
     )
     if snapshot is None:
         raise not_found("该患者尚无状态快照，不能生成专病评估")

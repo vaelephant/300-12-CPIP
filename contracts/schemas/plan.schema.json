@@ -241,6 +241,25 @@
         "null"
       ],
       "additionalProperties": true
+    },
+    "graph_content_hash": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "execution_blocked": {
+      "type": "boolean"
+    },
+    "execution_trace": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "execution_fingerprint": {
+      "type": [
+        "string",
+        "null"
+      ]
     }
   },
   "description": "Approval is required before activation; completed tasks must not be deleted during replan."

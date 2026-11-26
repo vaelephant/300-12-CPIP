@@ -55,7 +55,7 @@ def patient_detail_overview(
         select(Observation).where(Observation.patient_id == patient.id).order_by(Observation.occurred_at.desc())
     ).all()
     snapshot = db.scalar(
-        select(PatientSnapshot).where(PatientSnapshot.patient_id == patient.id).order_by(PatientSnapshot.as_of.desc())
+        select(PatientSnapshot).where(PatientSnapshot.patient_id == patient.id).order_by(PatientSnapshot.as_of.desc(), PatientSnapshot.created_at.desc())
     )
     assessment = None
     if snapshot is not None:

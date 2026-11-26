@@ -1,5 +1,6 @@
 export interface BackendUser {
   user_id: string;
+  employee_no: string | null;
   name: string;
   role: "ADMIN" | "CLINICIAN" | "EXPERT" | "MEDICAL_AFFAIRS" | "NURSE" | "EXECUTIVE";
   data_scope: "SELF" | "DEPT" | "ORG" | "ALL_NO_RECORD";
@@ -134,16 +135,30 @@ export interface BackendVariation {
   type: string;
   severity: string;
   title: string;
+  description: string;
+  detected_at: string;
+  source: string;
   status: string;
+  affected_nodes: string[];
+  rule_ref: string | null;
+  impact: string | null;
+  resolution: string | null;
+  resolved_at: string | null;
 }
 
 export interface BackendFollowup {
   followup_id: string;
   patient_id: string;
+  instance_id: string | null;
   status: string;
   risk_level: string;
   window_start: string;
   window_end: string;
+  channel: string;
+  owner: string;
+  consent_status: string;
+  escalation: Record<string, unknown>;
+  contacts: Record<string, unknown>[];
 }
 
 export interface BackendOutcome {
@@ -217,4 +232,22 @@ export interface BackendPathwayOverview {
 export interface BackendPage<T> {
   items: T[];
   meta: { page: number; page_size: number; total: number };
+}
+
+
+export interface BackendAnalyticsMetric {
+  key: string;
+  label: string;
+  value: number;
+  numerator: number;
+  denominator: number;
+  period: string;
+  definition: string;
+}
+
+export interface BackendAnalyticsSummary {
+  generated_at: string;
+  period: { key: string; timezone: string };
+  metrics: BackendAnalyticsMetric[];
+  note: string;
 }

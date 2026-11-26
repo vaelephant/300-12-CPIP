@@ -1,3 +1,5 @@
+import { IS_SERVER_MODE } from "@/lib/data-mode";
+import ServerAnalyticsPage from "./index-server";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import {
@@ -204,7 +206,7 @@ const RANK_COLUMNS: { key: RankKey; label: string; unit?: string }[] = [
   { key: "cost", label: "次均费用" },
 ];
 
-export default function AnalyticsPage() {
+function DemoAnalyticsPage() {
   const period = useUiStore((s) => s.period);
   const setPeriod = useUiStore((s) => s.setPeriod);
 
@@ -771,4 +773,10 @@ export default function AnalyticsPage() {
       </Dialog>
     </Page>
   );
+}
+
+
+export default function AnalyticsPage() {
+  if (IS_SERVER_MODE) return <ServerAnalyticsPage />;
+  return <DemoAnalyticsPage />;
 }

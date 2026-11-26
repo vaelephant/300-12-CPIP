@@ -224,6 +224,15 @@ def seed(db: Session) -> dict[str, int]:
 
 
 def main() -> None:
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--allow-demo", action="store_true", help="explicitly allow demo seed outside dev/test")
+    args = parser.parse_args()
+    from app.config import settings
+
+    if not settings.is_dev and not args.allow_demo:
+        raise SystemExit("refusing to seed demo users outside dev/test; pass --allow-demo explicitly")
     with SessionLocal() as db:
         counts = seed(db)
     print(f"seed complete: {counts} (password for demo users: {DEMO_PASSWORD})")

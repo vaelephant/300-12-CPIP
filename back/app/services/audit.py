@@ -6,6 +6,8 @@ from datetime import UTC, datetime
 
 from fastapi import Request
 
+from sqlalchemy.orm import Session
+
 from app.db import SessionLocal
 from app.domain.enums import AuditResult
 from app.domain.models import AuditEvent, User
@@ -43,6 +45,7 @@ def record_audit(
     detail: str | None = None,
     actor_id: str | None = None,
     actor_role: str | None = None,
+    db: Session | None = None,
 ) -> None:
     """Persist an audit event in its own transaction.
 
@@ -62,9 +65,14 @@ def record_audit(
         ip_masked=_mask_ip(request),
         detail=detail,
     )
+    if db is not None:
+        # Success audit participates in the business transaction: if the
+        # business write rolls back, the audit must roll back with it.
+        db.add(event)
+        return
     try:
-        with SessionLocal() as db:
-            db.add(event)
-            db.commit()
+        with SessionLocal() as audit_db:
+            audit_db.add(event)
+            audit_db.commit()
     except Exception:  # pragma: no cover - audit must not hide the original failure
         logger.exception("failed to persist audit event %s", {"action": action, "object": object_id})

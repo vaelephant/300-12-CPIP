@@ -106,6 +106,21 @@ npm run preview     # 预览生产构建
 - 配置示例见 `front/.env.example`（`VITE_HCC_API_URL`）。
 - 详见 `src/services/README.md`。
 
+## 浏览器 E2E（Playwright）
+
+```bash
+# 首次：安装 Chromium（CI 使用）
+npm run e2e:install
+
+# 启动后端与 5174 server-mode 前端由 playwright.config.ts 管理
+npm run e2e
+
+# 本机已有 Google Chrome 时可复用系统浏览器
+npm run e2e:chrome
+```
+
+覆盖：server 模式登录 → 患者中心 → 患者详情 → 路径库 → 任务中心 → 规划页 → 变异/随访 → 运营分析；同时覆盖 401 清会话、403 无本地回退、登录失败不建本地会话。
+
 ## Clinical Visualization Engine（临床可视化引擎）
 
 将路径设计、患者状态、临床决策、疾病演化、路径推演与执行过程统一纳入可视化体系。

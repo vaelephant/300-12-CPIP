@@ -1,9 +1,10 @@
+import { IS_SERVER_MODE } from "@/lib/data-mode";
 import { useQuery } from "@tanstack/react-query";
 import { LAST_SYNC, PATIENTS, PATIENT_SUMMARY } from "@/data";
 import { hccApi } from "@/services/hcc-api";
 import { toPatient } from "@/services/adapters";
 
-const API_MODE = import.meta.env.VITE_HCC_API_MODE === "server";
+const API_MODE = IS_SERVER_MODE;
 const DIRECTORY_KEY = ["backend", "patient-directory"] as const;
 
 export function usePatientDirectory() {

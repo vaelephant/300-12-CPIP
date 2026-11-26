@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from datetime import UTC, datetime
 from enum import StrEnum
 from typing import Any
 
@@ -69,12 +70,26 @@ _OBSERVATION_CODES = {
     "temp": "TEMP",
 }
 
+# V0.6.1: a unit mismatch is not a normal value. These are the only accepted
+# units for the current HCC rule set; expert rules may refine them later.
+EXPECTED_UNITS: dict[str, set[str | None]] = {
+    "NRS2002": {"分", None, ""},
+    "ICG_R15": {"%"},
+    "INR": {"1", None},
+    "PLT": {"10^9/L", "×10^9/L"},
+    "MRI_LIVER": {"mm"},
+    "TEMP": {"°C", "℃"},
+}
+
 
 @dataclass
 class RuleContext:
     patient: Patient
     snapshot: dict[str, Any]
     observations: dict[str, Observation]
+    as_of: datetime | None = None
+    observation_refs: set[str] = field(default_factory=set)
+    ruleset_version: str | None = None
 
     @property
     def missing(self) -> set[str]:
@@ -88,13 +103,28 @@ class RuleContext:
             return Tri.UNKNOWN
         return Tri.TRUE if value else Tri.FALSE
 
+    def _observation(self, code: str) -> Observation | None:
+        obs = self.observations.get(code)
+        if obs is None:
+            return None
+        if self.observation_refs and obs.id not in self.observation_refs:
+            return None
+        if self.as_of is not None and obs.occurred_at > self.as_of:
+            return None
+        if obs.value_status != "KNOWN":
+            return None
+        expected = EXPECTED_UNITS.get(code)
+        if expected is not None and obs.unit not in expected:
+            return None
+        return obs
+
     def num(self, key: str, code: str | None = None) -> tuple[float | None, list[str]]:
         if self.is_missing(key):
             return None, [key]
         obs_code = code or _OBSERVATION_CODES.get(key)
         if obs_code:
-            obs = self.observations.get(obs_code)
-            if obs is None or obs.value_status != "KNOWN" or obs.value_num is None:
+            obs = self._observation(obs_code)
+            if obs is None or obs.value_num is None:
                 return None, [key]
             return float(obs.value_num), []
         return None, [key]
@@ -116,14 +146,47 @@ class RuleContext:
         return int(value), []
 
 
+def _parse_as_of(snapshot: dict[str, Any]) -> datetime | None:
+    raw = snapshot.get("as_of")
+    if not isinstance(raw, str):
+        return None
+    try:
+        parsed = datetime.fromisoformat(raw.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=UTC)
+    return parsed
+
+
 def build_context(db: Session, patient: Patient, snapshot: dict[str, Any]) -> RuleContext:
-    observations: dict[str, Observation] = {}
+    """Build a deterministic context limited to the snapshot's own time window.
+
+    This intentionally does not pick the latest observation globally: that would
+    allow future data leakage and make plan activation non-reproducible.
+    """
+    as_of = _parse_as_of(snapshot)
+    refs = {str(ref) for ref in snapshot.get("observation_refs") or []}
     rows = db.scalars(
-        select(Observation).where(Observation.patient_id == patient.id).order_by(Observation.occurred_at.desc())
+        select(Observation)
+        .where(Observation.patient_id == patient.id)
+        .order_by(Observation.occurred_at.desc(), Observation.recorded_at.desc())
     ).all()
+    observations: dict[str, Observation] = {}
     for row in rows:
+        if as_of is not None and row.occurred_at > as_of:
+            continue
+        if refs and row.id not in refs:
+            continue
         observations.setdefault(row.code, row)
-    return RuleContext(patient=patient, snapshot=snapshot, observations=observations)
+    return RuleContext(
+        patient=patient,
+        snapshot=snapshot,
+        observations=observations,
+        as_of=as_of,
+        observation_refs=refs,
+        ruleset_version=snapshot.get("ruleset_version"),
+    )
 
 
 def _rule_001(ctx: RuleContext) -> RuleOutcome:
@@ -144,13 +207,20 @@ def _rule_001(ctx: RuleContext) -> RuleOutcome:
     missing.extend(ecog_missing)
     values.append(Tri.UNKNOWN if ecog is None else (Tri.TRUE if ecog <= 1 else Tri.FALSE))
     tumor = ctx.snapshot.get("tumor") or {}
-    if tumor.get("extrahepatic_metastasis") is True:
-        values.append(Tri.FALSE)
-        reasons.append("存在肝外转移")
+    if ctx.is_missing("tumor.extrahepatic_metastasis"):
+        values.append(Tri.UNKNOWN)
+        missing.append("tumor.extrahepatic_metastasis")
     else:
-        values.append(Tri.TRUE)
+        extrahepatic = ctx.tri_from_bool("tumor.extrahepatic_metastasis", tumor.get("extrahepatic_metastasis"))
+        values.append(tri_not(extrahepatic))
+        if extrahepatic == Tri.TRUE:
+            reasons.append("存在肝外转移")
     number = tumor.get("number")
-    values.append(Tri.UNKNOWN if number is None else (Tri.TRUE if number >= 1 else Tri.FALSE))
+    if ctx.is_missing("tumor.number"):
+        values.append(Tri.UNKNOWN)
+        missing.append("tumor.number")
+    else:
+        values.append(Tri.UNKNOWN if number is None else (Tri.TRUE if number >= 1 else Tri.FALSE))
     result = tri_and(*values)
     if result == Tri.UNKNOWN:
         reasons.append("准入必需字段存在 UNKNOWN，不能自动视为符合")
@@ -170,9 +240,14 @@ def _rule_002(ctx: RuleContext) -> RuleOutcome:
         if child == "C":
             reasons.append("Child-Pugh C 级")
     tumor = ctx.snapshot.get("tumor") or {}
-    values.append(Tri.TRUE if tumor.get("extrahepatic_metastasis") is True else Tri.FALSE)
-    if tumor.get("extrahepatic_metastasis") is True:
-        reasons.append("肝外转移")
+    if ctx.is_missing("tumor.extrahepatic_metastasis"):
+        values.append(Tri.UNKNOWN)
+        missing.append("tumor.extrahepatic_metastasis")
+    else:
+        extrahepatic = ctx.tri_from_bool("tumor.extrahepatic_metastasis", tumor.get("extrahepatic_metastasis"))
+        values.append(extrahepatic)
+        if extrahepatic == Tri.TRUE:
+            reasons.append("肝外转移")
     for key in ("liver.refractory_ascites", "liver.encephalopathy"):
         if ctx.is_missing(key):
             values.append(Tri.UNKNOWN)
@@ -196,6 +271,12 @@ def _rule_003(ctx: RuleContext) -> RuleOutcome:
     for key in required:
         if key in {"staging", "liver_reserve", "performance.ecog"}:
             if ctx.is_missing(key):
+                missing.append(key)
+            elif key == "staging" and not ctx.snapshot.get("staging"):
+                missing.append(key)
+            elif key == "liver_reserve" and not ctx.snapshot.get("liver_reserve"):
+                missing.append(key)
+            elif key == "performance.ecog" and ctx.snapshot.get("performance_status", {}).get("ecog") is None:
                 missing.append(key)
             continue
         _, item_missing = ctx.num(key)
@@ -243,7 +324,11 @@ def _rule_008(ctx: RuleContext) -> RuleOutcome:
     child, child_missing = ctx.child_pugh()
     missing.extend(child_missing)
     values.append(Tri.UNKNOWN if child is None else (Tri.TRUE if child in {"A", "B"} else Tri.FALSE))
-    values.append(Tri.FALSE if tumor.get("extrahepatic_metastasis") is True else Tri.TRUE)
+    if ctx.is_missing("tumor.extrahepatic_metastasis"):
+        values.append(Tri.UNKNOWN)
+        missing.append("tumor.extrahepatic_metastasis")
+    else:
+        values.append(tri_not(ctx.tri_from_bool("tumor.extrahepatic_metastasis", tumor.get("extrahepatic_metastasis"))))
     return RuleOutcome("RULE-008", "2.0.0", tri_and(*values), sorted(set(missing)), [])
 
 
@@ -258,7 +343,12 @@ def _rule_009(ctx: RuleContext) -> RuleOutcome:
         missing.append("imaging.portal_vein_patency")
     else:
         values.append(Tri.TRUE)
-    values.append(Tri.FALSE if (ctx.snapshot.get("tumor") or {}).get("extrahepatic_metastasis") is True else Tri.TRUE)
+    tumor = ctx.snapshot.get("tumor") or {}
+    if ctx.is_missing("tumor.extrahepatic_metastasis"):
+        values.append(Tri.UNKNOWN)
+        missing.append("tumor.extrahepatic_metastasis")
+    else:
+        values.append(tri_not(ctx.tri_from_bool("tumor.extrahepatic_metastasis", tumor.get("extrahepatic_metastasis"))))
     return RuleOutcome("RULE-009", "1.1.0", tri_and(*values), sorted(set(missing)), [])
 
 

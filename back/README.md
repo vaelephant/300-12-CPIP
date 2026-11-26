@@ -87,8 +87,8 @@ python3 -m app.seed
 | POST | `/enrollment/evaluate` | 入径评估，UNKNOWN → PENDING_SUPPLEMENT |
 | POST/GET | `/instances` / `/instances/{id}` | 仅 ELIGIBLE + 医生确认后创建实例 |
 | POST/GET | `/instances/{id}/plans` / `/plans/{id}` | 生成/读取个体化计划 |
-| POST | `/plans/{id}/submit` | 计划提交审核 |
-| POST | `/plans/{id}/approve` | 计划审核通过 |
+| POST | `/plans/{id}/submit` | 计划提交审核（执行分支阻断时拒绝） |
+| POST | `/plans/{id}/approve` | 计划审核通过（绑定执行指纹） |
 | POST | `/plans/{id}/activate` | 重新检查安全规则后激活 |
 | GET | `/tasks` | 科室范围任务队列 |
 | GET | `/tasks/overview` | 任务工作队列聚合（患者/路径/依赖/超时） |
@@ -113,7 +113,7 @@ python3 -m app.seed
 
 所有响应带 `X-Request-ID`，可透传上游请求 ID。
 
-> 说明：`contracts/openapi.yaml` 的 **45 个路径均已实现**。`POST /knowledge/retrieve` 与 `POST /predictions` 在外部适配器未配置时返回明确的 `503 + request_id`，不返回伪造证据/预测。
+> 说明：`contracts/openapi.yaml` 的 **53 个路径均已实现**。`POST /knowledge/retrieve` 与 `POST /predictions` 在外部适配器未配置时返回明确的 `503 + request_id`，不返回伪造证据/预测。
 
 ## 授权模型
 
@@ -132,7 +132,7 @@ cd back
 python3 -m pytest -q
 ```
 
-当前覆盖 48 项测试：健康检查、登录成功/失败、JWT 鉴权、请求 ID、参数错误信封、科室范围列表、跨科室拒绝、管理员无病历权限、UNKNOWN 保留、快照引用校验、事件导入幂等、审计拒绝留痕等。
+当前覆盖 75 项后端测试；浏览器 smoke 见 front/e2e：健康检查、登录成功/失败、JWT 鉴权、请求 ID、参数错误信封、科室范围列表、跨科室拒绝、管理员无病历权限、UNKNOWN 保留、快照引用校验、事件导入幂等、审计拒绝留痕等。
 
 ## 验收脚本与备份
 
@@ -149,6 +149,11 @@ python3 scripts/restore_sqlite.py backups/<file>.db --yes
 - `5f3bd1fad641`：S1 患者/事件/快照/审计
 - `6ed97d3e943e`：S2 路径版本/入径/实例/计划/任务/审批
 - `6b18382ccd2d`：S3 变异/随访/结局
+- `8d9bc4e07e04`：V0.6.1 随访预警与联系记录
+- `8303b8e0433f`：计划执行 trace / 图哈希 / 分支阻断
+- `28c838595d31`：重评事项 / 每实例唯一 ACTIVE 计划索引
+- `bb45ec5784f9`：计划执行指纹 / 审批指纹
+- `aa8918224bd7`：实例计划计数器 / 实例内版本唯一
 - 本地使用 SQLite；迁移开启 `render_as_batch`，便于后续 SQLite 兼容变更。
 - 生产切 PostgreSQL 时设置 `HCC_CIP_DATABASE_URL=postgresql+psycopg://...`，重新执行 `alembic upgrade head`；不得把 SQLite 文件当生产数据库。
 - 所有时间戳按 UTC 存储，API 返回 RFC 3339。

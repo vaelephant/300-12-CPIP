@@ -1,3 +1,4 @@
+import { IS_SERVER_MODE } from "@/lib/data-mode";
 import { Link, useParams } from "react-router-dom";
 import {
   Activity,
@@ -201,7 +202,7 @@ function TaskLine({ task }: { task: Task }) {
 
 export default function PatientDetailPage() {
   const { id = "" } = useParams();
-  if (import.meta.env.VITE_HCC_API_MODE === "server") {
+  if (IS_SERVER_MODE) {
     return <ServerPatientDetailPage />;
   }
   const patient = getPatient(id);

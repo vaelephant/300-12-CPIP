@@ -106,4 +106,8 @@ def plan_out(plan: Plan, tasks: list[Task]) -> PlanOut:
         warnings=load_json(plan.warnings_json, []),
         evidence_refs=load_json(plan.evidence_refs_json, []),
         tasks=[task_out(task) for task in tasks],
+        graph_content_hash=plan.graph_content_hash,
+        execution_blocked=plan.execution_blocked,
+        execution_trace=load_json(plan.execution_trace_json, {}),
+        execution_fingerprint=plan.execution_fingerprint,
     )

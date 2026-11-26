@@ -1,3 +1,4 @@
+import { IS_SERVER_MODE } from "@/lib/data-mode";
 import { useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import {
@@ -1058,6 +1059,6 @@ function PlanningWorkbench({ instance, patient }: { instance: PathwayInstance; p
 
 
 export default function PlanningPage() {
-  if (import.meta.env.VITE_HCC_API_MODE === "server") return <ServerPlanningPage />;
+  if (IS_SERVER_MODE) return <ServerPlanningPage />;
   return <DemoPlanningPage />;
 }

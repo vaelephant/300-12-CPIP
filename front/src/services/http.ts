@@ -45,6 +45,10 @@ export async function apiRequest<T>(path: string, init: RequestInit = {}): Promi
   if (token) headers.set("Authorization", `Bearer ${token}`);
 
   const response = await fetch(`${HCC_API_BASE_URL}${path}`, { ...init, headers });
+  if (response.status === 401 && token) {
+    clearBackendToken();
+    if (typeof window !== "undefined") window.dispatchEvent(new Event("hcc:unauthorized"));
+  }
   const responseRequestId = response.headers.get("X-Request-ID") ?? "";
   if (!response.ok) {
     let code = "HTTP_ERROR";

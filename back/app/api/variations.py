@@ -18,7 +18,9 @@ from app.domain.models import PathwayInstance, PathwayVersion, Patient, PatientS
 from app.errors import conflict, forbidden, not_found
 from app.services.audit import record_audit
 from app.services.authz import ensure_patient_access
-from app.services.plans import generate_plan_tasks, plan_summary
+from app.services.graph_execution import select_execution
+from app.services.plans import execution_fingerprint, generate_plan_tasks, next_plan_version, plan_summary
+from app.services.rules import build_context
 
 router = APIRouter(tags=["variations"])
 
@@ -153,7 +155,7 @@ def replan_variation(
         raise conflict("INSTANCE_REQUIRED", "路径实例不存在")
     version = db.get(PathwayVersion, instance.pathway_version_id)
     snapshot = db.scalar(
-        select(PatientSnapshot).where(PatientSnapshot.patient_id == patient.id).order_by(PatientSnapshot.as_of.desc())
+        select(PatientSnapshot).where(PatientSnapshot.patient_id == patient.id).order_by(PatientSnapshot.as_of.desc(), PatientSnapshot.created_at.desc())
     )
     if version is None or snapshot is None:
         raise conflict("REPLAN_CONTEXT_MISSING", "缺少路径版本或患者快照")
@@ -163,7 +165,7 @@ def replan_variation(
         id=f"PLAN-{uuid.uuid4().hex[:12].upper()}",
         instance_id=instance.id,
         patient_id=patient.id,
-        version=f"P{len(existing_plans) + 1}",
+        version=next_plan_version(db, instance.id),
         status="DRAFT",
         snapshot_id=snapshot.id,
         ruleset_version=json.loads(snapshot.payload_json).get("ruleset_version") or "HCC-RULES-0.6.0",
@@ -173,7 +175,19 @@ def replan_variation(
     db.add(plan)
     db.flush()
     payload = json.loads(snapshot.payload_json)
-    tasks = generate_plan_tasks(plan=plan, instance=instance, version=version, snapshot_missing_fields=payload.get("missing_fields", []))
+    selection = select_execution(json.loads(version.graph_json), build_context(db, patient, payload))
+    selection.trace["graph_hash"] = version.content_hash
+    tasks = generate_plan_tasks(
+        plan=plan,
+        instance=instance,
+        version=version,
+        snapshot_missing_fields=payload.get("missing_fields", []),
+        selected_nodes=selection.selected_nodes,
+    )
+    plan.graph_content_hash = version.content_hash
+    plan.execution_trace_json = json.dumps(selection.trace, ensure_ascii=False)
+    plan.execution_blocked = selection.blocked
+    plan.execution_fingerprint = execution_fingerprint(version.content_hash, snapshot.id, plan.execution_trace_json)
     old_tasks = db.scalars(select(Task).where(Task.plan_id == active_plan.id)).all() if active_plan else []
     completed_by_node = {task.node_key: task for task in old_tasks if task.status == "COMPLETED"}
     for task in tasks:
@@ -185,9 +199,10 @@ def replan_variation(
             task.assignee = old.assignee
         db.add(task)
     plan.summary = plan_summary(version, len(tasks), payload.get("missing_fields", []))
-    plan.warnings_json = json.dumps(
-        [{"level": "WARN", "message": f"变异重规划：{variation.title}"}], ensure_ascii=False
-    )
+    warnings = [{"level": "WARN", "message": f"变异重规划：{variation.title}"}]
+    if selection.blocked:
+        warnings.append({"level": "RISK", "message": f"执行分支阻断：{selection.block_reason}"})
+    plan.warnings_json = json.dumps(warnings, ensure_ascii=False)
     evidence = sorted({ref for node in json.loads(version.graph_json).get("nodes", []) for ref in node.get("evidence_refs", [])})
     plan.evidence_refs_json = json.dumps(evidence, ensure_ascii=False)
     variation.status = "REPLAN_PENDING"

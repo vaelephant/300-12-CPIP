@@ -1,3 +1,4 @@
+import { IS_SERVER_MODE } from "@/lib/data-mode";
 import { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Controller, useForm } from "react-hook-form";
@@ -771,6 +772,6 @@ function DemoPathwaysPage() {
 
 
 export default function PathwaysPage() {
-  if (import.meta.env.VITE_HCC_API_MODE === "server") return <ServerPathwaysPage />;
+  if (IS_SERVER_MODE) return <ServerPathwaysPage />;
   return <DemoPathwaysPage />;
 }

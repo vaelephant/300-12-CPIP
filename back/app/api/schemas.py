@@ -13,6 +13,7 @@ class LoginRequest(BaseModel):
 
 class UserOut(BaseModel):
     user_id: str
+    employee_no: str | None = None
     name: str
     role: str
     data_scope: str
@@ -350,6 +351,10 @@ class PlanOut(BaseModel):
     warnings: list[dict[str, Any]] = Field(default_factory=list)
     evidence_refs: list[str] = Field(default_factory=list)
     tasks: list[TaskOut] = Field(default_factory=list)
+    graph_content_hash: str | None = None
+    execution_blocked: bool = False
+    execution_trace: dict[str, Any] = Field(default_factory=dict)
+    execution_fingerprint: str | None = None
 
 
 class TaskTransitionRequest(BaseModel):
@@ -639,3 +644,58 @@ class TaskOverviewOut(BaseModel):
 class TaskOverviewListOut(BaseModel):
     items: list[TaskOverviewOut]
     meta: PageMeta
+
+
+class FollowupAlertOut(BaseModel):
+    alert_id: str
+    followup_id: str
+    patient_id: str
+    risk_level: str
+    reason: str
+    status: str
+    channel: str
+    created_by: str
+    created_at: datetime
+    notified_at: datetime | None = None
+    acknowledged_by: str | None = None
+    acknowledged_at: datetime | None = None
+    resolved_by: str | None = None
+    resolved_at: datetime | None = None
+    resolution: str | None = None
+    closed_by: str | None = None
+    closed_at: datetime | None = None
+
+
+class FollowupAlertListOut(BaseModel):
+    items: list[FollowupAlertOut]
+    meta: PageMeta
+
+
+class FollowupAlertResolveRequest(BaseModel):
+    resolution: str = Field(min_length=1, max_length=2000)
+
+
+class FollowupAlertCloseRequest(BaseModel):
+    reason: str = Field(min_length=1, max_length=2000)
+
+
+class ReassessmentOut(BaseModel):
+    reassessment_id: str
+    patient_id: str
+    instance_id: str
+    event_id: str | None = None
+    trigger_type: str
+    reason: str
+    status: str
+    plan_id: str | None = None
+    created_at: datetime
+    resolved_at: datetime | None = None
+
+
+class ReassessmentListOut(BaseModel):
+    items: list[ReassessmentOut]
+    meta: PageMeta
+
+
+class ReassessmentDismissRequest(BaseModel):
+    reason: str = Field(min_length=1, max_length=2000)

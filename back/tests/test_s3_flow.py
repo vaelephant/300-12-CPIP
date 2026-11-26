@@ -95,6 +95,36 @@ def test_followup_contact_escalation_and_close(client):
     assert escalated.json()["risk_level"] == "HIGH"
     assert escalated.json()["status"] == "PENDING_ACTION"
     assert escalated.json()["escalation"]["required"] is True
+    assert escalated.json()["escalation"]["status"] == "NOTIFICATION_PENDING"
+    alert_id = escalated.json()["escalation"]["alert_id"]
+    # Cannot close follow-up while alert is open.
+    assert client.post(
+        f"/api/v1/followups/{followup['followup_id']}/close",
+        headers=headers,
+        json={"reason": "提前关闭"},
+    ).status_code == 409
+    # Cannot acknowledge before notification.
+    assert client.post(f"/api/v1/followup-alerts/{alert_id}/acknowledge", headers=headers).status_code == 409
+    notified = client.post(f"/api/v1/followup-alerts/{alert_id}/notify", headers=headers)
+    assert notified.status_code == 200
+    assert notified.json()["status"] == "NOTIFIED"
+    acknowledged = client.post(f"/api/v1/followup-alerts/{alert_id}/acknowledge", headers=headers)
+    assert acknowledged.status_code == 200
+    assert acknowledged.json()["acknowledged_by"] is not None
+    resolved = client.post(
+        f"/api/v1/followup-alerts/{alert_id}/resolve",
+        headers=headers,
+        json={"resolution": "已联系患者并安排门诊复核"},
+    )
+    assert resolved.status_code == 200
+    assert resolved.json()["status"] == "RESOLVED"
+    closed_alert = client.post(
+        f"/api/v1/followup-alerts/{alert_id}/close",
+        headers=headers,
+        json={"reason": "处置完成"},
+    )
+    assert closed_alert.status_code == 200
+    assert closed_alert.json()["status"] == "CLOSED"
     closed = client.post(
         f"/api/v1/followups/{followup['followup_id']}/close",
         headers=headers,

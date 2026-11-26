@@ -1237,6 +1237,156 @@ components:
             $ref: '#/components/schemas/TaskOverview'
         meta:
           $ref: '#/components/schemas/PageMeta'
+    FollowupAlert:
+      type: object
+      additionalProperties: true
+      required:
+      - alert_id
+      - followup_id
+      - patient_id
+      - risk_level
+      - reason
+      - status
+      - channel
+      - created_at
+      properties:
+        alert_id:
+          type: string
+        followup_id:
+          type: string
+        patient_id:
+          type: string
+        risk_level:
+          type: string
+        reason:
+          type: string
+        status:
+          enum:
+          - OPEN
+          - NOTIFICATION_PENDING
+          - NOTIFIED
+          - ACKNOWLEDGED
+          - IN_ACTION
+          - RESOLVED
+          - CLOSED
+        channel:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        notified_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        acknowledged_by:
+          type:
+          - string
+          - 'null'
+        acknowledged_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        resolution:
+          type:
+          - string
+          - 'null'
+    FollowupAlertList:
+      type: object
+      required:
+      - items
+      - meta
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/FollowupAlert'
+        meta:
+          $ref: '#/components/schemas/PageMeta'
+    AlertResolve:
+      type: object
+      additionalProperties: false
+      required:
+      - resolution
+      properties:
+        resolution:
+          type: string
+          maxLength: 2000
+    AlertClose:
+      type: object
+      additionalProperties: false
+      required:
+      - reason
+      properties:
+        reason:
+          type: string
+          maxLength: 2000
+    Reassessment:
+      type: object
+      additionalProperties: false
+      required:
+      - reassessment_id
+      - patient_id
+      - instance_id
+      - trigger_type
+      - reason
+      - status
+      - created_at
+      properties:
+        reassessment_id:
+          type: string
+        patient_id:
+          type: string
+        instance_id:
+          type: string
+        event_id:
+          type:
+          - string
+          - 'null'
+        trigger_type:
+          type: string
+        reason:
+          type: string
+        status:
+          enum:
+          - OPEN
+          - REPLAN_DRAFTED
+          - DISMISSED
+          - RESOLVED
+        plan_id:
+          type:
+          - string
+          - 'null'
+        created_at:
+          type: string
+          format: date-time
+        resolved_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+    ReassessmentList:
+      type: object
+      required:
+      - items
+      - meta
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Reassessment'
+        meta:
+          $ref: '#/components/schemas/PageMeta'
+    ReassessmentDismiss:
+      type: object
+      additionalProperties: false
+      required:
+      - reason
+      properties:
+        reason:
+          type: string
+          maxLength: 2000
 paths:
   /health:
     get:
@@ -2709,3 +2859,241 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /followup-alerts:
+    get:
+      tags:
+      - followups
+      summary: List human follow-up alert queue
+      operationId: list_followup_alerts
+      parameters:
+      - name: status
+        in: query
+        schema:
+          type: string
+      - name: risk
+        in: query
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Alerts
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FollowupAlertList'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema: &id008
+                $ref: '#/components/schemas/ErrorResponse'
+  /followup-alerts/{alert_id}/notify:
+    post:
+      tags:
+      - followups
+      summary: Enqueue in-app notification
+      operationId: notify_followup_alert
+      parameters:
+      - name: alert_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Notified
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FollowupAlert'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema: *id008
+        '409':
+          description: Invalid state
+          content:
+            application/json:
+              schema: *id008
+  /followup-alerts/{alert_id}/acknowledge:
+    post:
+      tags:
+      - followups
+      summary: Acknowledge alert by authorized user
+      operationId: acknowledge_followup_alert
+      parameters:
+      - name: alert_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Acknowledged
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FollowupAlert'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema: *id008
+        '409':
+          description: Invalid state
+          content:
+            application/json:
+              schema: *id008
+  /followup-alerts/{alert_id}/resolve:
+    post:
+      tags:
+      - followups
+      summary: Record alert resolution
+      operationId: resolve_followup_alert
+      parameters:
+      - name: alert_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Resolved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FollowupAlert'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema: *id008
+        '409':
+          description: Invalid state
+          content:
+            application/json:
+              schema: *id008
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AlertResolve'
+  /followup-alerts/{alert_id}/close:
+    post:
+      tags:
+      - followups
+      summary: Close resolved alert
+      operationId: close_followup_alert
+      parameters:
+      - name: alert_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Closed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FollowupAlert'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema: *id008
+        '409':
+          description: Invalid state
+          content:
+            application/json:
+              schema: *id008
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AlertClose'
+  /reassessments:
+    get:
+      tags:
+      - reassessments
+      summary: List event-driven reassessment items
+      operationId: list_reassessments
+      parameters:
+      - name: status
+        in: query
+        schema:
+          type: string
+      - name: instance_id
+        in: query
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Reassessments
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReassessmentList'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema: &id009
+                $ref: '#/components/schemas/ErrorResponse'
+  /reassessments/{reassessment_id}/dismiss:
+    post:
+      tags:
+      - reassessments
+      summary: Dismiss a reassessment without changing the active plan
+      operationId: dismiss_reassessment
+      parameters:
+      - name: reassessment_id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReassessmentDismiss'
+      responses:
+        '200':
+          description: Reassessment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reassessment'
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema: *id009
+  /reassessments/{reassessment_id}/replan:
+    post:
+      tags:
+      - reassessments
+      summary: Generate a draft replan from a reassessment, keeping the active plan
+      operationId: replan_reassessment
+      parameters:
+      - name: reassessment_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: Draft plan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Plan'
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema: *id009

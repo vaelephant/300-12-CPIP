@@ -19,7 +19,14 @@ from app.api.schemas import (
     FollowupOut,
 )
 from app.db import get_db
-from app.domain.models import Followup, PathwayInstance, Patient, User
+from app.domain.models import (
+    Followup,
+    FollowupAlert,
+    FollowupContactRecord,
+    PathwayInstance,
+    Patient,
+    User,
+)
 from app.errors import conflict, forbidden, not_found
 from app.services.audit import record_audit
 from app.services.authz import ensure_patient_access
@@ -117,11 +124,26 @@ def record_contact(
         raise forbidden("当前角色无权记录随访")
     if item.status in {"CLOSED", "DECLINED"}:
         raise conflict("FOLLOWUP_CLOSED", "已关闭或拒绝的随访不能继续记录")
+    contact = FollowupContactRecord(
+        id=f"FC-{uuid.uuid4().hex[:12].upper()}",
+        followup_id=item.id,
+        patient_id=patient.id,
+        channel=body.channel,
+        outcome=body.outcome,
+        raw_patient_text=body.raw_patient_text,
+        structured_extract_json=json.dumps(body.structured_extract or {}, ensure_ascii=False),
+        confirmed_by_human=body.confirmed_by_human,
+        confirmed_by=user.id if body.confirmed_by_human else None,
+        confirmed_at=datetime.now(UTC) if body.confirmed_by_human else None,
+        attempted_at=datetime.now(UTC),
+        created_by=user.id,
+    )
+    db.add(contact)
     contacts = json.loads(item.contacts_json or "[]")
     contacts.append(
         {
-            "contact_id": f"FC-{uuid.uuid4().hex[:10].upper()}",
-            "attempted_at": datetime.now(UTC).isoformat(),
+            "contact_id": contact.id,
+            "attempted_at": contact.attempted_at.isoformat(),
             "channel": body.channel,
             "outcome": body.outcome,
             "raw_patient_text": body.raw_patient_text,
@@ -130,7 +152,9 @@ def record_contact(
         }
     )
     item.contacts_json = json.dumps(contacts, ensure_ascii=False)
-    if body.structured_extract:
+    # Unconfirmed extraction is stored separately but never promoted to the
+    # structured clinical record.
+    if body.structured_extract and body.confirmed_by_human:
         record = json.loads(item.structured_record_json or "{}")
         record.update(body.structured_extract)
         item.structured_record_json = json.dumps(record, ensure_ascii=False)
@@ -171,20 +195,33 @@ def escalate_followup(
         raise forbidden("当前角色无权升级随访风险")
     if item.status in {"CLOSED", "DECLINED"}:
         raise conflict("FOLLOWUP_CLOSED", "已关闭随访不能升级")
+    existing = db.scalar(
+        select(FollowupAlert).where(
+            FollowupAlert.followup_id == item.id,
+            FollowupAlert.status.in_(["OPEN", "NOTIFICATION_PENDING", "NOTIFIED", "ACKNOWLEDGED", "IN_ACTION"]),
+        )
+    )
+    if existing is not None:
+        raise conflict("ALERT_EXISTS", "该随访已有未关闭预警，不能重复升级")
     now = datetime.now(UTC)
+    alert = FollowupAlert(
+        id=f"FA-{uuid.uuid4().hex[:12].upper()}",
+        followup_id=item.id,
+        patient_id=patient.id,
+        risk_level="HIGH",
+        reason=body.reason,
+        status="NOTIFICATION_PENDING",
+        channel="IN_APP_QUEUE",
+        created_by=user.id,
+    )
     item.risk_level = "HIGH"
     item.status = "PENDING_ACTION"
     item.escalation_json = json.dumps(
-        {
-            "required": True,
-            "reason": body.reason,
-            "notified_at": now.isoformat(),
-            "acknowledged_at": now.isoformat(),
-            "resolved_at": None,
-        },
+        {"alert_id": alert.id, "required": True, "reason": body.reason, "status": "NOTIFICATION_PENDING"},
         ensure_ascii=False,
     )
     item.updated_at = now
+    db.add(alert)
     db.commit()
     record_audit(
         request=request,
@@ -193,7 +230,7 @@ def escalate_followup(
         object_type="FOLLOWUP",
         object_id=item.id,
         result="SUCCESS",
-        detail=body.reason,
+        detail=f"alert={alert.id}",
     )
     return followup_out(item)
 
@@ -213,11 +250,10 @@ def close_followup(
         raise forbidden("当前角色无权关闭随访")
     if item.status == "CLOSED":
         raise conflict("FOLLOWUP_CLOSED", "随访已关闭")
+    alerts = db.scalars(select(FollowupAlert).where(FollowupAlert.followup_id == item.id)).all()
+    if any(alert.status != "CLOSED" for alert in alerts):
+        raise conflict("ALERT_NOT_CLOSED", "随访存在未关闭预警，必须先完成通知/签收/处置/关闭")
     now = datetime.now(UTC)
-    escalation = json.loads(item.escalation_json or "{}")
-    if escalation:
-        escalation["resolved_at"] = now.isoformat()
-        item.escalation_json = json.dumps(escalation, ensure_ascii=False)
     item.status = "CLOSED"
     item.updated_at = now
     db.commit()

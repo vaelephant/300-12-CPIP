@@ -99,10 +99,32 @@ def validate_pathway(graph: dict[str, Any], rules: list[dict[str, Any]]) -> dict
     adjacency: dict[str, list[str]] = defaultdict(list)
     reverse: dict[str, list[str]] = defaultdict(list)
     edges_seen: set[tuple[str, str]] = set()
+    edge_ids_seen: set[str] = set()
+    from app.services.graph_execution import parse_condition
+
     for edge in raw_edges:
         if not isinstance(edge, dict):
             errors.append({"code": "INVALID_EDGE", "message": "边不是对象"})
             continue
+        edge_id = str(edge.get("edge_id") or f"{edge.get('source')}->{edge.get('target')}")
+        if edge_id in edge_ids_seen:
+            errors.append({"code": "DUPLICATE_EDGE_ID", "message": f"edge_id 重复：{edge_id}"})
+        edge_ids_seen.add(edge_id)
+        if edge.get("gateway_type") not in {None, "XOR", "AND"}:
+            errors.append({"code": "INVALID_GATEWAY", "message": f"网关类型非法：{edge.get('gateway_type')}"})
+        if edge.get("condition") is not None:
+            parsed = parse_condition(edge)
+            if parsed is None:
+                errors.append({"code": "INVALID_CONDITION", "message": f"边 {edge_id} 条件表达式无效"})
+            else:
+                rule_id, version, _ = parsed
+                supported = SUPPORTED_RULES.get(rule_id)
+                if supported is None:
+                    errors.append({"code": "CONDITION_RULE_UNREGISTERED", "message": f"条件引用未注册规则：{rule_id}"})
+                elif supported != version:
+                    errors.append({"code": "CONDITION_RULE_VERSION", "message": f"条件规则版本不支持：{rule_id}@{version}"})
+            if edge.get("is_default") is True:
+                errors.append({"code": "DEFAULT_WITH_CONDITION", "message": f"默认边不能同时携带条件：{edge_id}"})
         source, target = edge.get("source"), edge.get("target")
         if source not in nodes or target not in nodes:
             errors.append({"code": "EDGE_REFERENCE_INVALID", "message": f"边引用了不存在的节点：{source} -> {target}"})
@@ -134,6 +156,18 @@ def validate_pathway(graph: dict[str, Any], rules: list[dict[str, Any]]) -> dict
     if dead_ends:
         errors.append({"code": "DEAD_END", "message": f"非结束节点没有出边：{', '.join(sorted(dead_ends))}"})
     for key, node in nodes.items():
+        gateway_type = node.get("gateway_type")
+        if gateway_type not in {None, "XOR", "AND"}:
+            errors.append({"code": "INVALID_GATEWAY_TYPE", "message": f"节点 {key} 网关类型非法：{gateway_type}", "node_key": key})
+        elif gateway_type == "AND":
+            out_edges = [edge for edge in raw_edges if isinstance(edge, dict) and edge.get("source") == key]
+            if len(out_edges) < 2:
+                errors.append({"code": "AND_GATEWAY_FANOUT", "message": f"AND 网关 {key} 至少需要 2 条出边", "node_key": key})
+            if any(edge.get("condition") is not None for edge in out_edges):
+                errors.append({"code": "AND_GATEWAY_CONDITION", "message": f"AND 网关 {key} 不允许条件边", "node_key": key})
+        join_policy = node.get("join_policy")
+        if join_policy not in {None, "ALL_ACTIVE"}:
+            errors.append({"code": "UNSUPPORTED_JOIN_POLICY", "message": f"节点 {key} join_policy 不受支持：{join_policy}", "node_key": key})
         if node.get("type") == "START" and reverse.get(key):
             errors.append({"code": "START_INCOMING", "message": "开始节点不允许有入边", "node_key": key})
         if node.get("type") == "END" and adjacency.get(key):

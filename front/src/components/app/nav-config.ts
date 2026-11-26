@@ -4,6 +4,7 @@ import {
   ClipboardList,
   FlaskConical,
   GitBranch,
+  HeartPulse,
   LayoutDashboard,
   Presentation,
   Route,
@@ -49,6 +50,7 @@ export const NAV_GROUPS: NavGroup[] = [
       { label: "患者中心", to: "/patients", icon: Users, permissions: ["patient.view"], match: ["/patients", "/planning"] },
       { label: "任务中心", to: "/tasks", icon: ClipboardList, permissions: ["task.view"], badge: 8, tone: "risk" },
       { label: "变异管理", to: "/variations", icon: GitBranch, permissions: ["variation.view"], badge: 3, tone: "risk" },
+      { label: "随访管理", to: "/followups", icon: HeartPulse, permissions: ["patient.view"] },
     ],
   },
   {
@@ -85,6 +87,7 @@ export const ROUTE_TITLES: Record<string, string> = {
   "/patients": "患者中心",
   "/tasks": "任务中心",
   "/variations": "变异管理",
+  "/followups": "随访管理",
   "/knowledge": "知识库",
   "/simulation": "路径模拟",
   "/analytics": "运营分析",

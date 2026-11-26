@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import UTC, date, datetime
 
-from sqlalchemy import Boolean, Date, Float, ForeignKey, Integer, String, Text
+from sqlalchemy import Boolean, Date, Float, ForeignKey, Index, Integer, String, Text, text
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 from app.domain.types import UTCDateTime
@@ -205,10 +205,21 @@ class PathwayInstance(Base):
     active_plan_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
     current_stage: Mapped[str | None] = mapped_column(String(64), nullable=True)
     data_completeness: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    plan_counter: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
 
 
 class Plan(Base):
     __tablename__ = "plans"
+    __table_args__ = (
+        Index(
+            "uq_plans_one_active_per_instance",
+            "instance_id",
+            unique=True,
+            sqlite_where=text("status = 'ACTIVE'"),
+            postgresql_where=text("status = 'ACTIVE'"),
+        ),
+        Index("uq_plan_instance_version", "instance_id", "version", unique=True),
+    )
 
     id: Mapped[str] = mapped_column(String(64), primary_key=True)
     instance_id: Mapped[str] = mapped_column(ForeignKey("pathway_instances.id"), index=True, nullable=False)
@@ -226,6 +237,10 @@ class Plan(Base):
     summary: Mapped[str] = mapped_column(Text, nullable=False, default="")
     warnings_json: Mapped[str] = mapped_column(Text, nullable=False, default="[]")
     evidence_refs_json: Mapped[str] = mapped_column(Text, nullable=False, default="[]")
+    graph_content_hash: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    execution_trace_json: Mapped[str] = mapped_column(Text, nullable=False, default="{}")
+    execution_blocked: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    execution_fingerprint: Mapped[str | None] = mapped_column(String(80), nullable=True)
 
 
 class Task(Base):
@@ -263,6 +278,7 @@ class Approval(Base):
     reviewer: Mapped[str | None] = mapped_column(String(64), nullable=True)
     reviewed_at: Mapped[datetime | None] = mapped_column(UTCDateTime, nullable=True)
     comment: Mapped[str | None] = mapped_column(Text, nullable=True)
+    subject_fingerprint: Mapped[str | None] = mapped_column(String(80), nullable=True)
 
 
 class Variation(Base):
@@ -328,3 +344,58 @@ class Outcome(Base):
     recorded_by: Mapped[str] = mapped_column(String(64), nullable=False)
     recorded_at: Mapped[datetime] = mapped_column(UTCDateTime, default=utcnow, nullable=False)
     created_at: Mapped[datetime] = mapped_column(UTCDateTime, default=utcnow, nullable=False)
+
+
+class FollowupAlert(Base):
+    __tablename__ = "followup_alerts"
+
+    id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    followup_id: Mapped[str] = mapped_column(ForeignKey("followups.id"), index=True, nullable=False)
+    patient_id: Mapped[str] = mapped_column(ForeignKey("patients.id"), index=True, nullable=False)
+    risk_level: Mapped[str] = mapped_column(String(16), nullable=False, default="HIGH")
+    reason: Mapped[str] = mapped_column(Text, nullable=False)
+    status: Mapped[str] = mapped_column(String(32), nullable=False, default="NOTIFICATION_PENDING")
+    channel: Mapped[str] = mapped_column(String(32), nullable=False, default="IN_APP_QUEUE")
+    created_by: Mapped[str] = mapped_column(String(64), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(UTCDateTime, default=utcnow, nullable=False)
+    notified_at: Mapped[datetime | None] = mapped_column(UTCDateTime, nullable=True)
+    acknowledged_by: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    acknowledged_at: Mapped[datetime | None] = mapped_column(UTCDateTime, nullable=True)
+    resolved_by: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    resolved_at: Mapped[datetime | None] = mapped_column(UTCDateTime, nullable=True)
+    resolution: Mapped[str | None] = mapped_column(Text, nullable=True)
+    closed_by: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    closed_at: Mapped[datetime | None] = mapped_column(UTCDateTime, nullable=True)
+
+
+class FollowupContactRecord(Base):
+    __tablename__ = "followup_contacts"
+
+    id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    followup_id: Mapped[str] = mapped_column(ForeignKey("followups.id"), index=True, nullable=False)
+    patient_id: Mapped[str] = mapped_column(ForeignKey("patients.id"), index=True, nullable=False)
+    channel: Mapped[str] = mapped_column(String(16), nullable=False)
+    outcome: Mapped[str] = mapped_column(String(16), nullable=False)
+    raw_patient_text: Mapped[str | None] = mapped_column(Text, nullable=True)
+    structured_extract_json: Mapped[str] = mapped_column(Text, nullable=False, default="{}")
+    confirmed_by_human: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    confirmed_by: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    confirmed_at: Mapped[datetime | None] = mapped_column(UTCDateTime, nullable=True)
+    attempted_at: Mapped[datetime] = mapped_column(UTCDateTime, default=utcnow, nullable=False)
+    created_by: Mapped[str] = mapped_column(String(64), nullable=False)
+
+
+class Reassessment(Base):
+    __tablename__ = "reassessments"
+
+    id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    patient_id: Mapped[str] = mapped_column(ForeignKey("patients.id"), index=True, nullable=False)
+    instance_id: Mapped[str] = mapped_column(ForeignKey("pathway_instances.id"), index=True, nullable=False)
+    event_id: Mapped[str | None] = mapped_column(ForeignKey("clinical_events.id"), nullable=True)
+    trigger_type: Mapped[str] = mapped_column(String(64), nullable=False, default="CLINICAL_EVENT")
+    reason: Mapped[str] = mapped_column(Text, nullable=False)
+    status: Mapped[str] = mapped_column(String(24), nullable=False, default="OPEN")
+    plan_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    created_by: Mapped[str] = mapped_column(String(64), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(UTCDateTime, default=utcnow, nullable=False)
+    resolved_at: Mapped[datetime | None] = mapped_column(UTCDateTime, nullable=True)

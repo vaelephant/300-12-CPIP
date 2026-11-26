@@ -198,6 +198,17 @@ def main() -> int:
             )
         )
         assert escalated["risk_level"] == "HIGH"
+        alert_id = escalated["escalation"]["alert_id"]
+        require(client.post(f"/followup-alerts/{alert_id}/notify", headers=clinician))
+        require(client.post(f"/followup-alerts/{alert_id}/acknowledge", headers=clinician))
+        require(
+            client.post(
+                f"/followup-alerts/{alert_id}/resolve",
+                headers=clinician,
+                json={"resolution": "已联系患者并安排门诊复核"},
+            )
+        )
+        require(client.post(f"/followup-alerts/{alert_id}/close", headers=clinician, json={"reason": "处置完成"}))
         require(
             client.post(
                 f"/followups/{followup['followup_id']}/close",
@@ -205,7 +216,7 @@ def main() -> int:
                 json={"reason": "已安排门诊复核"},
             )
         )
-        print("[ok] follow-up contact -> HIGH risk escalation -> human closure")
+        print("[ok] follow-up contact -> alert notify/ack/resolve/close -> human closure")
 
         outcome = require(
             client.post(

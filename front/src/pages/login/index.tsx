@@ -1,3 +1,4 @@
+import { IS_SERVER_MODE } from "@/lib/data-mode";
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -19,8 +20,9 @@ import { SyntheticTag } from "@/components/app/section";
 import { PatientAvatar } from "@/components/app/patient-avatar";
 import { ApiError } from "@/services/http";
 import { hccApi } from "@/services/hcc-api";
+import type { BackendUser } from "@/services/types";
 
-const API_MODE = import.meta.env.VITE_HCC_API_MODE === "server";
+const API_MODE = IS_SERVER_MODE;
 
 const schema = z.object({
   employeeNo: z.string().min(1, "请输入工号"),
@@ -45,6 +47,7 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const loginAs = useSessionStore((s) => s.loginAs);
+  const loginFromBackend = useSessionStore((s) => s.loginFromBackend);
   const [selected, setSelected] = useState(DEMO_ACCOUNTS[0].user.id);
   const [showPassword, setShowPassword] = useState(false);
   const [pending, setPending] = useState(false);
@@ -78,12 +81,20 @@ export default function LoginPage() {
       setPending(true);
       try {
         await hccApi.login({ employee_no: employeeNo, password });
+        const me: BackendUser = await hccApi.me();
+        loginFromBackend(me);
+        toast.success(`已登录 · ${me.name}`, {
+          description: "身份来自后端 /me；前端角色仅用于展示，授权以服务端为准。",
+          duration: 3000,
+        });
+        navigate(target?.from && target.from !== "/login" ? target.from : "/dashboard", { replace: true });
       } catch (error) {
-        setPending(false);
         const message = error instanceof ApiError ? `${error.message}（${error.requestId}）` : "后端登录失败";
-        toast.error("无法连接 HCC-CIP 后端", { description: message, duration: 4000 });
-        return;
+        toast.error("登录失败", { description: message, duration: 4000 });
+      } finally {
+        setPending(false);
       }
+      return;
     }
     doLogin(userId);
   };

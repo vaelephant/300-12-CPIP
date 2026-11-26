@@ -1,3 +1,4 @@
+import { IS_SERVER_MODE } from "@/lib/data-mode";
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -645,6 +646,6 @@ function DemoTasksPage() {
 
 
 export default function TasksPage() {
-  if (import.meta.env.VITE_HCC_API_MODE === "server") return <ServerTasksPage />;
+  if (IS_SERVER_MODE) return <ServerTasksPage />;
   return <DemoTasksPage />;
 }

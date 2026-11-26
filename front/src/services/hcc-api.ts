@@ -1,5 +1,6 @@
 import { apiRequest, clearBackendToken, getBackendToken, setBackendToken } from "./http";
 import type {
+  BackendAnalyticsSummary,
   BackendEnrollmentEvaluation,
   BackendFollowup,
   BackendInstance,
@@ -139,6 +140,11 @@ export const hccApi = {
     apiRequest<BackendVariation>("/variations", { method: "POST", body: JSON.stringify(payload) }),
   replanVariation: (variationId: string) =>
     apiRequest<BackendPlan>(`/variations/${variationId}/replan`, { method: "POST" }),
+  resolveVariation: (variationId: string, payload: { resolution: string; close: boolean }) =>
+    apiRequest<BackendVariation>(`/variations/${variationId}/resolve`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
   listFollowups: (params: { status?: string; risk?: string } = {}) => {
     const search = new URLSearchParams();
     if (params.status) search.set("status", params.status);
@@ -172,5 +178,5 @@ export const hccApi = {
   specialtyAssessment: (patientId: string) =>
     apiRequest<Record<string, unknown>>(`/patients/${patientId}/specialty-assessment`),
   analyticsSummary: (period = "last_30_days") =>
-    apiRequest<Record<string, unknown>>(`/analytics/summary?period=${encodeURIComponent(period)}`),
+    apiRequest<BackendAnalyticsSummary>(`/analytics/summary?period=${encodeURIComponent(period)}`),
 };

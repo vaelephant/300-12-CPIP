@@ -4,7 +4,7 @@ import json
 from datetime import UTC, datetime
 
 from fastapi import APIRouter, Depends, Query, Request
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_user
@@ -172,16 +172,29 @@ def transition_task(
     if body.to_status == "COMPLETED" and not (body.result_summary or "").strip():
         raise conflict("RESULT_REQUIRED", "完成任务必须记录结果摘要")
 
-    task.status = body.to_status
-    task.row_version += 1
-    if task.assignee is None:
-        task.assignee = user.id
+    # Atomic compare-and-swap: never update from a stale in-memory read.
+    values = {
+        "status": body.to_status,
+        "row_version": Task.row_version + 1,
+        "assignee": task.assignee or user.id,
+    }
     if body.to_status == "COMPLETED":
-        task.completed_at = datetime.now(UTC)
-        task.result_summary = body.result_summary
+        values["completed_at"] = datetime.now(UTC)
+        values["result_summary"] = body.result_summary
     if body.to_status == "CANCELLED":
-        task.result_summary = body.result_summary or "已取消"
-    db.commit()
+        values["result_summary"] = body.result_summary or "已取消"
+    result = db.execute(
+        update(Task)
+        .where(
+            Task.id == task.id,
+            Task.row_version == body.expected_version,
+            Task.status == task.status,
+        )
+        .values(**values)
+    )
+    if result.rowcount != 1:
+        db.rollback()
+        raise conflict("VERSION_CONFLICT", "任务并发更新冲突，请刷新后重试")
     record_audit(
         request=request,
         actor=user,
@@ -189,6 +202,9 @@ def transition_task(
         object_type="TASK",
         object_id=task.id,
         result="SUCCESS",
-        detail=f"{task.status}, version={task.row_version}",
+        detail=f"{body.to_status}, version={body.expected_version + 1}",
+        db=db,
     )
+    db.commit()
+    db.refresh(task)
     return task_out(task)

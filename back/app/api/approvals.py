@@ -14,6 +14,7 @@ from app.domain.enums import Role
 from app.domain.models import Approval, PathwayVersion, Plan, User
 from app.errors import conflict, forbidden, not_found
 from app.services.audit import record_audit
+from app.services.plans import execution_fingerprint
 
 router = APIRouter(tags=["approvals"])
 
@@ -44,6 +45,9 @@ def decide_approval(
             if approve:
                 if plan.status != "PENDING_APPROVAL":
                     raise conflict("INVALID_PLAN_STATE", "计划不在待审核状态")
+                current = execution_fingerprint(plan.graph_content_hash, plan.snapshot_id, plan.execution_trace_json)
+                if approval.subject_fingerprint != current or plan.execution_fingerprint != current:
+                    raise conflict("PLAN_FINGERPRINT_MISMATCH", "计划执行轨迹与审批指纹不一致")
                 plan.status = "APPROVED"
                 plan.approved_by = reviewer.id
                 plan.approved_at = datetime.now(UTC)
@@ -88,7 +92,6 @@ def approve(
     if approval is None:
         raise not_found("审批申请不存在")
     decide_approval(db, approval, user, approve=True, comment=body.comment)
-    db.commit()
     record_audit(
         request=request,
         actor=user,
@@ -97,7 +100,9 @@ def approve(
         object_id=approval.object_id,
         result="SUCCESS",
         detail=body.comment,
+        db=db,
     )
+    db.commit()
     return approval_out(approval).model_dump(mode="json")
 
 
@@ -113,7 +118,6 @@ def reject(
     if approval is None:
         raise not_found("审批申请不存在")
     decide_approval(db, approval, user, approve=False, comment=body.comment)
-    db.commit()
     record_audit(
         request=request,
         actor=user,
@@ -122,5 +126,7 @@ def reject(
         object_id=approval.object_id,
         result="SUCCESS",
         detail=body.comment,
+        db=db,
     )
+    db.commit()
     return approval_out(approval).model_dump(mode="json")

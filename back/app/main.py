@@ -10,12 +10,14 @@ from app.api.audit import router as audit_router
 from app.api.auth import router as auth_router
 from app.api.clinical_events import router as events_router
 from app.api.enrollment import router as enrollment_router
+from app.api.followup_alerts import router as followup_alerts_router
 from app.api.followups import router as followups_router
 from app.api.health import router as health_router
 from app.api.instances import router as instances_router
 from app.api.knowledge import router as knowledge_router
 from app.api.outcomes import router as outcomes_router
 from app.api.predictions import router as predictions_router
+from app.api.reassessments import router as reassessments_router
 from app.api.patients import router as patients_router
 from app.api.patient_detail import router as patient_detail_router
 from app.api.pathways import router as pathways_router
@@ -36,10 +38,11 @@ def create_app() -> FastAPI:
         docs_url="/api/docs",
         openapi_url="/api/openapi.json",
     )
+    settings.validate_runtime()
     app.add_middleware(RequestIDMiddleware)
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["http://127.0.0.1:5173", "http://localhost:5173", "http://127.0.0.1:5174", "http://localhost:5174"],
+        allow_origins=settings.cors_origin_list,
         allow_credentials=False,
         allow_methods=["GET", "POST", "PATCH", "OPTIONS"],
         allow_headers=["Authorization", "Content-Type", "X-Request-ID", "Idempotency-Key"],
@@ -61,11 +64,13 @@ def create_app() -> FastAPI:
     app.include_router(approvals_router, prefix=api_prefix)
     app.include_router(variations_router, prefix=api_prefix)
     app.include_router(followups_router, prefix=api_prefix)
+    app.include_router(followup_alerts_router, prefix=api_prefix)
     app.include_router(outcomes_router, prefix=api_prefix)
     app.include_router(assessments_router, prefix=api_prefix)
     app.include_router(analytics_router, prefix=api_prefix)
     app.include_router(knowledge_router, prefix=api_prefix)
     app.include_router(predictions_router, prefix=api_prefix)
+    app.include_router(reassessments_router, prefix=api_prefix)
     if settings.auto_create_tables:
         init_db()
     return app

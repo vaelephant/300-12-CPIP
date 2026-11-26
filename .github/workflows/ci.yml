@@ -39,6 +39,19 @@ jobs:
           npm run typecheck
           npx vite build
 
+      - name: Prepare demo SQLite database for browser E2E
+        run: |
+          cd back
+          rm -f hcc-cip.db
+          python -m alembic upgrade head
+          python -m app.seed
+
+      - name: Install Playwright Chromium
+        run: cd front && npx playwright install --with-deps chromium
+
+      - name: Browser E2E · server mode core flow
+        run: cd front && npm run e2e
+
       - name: Migration replay smoke test
         env:
           HCC_CIP_DATABASE_URL: sqlite:////tmp/hcc-ci.db

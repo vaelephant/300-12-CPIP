@@ -180,7 +180,7 @@ def list_patient_overview(
             select(Encounter).where(Encounter.patient_id == patient.id).order_by(Encounter.admitted_at.desc())
         )
         snapshot = db.scalar(
-            select(PatientSnapshot).where(PatientSnapshot.patient_id == patient.id).order_by(PatientSnapshot.as_of.desc())
+            select(PatientSnapshot).where(PatientSnapshot.patient_id == patient.id).order_by(PatientSnapshot.as_of.desc(), PatientSnapshot.created_at.desc())
         )
         instance = db.scalar(
             select(PathwayInstance).where(PathwayInstance.patient_id == patient.id).order_by(PathwayInstance.enrolled_at.desc())
