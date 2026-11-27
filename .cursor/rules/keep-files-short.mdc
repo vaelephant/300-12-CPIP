@@ -1,0 +1,16 @@
+---
+description: Prefer short files; split by responsibility before a file grows large
+alwaysApply: true
+---
+
+# Keep files short
+
+- Prefer **~200–300 lines** per file; treat **~400+** as a signal to split.
+- Split by **responsibility** (hooks / UI / utils / API), not by arbitrary line cuts.
+- New features: create focused modules first; do not append into already-large files.
+- Pages that orchestrate many concerns should be thin assemblers (`index` / `workspace`) that import smaller pieces.
+
+```text
+❌ one 1000-line studio.tsx with graph + save + toolbar + dialogs
+✅ studio/{index,workspace,toolbar,canvas,dialogs,use-*-graph,use-*-lifecycle,graph-utils}
+```

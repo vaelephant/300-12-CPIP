@@ -1,10 +1,10 @@
 # HCC-CIP · 肝癌全病程智能诊疗平台（HCC Clinical Intelligence Platform）
 
-> **V0.5 · 研发演示版本**：当前仓库已完成**前端高保真工程**，以原发性肝癌为专病应用，覆盖路径设计、发现、规划、辅助决策、执行、监测与持续优化。
+> **V0.6.1 · 研发演示 / 融资可信度版本**：当期产品定位为**可审计的原发性肝癌临床路径旁路工具**（医生审核后生效，不自主下医嘱）。预测模型与器械/CDSS 取证为同一证据链上的**后续期权**，当前 `clinical_use=false`。
 >
-> 产品定义：**原发性肝癌智能临床路径平台（Liver Cancer Clinical Pathway Platform）** —— 以医学知识和真实患者数据为基础，提供临床路径可设计、可挖掘、可规划、可执行、可预测、可优化的能力，并逐步接入医疗世界模型，实现预测驱动的全病程智能管理。
+> 产品定义：**原发性肝癌智能临床路径平台** —— 以患者状态与医学规则组织入径、规划、执行、变异与随访；Server 模式走通可运行闭环；Demo 模式仅作界面概念。
 >
-> **本阶段只做原发性肝癌单病种**，不扩展肺癌、胆囊等其他病种；全部患者、指标与预测均为**合成演示数据**，不连接真实医院系统，不构成临床决策依据。
+> **本阶段只做原发性肝癌单病种**；全部数据为**合成演示数据**，不连接真实医院系统，不构成临床决策依据。融资演示请使用 Server 模式，见 [docs/FINANCING-DEMO-RUNBOOK.md](docs/FINANCING-DEMO-RUNBOOK.md)。
 
 ## 当前进度
 
@@ -14,7 +14,8 @@
 | `back/` 后端服务 | ✅ S1–S3 完成（SQLite 开发） | FastAPI + SQLAlchemy + Alembic；路径/规则/入径/计划/任务/变异/随访/结局与聚合指标；75 项 pytest 通过；Playwright 6 个 server-mode 场景通过 |
 | `contracts/` 数据协议 | ✅ T02 完成 | OpenAPI 3.1（36 paths）、13 个 JSON Schema、HCC 合成验收病例，`python3 contracts/validate.py` 通过 |
 | V0.6.1 引擎强化 | 🚧 T20–T24/T27 完成，T25 基础，T26/T28/T29 部分 | 条件网关/执行 trace/审批指纹、时点快照/激活重评、三值单位边界、随访预警闭环、事件驱动重评、任务原子更新、唯一 ACTIVE 计划、Demo/Server 隔离、变异/随访/分析页、6 个 Playwright 场景、生产配置与登录限流、DS01–DS03/DS05 基础与 5 步演示导览已落地；T26 其余页面/T25 完整并发/CI runner 待完成 |
-| V0.6 研发实施 | 🚧 S1–S3 完成，S4 进行中 | 后端契约 53/53 路径已实现；部署/备份/端到端/安全测试完成；前端登录 + 患者中心 + 患者详情 + 路径库 + 任务中心 + 规划页已接入真实 API，变异/随访/分析等页面仍待迁移 |
+| V0.6 研发实施 | 🚧 S1–S3 完成，S4 进行中 | 后端契约 53/53 路径已实现；前端 Server：患者/路径/任务/规划/审批/重评/变异/随访/分析/审计已接 API；设计器可保存草稿并提交审核 |
+| 融资演示资产 | ✅ Runbook + 病例包 | [FINANCING-DEMO-RUNBOOK.md](docs/FINANCING-DEMO-RUNBOOK.md)；`make demo-pack`；技术附录 `/about/tech` |
 
 ## 快速开始
 
@@ -34,7 +35,8 @@ npm run dev        # http://127.0.0.1:5173
 - [契约目录 · OpenAPI / JSON Schema / 校验脚本](contracts/README.md)
 - [后端 README · S1–S3 启动、API、演示账号与边界](back/README.md)
 - [S4 部署与演示手册 · SQLite 备份/恢复、生产切换边界](docs/V0.6-S4-DEPLOYMENT.md)
-- [临床规则审阅清单（待签署）](docs/V0.6-CLINICAL-REVIEW.md)
+- [临床规则审阅清单（审阅已启动 · 待完整签署）](docs/V0.6-CLINICAL-REVIEW.md)
+- [融资演示 Runbook](docs/FINANCING-DEMO-RUNBOOK.md)
 - [V0.6.1 引擎强化实施状态](docs/V0.6.1-HARDENING-STATUS.md)
 - [Design System V1.0 实施状态](docs/V1.0-DESIGN-SYSTEM-STATUS.md)
 - CI：`.github/workflows/ci.yml`（契约、后端测试、迁移重放、前端 typecheck/build）；本地命令见 `Makefile`

@@ -4,6 +4,7 @@ import {
   Bell,
   CircleHelp,
   Command as CommandIcon,
+  Compass,
   Search,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -23,11 +24,13 @@ import {
 } from "@/components/ui/breadcrumb";
 import { crumbForPath } from "./nav-config";
 import { ModeToggle } from "@/components/mode-toggle";
+import { IS_SERVER_MODE } from "@/lib/data-mode";
 
 export function Topbar() {
   const location = useLocation();
   const navigate = useNavigate();
   const setCommandOpen = useUiStore((s) => s.setCommandOpen);
+  const openTour = useUiStore((s) => s.openTour);
   const [notifOpen, setNotifOpen] = useState(false);
   const crumbs = crumbForPath(location.pathname);
   const unread = NOTIFICATIONS.filter((n) => n.level !== "INFO").length;
@@ -76,10 +79,24 @@ export function Topbar() {
       </button>
 
       <div className="ml-auto flex items-center gap-1.5">
-        <span className="hidden items-center gap-1.5 rounded-md bg-secondary/80 px-2 py-1 text-[11px] text-muted-foreground xl:flex">
-          <span className="size-1.5 rounded-full bg-ok" />
-          同步 {fmtTime(LAST_SYNC)}
+        <span
+          className={cn(
+            "hidden items-center gap-1.5 rounded-md px-2 py-1 text-[11px] xl:flex",
+            IS_SERVER_MODE ? "bg-ok/10 text-ok" : "bg-secondary/80 text-muted-foreground",
+          )}
+          title={IS_SERVER_MODE ? "Server 模式 · 后端真实状态" : "Demo 模式 · 合成界面概念"}
+        >
+          <span className={cn("size-1.5 rounded-full", IS_SERVER_MODE ? "bg-ok" : "bg-warn")} />
+          {IS_SERVER_MODE ? "SERVER" : "DEMO"} · 同步 {fmtTime(LAST_SYNC)}
         </span>
+
+        <button
+          onClick={() => openTour()}
+          title="融资演示导览"
+          className="hidden size-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground md:flex"
+        >
+          <Compass className="size-4" />
+        </button>
 
         <Popover open={notifOpen} onOpenChange={setNotifOpen}>
           <PopoverTrigger asChild>

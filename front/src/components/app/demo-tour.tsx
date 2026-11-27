@@ -4,6 +4,7 @@ import { ArrowLeft, ArrowRight, X } from "lucide-react";
 import { useUiStore } from "@/stores/ui-store";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { IS_SERVER_MODE } from "@/lib/data-mode";
 
 const STEPS = [
   {
@@ -12,14 +13,14 @@ const STEPS = [
     body: "先看患者身份、当前阶段、风险与数据完整度。UNKNOWN 字段不会被当作阴性条件。",
   },
   {
-    path: "/patients/HCC-DEMO-001/map",
-    title: "路径执行与分支选择",
-    body: "按服务端执行状态查看已完成、执行中、变异、UNKNOWN 与未选路径；选中节点可看证据与规则。",
+    path: "/approvals",
+    title: "计划 / 路径审批",
+    body: "审批写入后端；非提交人审核。路径版本通过后由医务处发布；计划通过后须手动激活。",
   },
   {
-    path: "/approvals",
-    title: "计划审批与责任边界",
-    body: "计划必须经非提交人审核、绑定执行指纹后才能激活；AI 建议不会自动变成医嘱。",
+    path: "/reassessments",
+    title: "事件驱动重评",
+    body: "导入合成事件 → OPEN 重评 → DRAFT 重规划，原 ACTIVE 计划保持不变，医生再决定是否激活。",
   },
   {
     path: "/tasks",
@@ -27,9 +28,9 @@ const STEPS = [
     body: "任务推进受计划状态、角色、依赖和版本号约束；完成必须留下结果记录。",
   },
   {
-    path: "/dashboard",
-    title: "全貌与安全边界",
-    body: "最后回到工作台：所有数据均为合成数据，生产环境仍需临床签署与 PostgreSQL 验证。",
+    path: "/settings/audit",
+    title: "审计与安全边界",
+    body: "成功业务可追溯；被拒绝请求留痕。旁路工具不自主下医嘱；器械取证为后续期权。",
   },
 ];
 
@@ -49,7 +50,7 @@ export function DemoTour() {
 
   if (!open) return null;
   return (
-    <div className="fixed right-4 bottom-4 left-4 z-[70] sm:left-auto sm:w-[520px]" role="dialog" aria-label="">
+    <div className="fixed right-4 bottom-4 left-4 z-[70] sm:left-auto sm:w-[520px]" role="dialog" aria-label="融资演示导览">
       <div className="rounded-lg border border-line bg-card p-4 shadow-pop">
         <div className="flex items-start gap-3">
           <div className="flex size-8 shrink-0 items-center justify-center rounded-md bg-brand-wash font-mono text-[11px] font-semibold text-brand">
@@ -63,6 +64,9 @@ export function DemoTour() {
               </button>
             </div>
             <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">{current.body}</p>
+            {!IS_SERVER_MODE && (
+              <p className="mt-1 text-[10px] text-warn">当前为 Demo 模式；融资主演示请使用 VITE_DATA_MODE=server。</p>
+            )}
           </div>
         </div>
         <div className="mt-3 flex items-center gap-1.5">
@@ -76,17 +80,23 @@ export function DemoTour() {
           ))}
         </div>
         <div className="mt-3 flex items-center justify-between">
-          <span className="font-mono text-[8.5px] tracking-wide text-muted-foreground/70">GUIDED DEMO · SYNTHETIC</span>
+          <span className="font-mono text-[8.5px] tracking-wide text-muted-foreground/70">
+            FINANCING DEMO · SYNTHETIC · {IS_SERVER_MODE ? "SERVER" : "DEMO"}
+          </span>
           <div className="flex gap-1.5">
-            <Button size="xs" variant="outline" disabled={step === 0} onClick={() => setStep(step - 1)}>
-              <ArrowLeft className="size-3" /> 上一步
+            <Button variant="ghost" size="sm" disabled={step === 0} onClick={() => setStep(step - 1)}>
+              <ArrowLeft className="size-3.5" />
+              上一步
             </Button>
             {step < STEPS.length - 1 ? (
-              <Button size="xs" onClick={() => setStep(step + 1)}>
-                下一步 <ArrowRight className="size-3" />
+              <Button size="sm" onClick={() => setStep(step + 1)}>
+                下一步
+                <ArrowRight className="size-3.5" />
               </Button>
             ) : (
-              <Button size="xs" onClick={close}>完成</Button>
+              <Button size="sm" onClick={close}>
+                结束
+              </Button>
             )}
           </div>
         </div>

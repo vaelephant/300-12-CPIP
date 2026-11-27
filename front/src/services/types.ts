@@ -251,3 +251,54 @@ export interface BackendAnalyticsSummary {
   metrics: BackendAnalyticsMetric[];
   note: string;
 }
+
+export interface BackendApproval {
+  approval_id: string;
+  object_type: string;
+  object_id: string;
+  status: string;
+  risk: string;
+  requested_by: string;
+  requested_at: string;
+  reviewer: string | null;
+  reviewed_at: string | null;
+  comment: string | null;
+}
+
+export interface BackendAuditEvent {
+  event_id: string;
+  request_id: string;
+  actor_id: string;
+  actor_role: string;
+  action: string;
+  object_type: string;
+  object_id: string;
+  result: string;
+  occurred_at: string;
+  ip_masked: string | null;
+  detail: string | null;
+}
+
+export interface BackendReassessment {
+  reassessment_id: string;
+  patient_id: string;
+  instance_id: string;
+  event_id: string | null;
+  trigger_type: string;
+  reason: string;
+  status: string;
+  plan_id: string | null;
+  created_at: string;
+  resolved_at: string | null;
+}
+
+export interface BackendPathwayGraphPayload {
+  nodes: Record<string, unknown>[];
+  edges: Record<string, unknown>[];
+}
+
+export interface BackendPathwayVersionCreate {
+  version: string;
+  graph: BackendPathwayGraphPayload;
+  rules: Record<string, unknown>[];
+}

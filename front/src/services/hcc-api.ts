@@ -1,6 +1,8 @@
 import { apiRequest, clearBackendToken, getBackendToken, setBackendToken } from "./http";
 import type {
   BackendAnalyticsSummary,
+  BackendApproval,
+  BackendAuditEvent,
   BackendEnrollmentEvaluation,
   BackendFollowup,
   BackendInstance,
@@ -10,10 +12,12 @@ import type {
   BackendPage,
   BackendPathwayOverview,
   BackendPathwayVersion,
+  BackendPathwayVersionCreate,
   BackendPatient,
   BackendPatientDetail,
   BackendPatientOverview,
   BackendPlan,
+  BackendReassessment,
   BackendTask,
   BackendTaskOverview,
   BackendUser,
@@ -83,11 +87,68 @@ export const hccApi = {
   listPathwayOverview: () => apiRequest<BackendPage<BackendPathwayOverview>>("/pathways/overview"),
   listPathwayVersions: (pathwayId: string) =>
     apiRequest<BackendPathwayVersion[]>(`/pathways/${pathwayId}/versions`),
+  createPathwayVersion: (pathwayId: string, payload: BackendPathwayVersionCreate) =>
+    apiRequest<BackendPathwayVersion>(`/pathways/${pathwayId}/versions`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
   validatePathwayVersion: (versionId: string) =>
-    apiRequest<{ valid: boolean; errors: unknown[]; warnings: unknown[] }>(
+    apiRequest<{ valid: boolean; errors: unknown[]; warnings: unknown[]; content_hash?: string | null }>(
       `/pathway-versions/${versionId}/validate`,
       { method: "POST" },
     ),
+  submitPathwayVersion: (versionId: string) =>
+    apiRequest<BackendPathwayVersion>(`/pathway-versions/${versionId}/submit`, { method: "POST" }),
+  publishPathwayVersion: (versionId: string) =>
+    apiRequest<BackendPathwayVersion>(`/pathway-versions/${versionId}/publish`, { method: "POST" }),
+  listApprovals: (params: { status?: string; page?: number; pageSize?: number } = {}) => {
+    const search = new URLSearchParams();
+    search.set("page", String(params.page ?? 1));
+    search.set("page_size", String(params.pageSize ?? 50));
+    if (params.status) search.set("status", params.status);
+    return apiRequest<BackendPage<BackendApproval>>(`/approvals?${search.toString()}`);
+  },
+  approveRequest: (approvalId: string, comment?: string) =>
+    apiRequest<BackendApproval>(`/approvals/${approvalId}/approve`, {
+      method: "POST",
+      body: JSON.stringify({ comment }),
+    }),
+  rejectRequest: (approvalId: string, comment?: string) =>
+    apiRequest<BackendApproval>(`/approvals/${approvalId}/reject`, {
+      method: "POST",
+      body: JSON.stringify({ comment }),
+    }),
+  listAuditEvents: (params: { page?: number; pageSize?: number; objectType?: string; objectId?: string } = {}) => {
+    const search = new URLSearchParams();
+    search.set("page", String(params.page ?? 1));
+    search.set("page_size", String(params.pageSize ?? 50));
+    if (params.objectType) search.set("object_type", params.objectType);
+    if (params.objectId) search.set("object_id", params.objectId);
+    return apiRequest<BackendPage<BackendAuditEvent>>(`/audit-events?${search.toString()}`);
+  },
+  listReassessments: (params: { page?: number; pageSize?: number; status?: string } = {}) => {
+    const search = new URLSearchParams();
+    search.set("page", String(params.page ?? 1));
+    search.set("page_size", String(params.pageSize ?? 50));
+    if (params.status) search.set("status", params.status);
+    return apiRequest<BackendPage<BackendReassessment>>(`/reassessments?${search.toString()}`);
+  },
+  dismissReassessment: (reassessmentId: string, reason: string) =>
+    apiRequest<BackendReassessment>(`/reassessments/${reassessmentId}/dismiss`, {
+      method: "POST",
+      body: JSON.stringify({ reason }),
+    }),
+  replanReassessment: (reassessmentId: string) =>
+    apiRequest<BackendPlan>(`/reassessments/${reassessmentId}/replan`, { method: "POST" }),
+  importClinicalEvents: (payload: {
+    source_system: string;
+    idempotency_key?: string;
+    events: Record<string, unknown>[];
+  }) =>
+    apiRequest<{ imported: number; duplicates: number; request_id: string }>("/clinical-events/import", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
   evaluateEnrollment: (payload: { patient_id: string; snapshot_id: string; pathway_version_id: string }) =>
     apiRequest<BackendEnrollmentEvaluation>("/enrollment/evaluate", {
       method: "POST",

@@ -20,6 +20,7 @@ import PlanningPage from "@/pages/planning";
 import TasksPage from "@/pages/tasks";
 import FollowupsPage from "@/pages/followups";
 import VariationsPage from "@/pages/variations";
+import ReassessmentsPage from "@/pages/reassessments";
 import SimulationPage from "@/pages/simulation";
 import SimulationEnginePage from "@/pages/simulation/engine";
 import KnowledgePage from "@/pages/knowledge";
@@ -27,6 +28,7 @@ import AnalyticsPage from "@/pages/analytics";
 import ExecutivePage from "@/pages/executive";
 import ProcessMiningPage from "@/pages/process-mining";
 import AboutPage from "@/pages/about";
+import TechAppendixPage from "@/pages/about/tech-appendix";
 import UsersPage from "@/pages/settings/users";
 import RolesPage from "@/pages/settings/roles";
 import AuditPage from "@/pages/settings/audit";
@@ -39,6 +41,7 @@ import LivePathwayGalleryPage from "@/dev/desgin/LivePathwayGallery";
 import WorldModelGalleryPage from "@/dev/desgin/WorldModelGallery";
 import ProductDemoPage from "@/dev/desgin/ProductDemo";
 import { useSessionStore } from "@/stores/session-store";
+import { DemoTour } from "@/components/app/demo-tour";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
@@ -122,6 +125,7 @@ export default function App() {
                 <Route path="/planning/:instanceId" element={<PlanningPage />} />
                 <Route path="/tasks" element={<TasksPage />} />
                 <Route path="/variations" element={<VariationsPage />} />
+                <Route path="/reassessments" element={<ReassessmentsPage />} />
                 <Route path="/followups" element={<FollowupsPage />} />
                 <Route path="/simulation" element={<SimulationPage />} />
                 <Route path="/simulation/engine" element={<SimulationEnginePage />} />
@@ -130,12 +134,14 @@ export default function App() {
                 <Route path="/executive" element={<ExecutivePage />} />
                 <Route path="/process-mining" element={<ProcessMiningPage />} />
                 <Route path="/about" element={<AboutPage />} />
+                <Route path="/about/tech" element={<TechAppendixPage />} />
                 <Route path="/settings/users" element={<UsersPage />} />
                 <Route path="/settings/roles" element={<RolesPage />} />
                 <Route path="/settings/audit" element={<AuditPage />} />
                 <Route path="*" element={<NotFound />} />
               </Route>
             </Routes>
+            <DemoTour />
           </BrowserRouter>
           <Toaster />
         </TooltipProvider>

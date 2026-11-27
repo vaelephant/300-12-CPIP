@@ -36,8 +36,8 @@ export default function AboutPage() {
           <p className="mt-2 text-[14px] text-muted-foreground">Liver Cancer Clinical Pathway Platform</p>
           <div className="my-6 h-px bg-line" />
           <p className="max-w-[880px] text-[13.5px] leading-[1.9] text-foreground/80">
-            以原发性肝癌为专病应用，以医学知识和真实患者数据为基础，提供临床路径设计、发现、规划、辅助决策、执行、监测及持续优化能力，
-            并逐步接入医疗世界模型，实现预测驱动的全病程智能管理。
+            当期定位为<strong>可审计的肝癌临床路径旁路工具</strong>：以患者状态与三值规则组织入径、规划、执行、变异与随访，医生审核后生效，不自主下医嘱。
+            预测模型与器械/CDSS 取证沿同一证据链升级，当前 `clinical_use=false`，取证为后续期权而非当期交付。
           </p>
 
           <div className="mt-8 grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-3">
@@ -61,9 +61,9 @@ export default function AboutPage() {
           </CardHeader>
           <CardContent className="space-y-2.5">
             {[
-              { icon: Compass, title: "专病应用", desc: "聚焦原发性肝癌单病种，做深路径设计与全病程管理，不扩展其他病种。" },
-              { icon: Layers3, title: "统一技术底座", desc: "临床路径引擎 + KEE 知识工程 + MWM 世界模型 + 多模态数据。" },
-              { icon: ShieldCheck, title: "可解释与可审核", desc: "所有建议、图谱与推演均可追溯到规则、证据与患者状态。" },
+              { icon: Compass, title: "专病旁路", desc: "聚焦原发性肝癌；挂接 HIS 旁路，不替换主系统，医生保留最终决策权。" },
+              { icon: Layers3, title: "状态驱动闭环", desc: "快照 · 三值规则 · 条件图执行 · 重评重规划；Server 模式同一套服务端状态。" },
+              { icon: ShieldCheck, title: "可解释与可审核", desc: "审批指纹、审计事件、契约校验；未配置能力诚实 503，不造假成功。" },
             ].map((item) => {
               const Icon = item.icon;
               return (
@@ -112,20 +112,26 @@ export default function AboutPage() {
           </CardHeader>
           <CardContent className="space-y-2">
             <Callout tone="info" title="产品边界">
-              预测与推演能力标记 `clinical_use = false`，不可替代临床决策；正式医嘱须由医生签署。
+              预测与推演标记 `clinical_use = false`；Demo 模式仅界面概念，融资主演示用 Server 模式。器械注册不作为当期承诺。
             </Callout>
             <div className="rounded-md border border-line bg-secondary/25 px-3 py-2.5">
-              <p className="text-[11px] font-medium">已交付</p>
+              <p className="text-[11px] font-medium">Server 可点闭环</p>
               <p className="mt-1 text-[10px] leading-relaxed text-muted-foreground">
-                23 个业务页面 · 300 例原发肝癌在管病例 · 16 项可视化能力 · 8 个核心引擎模块
+                患者 / 路径 / 任务 / 规划 / 审批 / 重评 / 变异 / 随访 / 分析 / 审计；验收病例 HCC-DEMO-001 · PW-HCC-001。
               </p>
             </div>
             <div className="rounded-md border border-line bg-secondary/25 px-3 py-2.5">
-              <p className="text-[11px] font-medium">后续阶段</p>
+              <p className="text-[11px] font-medium">研究预览 / 期权</p>
               <p className="mt-1 text-[10px] leading-relaxed text-muted-foreground">
-                真实数据接入、PM4Py 流程挖掘、患者状态空间、预测与实际对比、医学影像与数字孪生。
+                知识库 · 模拟 · 世界模型观测台 · 院长驾驶舱（Demo 可视化）；HIS 适配与 CDSS 取证为路线图期权。
               </p>
             </div>
+            <Button asChild size="sm" variant="outline" className="w-full">
+              <Link to="/about/tech">
+                技术附录 · 契约与状态机
+                <ArrowRight className="size-3.5" />
+              </Link>
+            </Button>
           </CardContent>
         </Card>
       </div>
@@ -133,9 +139,9 @@ export default function AboutPage() {
       <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-line pt-3 text-[10px] text-muted-foreground">
         <span className="inline-flex items-center gap-1">
           <Sparkles className="size-3" />
-          统一技术底座 · 独立产品开发 · 标准接口集成
+          旁路闭环 · 契约驱动 · 取证作期权
         </span>
-        <span className="font-mono">HCC-CIP · V0.6.1 · PRODUCT DEFINITION</span>
+        <span className="font-mono">HCC-CIP · V0.6.1 · BYPASS TOOL</span>
       </div>
     </Page>
   );

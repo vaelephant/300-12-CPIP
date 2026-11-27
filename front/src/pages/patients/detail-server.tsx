@@ -281,7 +281,9 @@ export default function ServerPatientDetailPage() {
               <div className="rounded-md border border-line bg-surface p-4">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="text-[14px] font-medium text-ink">
-                    {instance?.pathway_name ?? "暂无路径实例"}
+                    {instance
+                      ? `实例 ${instance.instance_id}`
+                      : "暂无路径实例"}
                   </span>
                   {instance?.status && (
                     <StatusBadge tone={instance.status === "ACTIVE" ? "ok" : "neutral"}>

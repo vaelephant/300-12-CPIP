@@ -17,6 +17,8 @@ import {
   Terminal,
   UserX,
 } from "lucide-react";
+import { IS_SERVER_MODE } from "@/lib/data-mode";
+import ServerAuditPage from "./audit-server";
 
 import { Page, PageHeader, PageMeta } from "@/components/app/page-header";
 import { Callout, EmptyState, Field, SectionHead, SyntheticTag } from "@/components/app/section";
@@ -83,6 +85,11 @@ function isSameDay(a: Date, b: Date) {
 }
 
 export default function AuditPage() {
+  if (IS_SERVER_MODE) return <ServerAuditPage />;
+  return <DemoAuditPage />;
+}
+
+function DemoAuditPage() {
   const [logs, setLogs] = useState<AuditLog[]>(AUDIT_LOGS);
   const [query, setQuery] = useState("");
   const [result, setResult] = useState<AuditLog["result"] | "ALL">("ALL");

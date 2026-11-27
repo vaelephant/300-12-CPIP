@@ -1,4 +1,4 @@
-.PHONY: help test contract e2e front-check db-upgrade seed backup demo
+.PHONY: help test contract e2e front-check db-upgrade seed backup demo demo-pack
 
 help:
 	@echo "make test         # backend pytest"
@@ -7,6 +7,7 @@ help:
 	@echo "make front-check  # frontend typecheck + build"
 	@echo "make db-upgrade   # alembic upgrade head"
 	@echo "make seed         # seed demo data"
+	@echo "make demo-pack    # print/verify financing acceptance case bindings"
 	@echo "make backup       # SQLite online backup"
 
 test:
@@ -26,6 +27,9 @@ db-upgrade:
 
 seed:
 	cd back && python3 -m app.seed
+
+demo-pack:
+	python3 back/scripts/pack_acceptance_case.py
 
 backup:
 	cd back && python3 scripts/backup_sqlite.py

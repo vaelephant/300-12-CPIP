@@ -15,6 +15,7 @@ const ROUTE_RULES: { prefix: string; module: string; permissions: string[] }[] =
   { prefix: "/planning", module: "患者中心 · 路径规划", permissions: ["patient.view"] },
   { prefix: "/tasks", module: "任务中心", permissions: ["task.view"] },
   { prefix: "/variations", module: "变异管理", permissions: ["variation.view"] },
+  { prefix: "/reassessments", module: "重评队列", permissions: ["patient.view"] },
   { prefix: "/followups", module: "随访管理", permissions: ["patient.view"] },
   { prefix: "/knowledge", module: "知识库", permissions: ["knowledge.view"] },
   { prefix: "/simulation", module: "路径模拟", permissions: ["pathway.view"] },

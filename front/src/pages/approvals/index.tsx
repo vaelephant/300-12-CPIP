@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
+import { IS_SERVER_MODE } from "@/lib/data-mode";
+import ServerApprovalsPage from "./index-server";
 import { readWmPlanDrafts } from "@/lib/wm-plan-drafts";
 import {
   AlertTriangle,
@@ -74,6 +76,11 @@ function approveLabel(type: Approval["type"]) {
 }
 
 export default function ApprovalsPage() {
+  if (IS_SERVER_MODE) return <ServerApprovalsPage />;
+  return <DemoApprovalsPage />;
+}
+
+function DemoApprovalsPage() {
   const user = useSessionStore((state) => state.user);
   const [approvals, setApprovals] = useState<Approval[]>(APPROVALS);
   const [typeFilter, setTypeFilter] = useState<"ALL" | Approval["type"]>("ALL");

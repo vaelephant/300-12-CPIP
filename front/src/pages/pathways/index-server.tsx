@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, BookOpenCheck, Database, GitBranch, Search, ShieldCheck } from "lucide-react";
 import type { BackendPathwayOverview, BackendPathwayVersion } from "@/services/types";
@@ -224,8 +225,8 @@ export default function ServerPathwaysPage() {
         )}
       </Card>
 
-      <Callout tone="neutral" title="只读联调视图" className="mt-3">
-        路径创建、设计器保存、版本 diff 与审批发布仍使用 demo 页面；本页仅验证后端路径库聚合 API 与权限范围。
+      <Callout tone="info" title="设计器已接后端写入" className="mt-3">
+        打开设计器可保存草稿、后端校验并提交审核；审批在「审核中心」，医务处可发布。版本 diff 仍为后续能力。
       </Callout>
 
       <Dialog open={Boolean(selected)} onOpenChange={(open) => !open && setSelected(null)}>
@@ -233,10 +234,17 @@ export default function ServerPathwaysPage() {
           <DialogHeader>
             <DialogTitle className="text-[16px]">{selected?.name}</DialogTitle>
             <DialogDescription>
-              {selected?.template_id} · 当前发布版本 v{selected?.current_version} · 只读后端数据
+              {selected?.template_id} · 当前发布版本 v{selected?.current_version} · 后端数据
             </DialogDescription>
           </DialogHeader>
-          {selected ? <VersionDetail templateId={selected.template_id} /> : null}
+          {selected ? (
+            <div className="space-y-3">
+              <VersionDetail templateId={selected.template_id} />
+              <Button asChild size="sm">
+                <Link to={`/pathways/${selected.template_id}/studio`}>打开设计器</Link>
+              </Button>
+            </div>
+          ) : null}
         </DialogContent>
       </Dialog>
     </Page>
