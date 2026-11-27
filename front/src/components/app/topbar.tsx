@@ -2,32 +2,15 @@ import { Fragment, useState } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import {
   Bell,
-  Check,
-  ChevronDown,
   CircleHelp,
   Command as CommandIcon,
-  LogOut,
   Search,
-  ShieldCheck,
-  UserRound,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useSessionStore } from "@/stores/session-store";
 import { useUiStore } from "@/stores/ui-store";
-import { DEMO_ACCOUNTS, ORGANIZATION } from "@/data/org";
 import { NOTIFICATIONS, LAST_SYNC } from "@/data/analytics";
 import { fmtTime, relTime } from "@/lib/utils";
-import { ROLE_SYSTEM_LABELS } from "@/lib/clinical";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import {
@@ -44,12 +27,8 @@ import { ModeToggle } from "@/components/mode-toggle";
 export function Topbar() {
   const location = useLocation();
   const navigate = useNavigate();
-  const user = useSessionStore((s) => s.user);
-  const loginAs = useSessionStore((s) => s.loginAs);
-  const logout = useSessionStore((s) => s.logout);
   const setCommandOpen = useUiStore((s) => s.setCommandOpen);
   const [notifOpen, setNotifOpen] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
   const crumbs = crumbForPath(location.pathname);
   const unread = NOTIFICATIONS.filter((n) => n.level !== "INFO").length;
 
@@ -102,7 +81,6 @@ export function Topbar() {
           同步 {fmtTime(LAST_SYNC)}
         </span>
 
-        {/* 通知 */}
         <Popover open={notifOpen} onOpenChange={setNotifOpen}>
           <PopoverTrigger asChild>
             <button className="relative flex size-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground">
@@ -161,75 +139,6 @@ export function Topbar() {
         </button>
 
         <ModeToggle />
-
-        <span className="mx-0.5 h-5 w-px bg-line" />
-
-        {/* 用户菜单 */}
-        <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
-          <DropdownMenuTrigger asChild>
-            <button className="flex items-center gap-2 rounded-md py-1 pr-1.5 pl-1 transition-colors hover:bg-secondary">
-              <Avatar className="size-7">
-                <AvatarFallback className="bg-primary/12 text-[10.5px] text-primary">{user?.name.slice(-2) ?? "—"}</AvatarFallback>
-              </Avatar>
-              <span className="hidden text-left lg:block">
-                <span className="block text-[11.5px] leading-tight font-medium">{user?.name ?? "未登录"}</span>
-                <span className="block text-[9.5px] leading-tight text-muted-foreground">
-                  {user ? ROLE_SYSTEM_LABELS[user.role] : "—"}
-                </span>
-              </span>
-              <ChevronDown className="size-3 text-muted-foreground" />
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-[252px]">
-            <div className="px-2 py-2">
-              <div className="flex items-center gap-2">
-                <Avatar className="size-8">
-                  <AvatarFallback className="bg-primary/12 text-[11px] text-primary">{user?.name.slice(-2)}</AvatarFallback>
-                </Avatar>
-                <div className="min-w-0">
-                  <p className="text-[12.5px] font-medium">{user?.name}</p>
-                  <p className="truncate text-[10.5px] text-muted-foreground">{user?.title}</p>
-                </div>
-              </div>
-              <div className="mt-2 flex items-center gap-1.5 rounded-[4px] border border-line bg-secondary/50 px-2 py-1 text-[10px] text-muted-foreground">
-                <ShieldCheck className="size-3 text-ok" />
-                数据范围：{user?.dataScope === "ALL" ? "全院（不含病历）" : user?.dataScope === "ORG" ? "全院聚合" : user?.dataScope === "DEPT" ? "本科室" : "本人负责"}
-              </div>
-            </div>
-            <DropdownMenuSeparator />
-            <DropdownMenuLabel>切换账号</DropdownMenuLabel>
-            {DEMO_ACCOUNTS.map((acc) => (
-              <DropdownMenuItem
-                key={acc.user.id}
-                onSelect={() => {
-                  loginAs(acc.user.id);
-                  setMenuOpen(false);
-                  navigate("/dashboard");
-                }}
-                className="justify-between"
-              >
-                <span className="flex items-center gap-2">
-                  <UserRound className="size-3.5" />
-                  <span>{acc.roleLabel}</span>
-                  <span className="text-[10px] text-muted-foreground">{acc.user.name}</span>
-                </span>
-                {user?.id === acc.user.id && <Check className="size-3.5 text-primary" />}
-              </DropdownMenuItem>
-            ))}
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              variant="destructive"
-              onSelect={() => {
-                logout();
-                navigate("/login");
-              }}
-            >
-              <LogOut className="size-3.5" />
-              退出登录
-            </DropdownMenuItem>
-            <div className="px-2 pt-1.5 pb-1 font-mono text-[9px] text-muted-foreground/60">{ORGANIZATION.code} · V0.6.1</div>
-          </DropdownMenuContent>
-        </DropdownMenu>
       </div>
     </header>
   );

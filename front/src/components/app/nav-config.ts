@@ -57,7 +57,7 @@ export const NAV_GROUPS: NavGroup[] = [
     label: "知识与模拟",
     items: [
       { label: "知识库", to: "/knowledge", icon: FlaskConical, permissions: ["knowledge.view"] },
-      { label: "路径模拟", to: "/simulation", icon: Sparkles, permissions: ["pathway.view"] },
+      { label: "路径模拟", to: "/simulation", icon: Sparkles, permissions: ["pathway.view"], match: ["/simulation"] },
     ],
   },
   {
@@ -90,6 +90,7 @@ export const ROUTE_TITLES: Record<string, string> = {
   "/followups": "随访管理",
   "/knowledge": "知识库",
   "/simulation": "路径模拟",
+  "/simulation/engine": "引擎与记录",
   "/analytics": "运营分析",
   "/executive": "院长驾驶舱",
   "/process-mining": "流程挖掘",
@@ -131,6 +132,8 @@ export function crumbForPath(pathname: string): { label: string; to?: string }[]
     crumbs.push({ label: "患者中心", to: "/patients" }, { label: "患者 360" });
   } else if (pathname.startsWith("/planning/")) {
     crumbs.push({ label: "患者中心", to: "/patients" }, { label: "路径规划" });
+  } else if (pathname === "/simulation/engine") {
+    crumbs.push({ label: "路径模拟", to: "/simulation" }, { label: "引擎与记录" });
   } else if (parts.length > 1) {
     const root = `/${parts.slice(0, 2).join("/")}`;
     const rootLabel = ROUTE_TITLES[root];

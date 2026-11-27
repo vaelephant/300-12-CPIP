@@ -228,9 +228,11 @@ export function TrajectorySimulator({
             </button>
           );
         })}
-        <span className="ml-auto inline-flex items-center gap-1 rounded-[3px] border border-risk/20 bg-risk-wash px-1.5 py-0.5 font-mono text-[9px] text-risk">
-          clinical_use = false
-        </span>
+        {!compact && (
+          <span className="ml-auto inline-flex items-center gap-1 rounded-[3px] border border-risk/20 bg-risk-wash px-1.5 py-0.5 font-mono text-[9px] text-risk">
+            clinical_use = false
+          </span>
+        )}
       </div>
 
       <EChart option={option} height={compact ? 240 : 300} ariaLabel="多路径疾病状态推演图" />
@@ -256,47 +258,49 @@ export function TrajectorySimulator({
       </div>
 
       {!compact && (
-        <div className="grid gap-2 rounded-md border border-line bg-secondary/30 px-3 py-2 sm:grid-cols-2 xl:grid-cols-4">
-          {[
-            { label: "模型", value: `${dataset.model.id}@${dataset.model.version}` },
-            { label: "Provider", value: dataset.model.provider },
-            { label: "适用队列", value: dataset.model.applicability },
-            { label: "训练数据", value: dataset.model.trainedOn },
-          ].map((m) => (
-            <div key={m.label} className="min-w-0">
-              <p className="text-[9px] tracking-wide text-muted-foreground">{m.label}</p>
-              <p className="truncate font-mono text-[10px] text-foreground/80" title={m.value}>
-                {m.value}
-              </p>
-            </div>
-          ))}
-        </div>
+        <>
+          <div className="grid gap-2 rounded-md border border-line bg-secondary/30 px-3 py-2 sm:grid-cols-2 xl:grid-cols-4">
+            {[
+              { label: "模型", value: `${dataset.model.id}@${dataset.model.version}` },
+              { label: "Provider", value: dataset.model.provider },
+              { label: "适用队列", value: dataset.model.applicability },
+              { label: "训练数据", value: dataset.model.trainedOn },
+            ].map((m) => (
+              <div key={m.label} className="min-w-0">
+                <p className="text-[9px] tracking-wide text-muted-foreground">{m.label}</p>
+                <p className="truncate font-mono text-[10px] text-foreground/80" title={m.value}>
+                  {m.value}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <p className="flex items-start gap-1.5 text-[9.5px] leading-relaxed text-muted-foreground/75">
+            <Info className="mt-px size-3 shrink-0" />
+            {dataset.model.note} 干预点仅用于展示推演交互；实际临床行动仍需医生评估与审核。切换时间尺度只改变展示坐标，不重新训练模型。
+          </p>
+
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="xs"
+              className="text-muted-foreground"
+              onClick={() => {
+                setHorizon(30);
+                setBand(true);
+                setActual(true);
+                setInterventions(true);
+              }}
+            >
+              <RotateCcw className="size-3" />
+              重置视图
+            </Button>
+            <span className="text-[9.5px] text-muted-foreground/60">
+              拖动或悬停查看各候选路径的中位数与不确定性区间
+            </span>
+          </div>
+        </>
       )}
-
-      <p className="flex items-start gap-1.5 text-[9.5px] leading-relaxed text-muted-foreground/75">
-        <Info className="mt-px size-3 shrink-0" />
-        {dataset.model.note} 干预点仅用于展示推演交互；实际临床行动仍需医生评估与审核。切换时间尺度只改变展示坐标，不重新训练模型。
-      </p>
-
-      <div className="flex items-center gap-2">
-        <Button
-          variant="ghost"
-          size="xs"
-          className="text-muted-foreground"
-          onClick={() => {
-            setHorizon(30);
-            setBand(true);
-            setActual(true);
-            setInterventions(true);
-          }}
-        >
-          <RotateCcw className="size-3" />
-          重置视图
-        </Button>
-        <span className="text-[9.5px] text-muted-foreground/60">
-          拖动或悬停查看各候选路径的中位数与不确定性区间
-        </span>
-      </div>
     </div>
   );
 }

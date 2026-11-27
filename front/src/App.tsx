@@ -21,6 +21,7 @@ import TasksPage from "@/pages/tasks";
 import FollowupsPage from "@/pages/followups";
 import VariationsPage from "@/pages/variations";
 import SimulationPage from "@/pages/simulation";
+import SimulationEnginePage from "@/pages/simulation/engine";
 import KnowledgePage from "@/pages/knowledge";
 import AnalyticsPage from "@/pages/analytics";
 import ExecutivePage from "@/pages/executive";
@@ -123,6 +124,7 @@ export default function App() {
                 <Route path="/variations" element={<VariationsPage />} />
                 <Route path="/followups" element={<FollowupsPage />} />
                 <Route path="/simulation" element={<SimulationPage />} />
+                <Route path="/simulation/engine" element={<SimulationEnginePage />} />
                 <Route path="/knowledge" element={<KnowledgePage />} />
                 <Route path="/analytics" element={<AnalyticsPage />} />
                 <Route path="/executive" element={<ExecutivePage />} />
