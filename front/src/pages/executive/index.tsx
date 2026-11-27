@@ -243,7 +243,7 @@ export default function ExecutivePage() {
         title="院长临床路径驾驶舱"
         meta={
           <>
-            <PageMeta label="组织" value="仁和医院" />
+            <PageMeta label="组织" value="重庆附二医院" />
             <PageMeta label="统计周期" value={`${period}`} />
             <PageMeta label="数据截止" value={fmtDate(LAST_SYNC, true)} mono />
           </>

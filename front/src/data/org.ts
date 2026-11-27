@@ -9,8 +9,8 @@ import { ROLE_SYSTEM_LABELS } from "@/lib/clinical";
 
 export const ORGANIZATION: Organization = {
   id: "org-rh-demo",
-  name: "仁和医院",
-  shortName: "仁和医院",
+  name: "重庆附二医院",
+  shortName: "重庆附二医院",
   code: "RH-DEMO",
   level: "三级甲等",
   city: "杭州",

@@ -100,7 +100,7 @@ export const PLANS: PlanVersion[] = [
     ],
     evidence: [
       { ref: "EV-001", title: "原发性肝癌诊疗指南（2024年版）", source: "国家卫生健康委员会" },
-      { ref: "EV-004", title: "仁和医院肝切除围术期诊疗规范 V2.1", source: "仁和医院医务处" },
+      { ref: "EV-004", title: "重庆附二医院肝切除围术期诊疗规范 V2.1", source: "重庆附二医院医务处" },
     ],
   },
   {

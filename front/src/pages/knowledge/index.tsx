@@ -1283,7 +1283,7 @@ export default function KnowledgePage() {
                 id="doc-source"
                 value={docForm.source}
                 onChange={(e) => setDocForm((f) => ({ ...f, source: e.target.value }))}
-                placeholder="例如：仁和医院医务处 / 国家卫生健康委员会"
+                placeholder="例如：重庆附二医院医务处 / 国家卫生健康委员会"
               />
             </div>
             <div className="space-y-1.5">

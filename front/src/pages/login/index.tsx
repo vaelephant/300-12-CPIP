@@ -5,18 +5,23 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
-import { ArrowRight, Eye, EyeOff, KeyRound, Lock, ShieldCheck, UserRound } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { ArrowRight, Eye, EyeOff, KeyRound, Lock, UserRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useSessionStore } from "@/stores/session-store";
 import { DEMO_ACCOUNTS, USERS } from "@/data/org";
 import { ROLE_SYSTEM_LABELS } from "@/lib/clinical";
 import { BrandMark } from "@/components/app/brand-mark";
 import { SyntheticTag } from "@/components/app/section";
-import { PatientAvatar } from "@/components/app/patient-avatar";
 import { ApiError } from "@/services/http";
 import { hccApi } from "@/services/hcc-api";
 import type { BackendUser } from "@/services/types";
@@ -113,76 +118,42 @@ export default function LoginPage() {
 
   return (
     <div className="grid min-h-screen lg:grid-cols-[1.05fr_0.95fr]">
-      <aside className="relative hidden flex-col justify-between overflow-hidden border-r border-line bg-[#1e2a3a] px-12 py-10 text-[#f4f5f3] lg:flex xl:px-16">
-        <div className="absolute inset-0 bg-[radial-gradient(900px_480px_at_85%_-10%,rgba(255,255,255,0.07),transparent_55%)]" />
-
-        <div className="relative flex items-center gap-2.5">
-          <div className="flex size-7 items-center justify-center rounded-[6px] bg-white/10 text-white">
-            <BrandMark className="size-4" />
-          </div>
-          <div className="flex items-baseline gap-2">
-            <span className="text-[14px] font-semibold tracking-[-0.02em]">DR.SeeK · HCC-CIP</span>
-            <span className="font-mono text-[11px] text-white/45">V0.6.1</span>
-          </div>
+      <aside className="relative hidden flex-col overflow-hidden border-r border-line bg-[#1e2a3a] px-14 py-12 text-[#f4f5f3] lg:flex xl:px-20">
+        <div className="relative flex items-center gap-2">
+          <BrandMark className="size-3.5 text-white/80" />
+          <span className="text-[12px] font-medium tracking-[-0.01em] text-white/80">DR.SeeK · HCC-CIP</span>
+          <span className="font-mono text-[10px] text-white/35">V0.6.1</span>
         </div>
 
-        <div className="relative max-w-[520px]">
-          <p className="mb-4 text-[13px] font-medium text-white/50">原发性肝癌 · HCC-CIP</p>
-          <h1 className="text-[36px] leading-[1.18] font-semibold tracking-[-0.03em] text-balance">
+        <div className="relative my-auto max-w-[420px] py-10">
+          <p className="text-[12px] text-white/45">原发性肝癌 · HCC-CIP</p>
+          <h1 className="mt-3 text-[26px] leading-[1.25] font-semibold tracking-[-0.03em]">
             以医疗模型为核心的
             <br />
             肝癌全病程平台
           </h1>
-          <p className="mt-3 font-mono text-[12px] tracking-[0.02em] text-white/40">
+          <p className="mt-3 font-mono text-[11px] text-white/35">
             Model-driven Clinical Intelligence · HCC-CIP
           </p>
-          <p className="mt-5 max-w-[28em] text-[15px] leading-relaxed text-white/65">
+          <p className="mt-5 text-[13px] leading-relaxed text-white/60">
             用患者状态模型组织诊断、规划与执行。
           </p>
 
-          <div className="mt-10 grid max-w-[520px] grid-cols-3 gap-0 border-t border-white/15">
-            {LAYERS.map((layer, i) => (
-              <div
+          <ul className="mt-10 space-y-0 border-t border-white/12">
+            {LAYERS.map((layer) => (
+              <li
                 key={layer.title}
-                className={cn("py-5 pr-5", i > 0 && "border-l border-white/15 pl-5")}
+                className="grid grid-cols-[3.5rem_5.5rem_1fr] items-baseline gap-3 border-b border-white/10 py-3"
               >
-                <p className="font-mono text-[11px] text-white/40">{layer.mark}</p>
-                <p className="mt-2 text-[15px] font-semibold tracking-[-0.015em]">{layer.title}</p>
-                <p className="mt-2 text-[12.5px] leading-relaxed text-white/55">{layer.desc}</p>
-              </div>
+                <span className="font-mono text-[10px] text-white/35">{layer.mark}</span>
+                <span className="text-[13px] font-medium">{layer.title}</span>
+                <span className="text-[12px] leading-snug text-white/50">{layer.desc}</span>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
 
-        <div className="relative max-w-[440px]">
-          <div className="border border-white/12 bg-white/[0.04] p-4">
-            <div className="flex items-center justify-between">
-              <span className="flex items-center gap-1.5 text-[11px] font-medium text-white/50">
-                <span className="size-1.5 rounded-full bg-white/80" />
-                路径运行中 · 合成演示
-              </span>
-              <span className="font-mono text-[11px] text-white/40">INST-HCC-001</span>
-            </div>
-            <div className="mt-3 flex items-center gap-2.5">
-              <PatientAvatar name="陈志远" id="HCC-DEMO-001" size="sm" />
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center justify-between gap-2">
-                  <p className="text-[13px] font-medium text-white/90">陈志远 · 肝细胞癌 Ⅰb 期</p>
-                  <span className="tabular text-[12px] text-white/45">46%</span>
-                </div>
-                <div className="mt-1.5 h-1 w-full overflow-hidden rounded-full bg-white/10">
-                  <div className="h-full w-[46%] rounded-full bg-white/70" />
-                </div>
-              </div>
-            </div>
-            <div className="mt-3 flex flex-wrap gap-1.5">
-              <span className="border border-white/12 px-2 py-0.5 text-[11px] text-white/45">入院评估 已完成</span>
-              <span className="border border-white/20 px-2 py-0.5 text-[11px] font-medium text-white/85">术前检查 执行中</span>
-              <span className="border border-white/12 px-2 py-0.5 text-[11px] text-white/45">治疗方案 待执行</span>
-            </div>
-          </div>
-          <p className="mt-3 text-[11px] text-white/35">模型驱动 · 路径承载 · 医生审核把关</p>
-        </div>
+    
       </aside>
 
       <main className="relative flex flex-col justify-center bg-background px-6 py-10 sm:px-10">
@@ -265,64 +236,35 @@ export default function LoginPage() {
             <span className="h-px flex-1 bg-line" />
           </div>
 
-          <div className="space-y-1.5">
-            {DEMO_ACCOUNTS.map((acc) => {
-              const active = selected === acc.user.id;
-              return (
-                <button
-                  key={acc.user.id}
-                  type="button"
-                  onClick={() => setSelected(acc.user.id)}
-                  className={cn(
-                    "flex w-full items-center gap-2.5 rounded-md border px-2.5 py-2 text-left transition-colors",
-                    active ? "border-foreground/20 bg-secondary" : "border-line bg-card hover:bg-secondary/50",
-                  )}
-                >
-                  <span
-                    className={cn(
-                      "flex size-6 shrink-0 items-center justify-center rounded-full text-[9px] font-medium",
-                      active ? "bg-foreground text-background" : "bg-secondary text-muted-foreground",
-                    )}
-                  >
-                    {acc.user.name.slice(-2)}
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="flex items-center gap-1.5">
-                      <span className="text-[12px] font-medium">{acc.roleLabel}</span>
-                      <span className="text-[10px] text-muted-foreground">{acc.user.name}</span>
-                    </span>
-                    <span className="block truncate text-[9.5px] text-muted-foreground/70">{acc.user.title}</span>
-                  </span>
-                  {active && <span className="size-1.5 rounded-full bg-foreground" />}
-                </button>
-              );
-            })}
-          </div>
-
-          <Button
-            variant="secondary"
-            className="mt-3 h-8 w-full"
-            onClick={() => void enterAs(selectedAccount.user.id, selectedAccount.user.employeeNo)}
-            disabled={pending}
-          >
-            以「{selectedAccount.roleLabel}」身份进入
-          </Button>
-
-          <div className="mt-5 rounded-md border border-line bg-secondary/40 px-3 py-2.5">
-            <p className="flex items-start gap-1.5 text-[10.5px] leading-relaxed text-muted-foreground">
-              <ShieldCheck className="mt-px size-3 shrink-0 text-ok" />
-              管理员账号默认无病历访问权限；越权请求将返回 403 并记录审计。
+          <div className="space-y-2">
+            <Label htmlFor="demo-role">演示角色</Label>
+            <Select value={selected} onValueChange={setSelected}>
+              <SelectTrigger id="demo-role" className="h-9 w-full">
+                <SelectValue placeholder="选择角色" />
+              </SelectTrigger>
+              <SelectContent>
+                {DEMO_ACCOUNTS.map((acc) => (
+                  <SelectItem key={acc.user.id} value={acc.user.id}>
+                    {acc.roleLabel} · {acc.user.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <p className="text-[11px] text-muted-foreground">
+              {selectedAccount.user.title} · {selectedAccount.user.employeeNo}
             </p>
           </div>
 
-          <div className="mt-6 flex items-center justify-between text-[9.5px] text-muted-foreground/60">
-            <span>© 2026 仁和医院 · HCC-CIP</span>
-            <span className="flex items-center gap-2">
-              <span>隐私</span>
-              <span>安全</span>
-              <span>帮助</span>
-            </span>
-          </div>
+         
+        </div>
+
+        <div className="absolute right-6 bottom-6 flex items-center gap-4 text-[9.5px] text-muted-foreground/60 sm:right-10">
+          <span>© 2026 重庆附二医院 · HCC-CIP</span>
+          <span className="flex items-center gap-2">
+            <span>隐私</span>
+            <span>安全</span>
+            <span>帮助</span>
+          </span>
         </div>
       </main>
     </div>

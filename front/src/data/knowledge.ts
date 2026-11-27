@@ -5,11 +5,11 @@ export const EVIDENCE_ITEMS: EvidenceItem[] = [
   { id: "EV-001", title: "原发性肝癌诊疗指南（2024年版）", source: "国家卫生健康委员会", sourceType: "GUIDELINE", year: 2024, grade: "A", summary: "肝切除适用于 Child-Pugh A 级、ICG R15 < 15% 且无肝外转移的可切除肝细胞癌患者。" },
   { id: "EV-002", title: "中国肝癌肝切除围手术期管理专家共识（2023）", source: "中华医学会外科学分会", sourceType: "CONSENSUS", year: 2023, grade: "B", summary: "推荐术前完成 ICG 清除试验、营养风险筛查及心肺功能评估，MDT 讨论决定手术方案。" },
   { id: "EV-003", title: "国家临床路径（2023年版）· 肝癌手术", source: "国家卫生健康委员会", sourceType: "NATIONAL_PATHWAY", year: 2023, grade: "A", summary: "规定标准住院日 12–18 天，术前评估、手术、术后管理与随访四个阶段的关键节点。" },
-  { id: "EV-004", title: "仁和医院肝切除围术期诊疗规范 V2.1", source: "仁和医院医务处", sourceType: "HOSPITAL_STANDARD", year: 2025, grade: "院内规范", summary: "院内术前检查清单与手术分级授权要求，ICG R15 阈值统一为 15%。" },
+  { id: "EV-004", title: "重庆附二医院肝切除围术期诊疗规范 V2.1", source: "重庆附二医院医务处", sourceType: "HOSPITAL_STANDARD", year: 2025, grade: "院内规范", summary: "院内术前检查清单与手术分级授权要求，ICG R15 阈值统一为 15%。" },
   { id: "EV-005", title: "加速康复外科（ERAS）专家共识（2021）", source: "中华医学会外科学分会", sourceType: "CONSENSUS", year: 2021, grade: "B", summary: "推荐术前宣教、营养评估、减少肠道准备、术后早期下床与多模式镇痛。" },
   { id: "EV-006", title: "围手术期静脉血栓栓塞症预防指南（2022）", source: "中华医学会血管外科学组", sourceType: "GUIDELINE", year: 2022, grade: "A", summary: "基于 Caprini 评分选择机械或药物预防，术后 24 小时内启动评估。" },
   { id: "EV-007", title: "原发性肝癌MDT诊疗共识（2023）", source: "中国抗癌协会肝癌专业委员会", sourceType: "CONSENSUS", year: 2023, grade: "B", summary: "建议对临界可切除或合并门静脉癌栓患者进行 MDT 讨论并留存决策记录。" },
-  { id: "EV-008", title: "抗菌药物预防使用院内规范（2025修订）", source: "仁和医院药事管理委员会", sourceType: "HOSPITAL_STANDARD", year: 2025, grade: "院内规范", summary: "清洁-污染手术预防用药应在切皮前 0.5–1 小时给药，术后不超过 24 小时。" },
+  { id: "EV-008", title: "抗菌药物预防使用院内规范（2025修订）", source: "重庆附二医院药事管理委员会", sourceType: "HOSPITAL_STANDARD", year: 2025, grade: "院内规范", summary: "清洁-污染手术预防用药应在切皮前 0.5–1 小时给药，术后不超过 24 小时。" },
 ];
 
 export const KNOWLEDGE_DOCS: KnowledgeDoc[] = [
@@ -61,9 +61,9 @@ export const KNOWLEDGE_DOCS: KnowledgeDoc[] = [
   {
     id: "KD-004",
     code: "HS-HPB-021",
-    title: "仁和医院肝切除围术期诊疗规范 V2.1",
+    title: "重庆附二医院肝切除围术期诊疗规范 V2.1",
     type: "HOSPITAL_STANDARD",
-    source: "仁和医院医务处",
+    source: "重庆附二医院医务处",
     version: "2.1",
     effectiveAt: daysAgo(210),
     department: "肝胆外科",
@@ -183,7 +183,7 @@ export const KNOWLEDGE_DOCS: KnowledgeDoc[] = [
     code: "HS-ABX-2025",
     title: "抗菌药物预防使用院内规范（2025修订）",
     type: "HOSPITAL_STANDARD",
-    source: "仁和医院药事管理委员会",
+    source: "重庆附二医院药事管理委员会",
     version: "2025",
     effectiveAt: daysAgo(60),
     department: "全院",
