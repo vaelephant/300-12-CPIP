@@ -83,6 +83,20 @@ export default function VizGalleryPage() {
             >
               Combo →
             </a>
+            <a
+              href="/dev/desgin/live-pathway"
+              className="rounded-md border px-2.5 py-1 text-[12px] font-medium transition-colors hover:bg-white"
+              style={{ borderColor: VIZ.line, color: VIZ.ink, background: VIZ.card }}
+            >
+              Live Pathway →
+            </a>
+            <a
+              href="/dev/desgin/world-model"
+              className="rounded-md border px-2.5 py-1 text-[12px] font-medium transition-colors hover:bg-white"
+              style={{ borderColor: VIZ.line, color: VIZ.ink, background: VIZ.card }}
+            >
+              World Model →
+            </a>
             <div
               className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[12px]"
               style={{ borderColor: VIZ.line, background: VIZ.card }}

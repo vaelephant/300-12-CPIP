@@ -74,3 +74,8 @@
 8. **工作空间概览**：`/dev/desgin#ov-overview` · `kit/overview.tsx`
    - **OV-01** FactRail · **OV-02** GroupedSheet ✅ · **OV-03** VitalStrip · **OV-04** Snapshot · **OV-05** DenseTable
    - 已接入：`components/patient/overview-grouped-sheet.tsx` → detail 左侧栏。
+9. **动态路径图**：`/dev/desgin/live-pathway` · `kit/live-pathway.tsx`
+   - **LP-01** QuietGraph · **LP-02** StageSwim · **LP-03** FocusPath → 选定后替换 VIS-001 `LivePathwayGraph`。
+10. **世界模型画布**：`/dev/desgin/world-model` · `kit/world-model.tsx`
+   - **WM-01** WorldModelCanvas（上：传统路径阶段轨 · 下：Past|Now|Future）· **WM-02** WorldModelStrip
+   - 阶段轨兼顾临床路径认知；Past 事件挂阶段、可聚焦过滤；Future · `clinical_use=false`。
