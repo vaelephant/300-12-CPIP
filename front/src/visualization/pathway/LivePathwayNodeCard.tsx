@@ -1,8 +1,7 @@
 import { memo } from "react";
 import { Handle, Position, type Node, type NodeProps } from "@xyflow/react";
-import { CheckCircle2, Clock3, FileText, Lock, TriangleAlert, UserRound } from "lucide-react";
+import { CheckCircle2, CircleDashed, HelpCircle, Lock, TriangleAlert } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { NODE_META, ROLE_LABELS } from "@/lib/clinical";
 import type { PathwayNode, TimeConstraint } from "@/types";
 import type { PathwayNodeVisualState } from "@/visualization/core/types";
 
@@ -27,44 +26,44 @@ export const PATHWAY_STATE_META: Record<PathwayNodeVisualState, PathwayStateMeta
   completed: {
     label: "已完成",
     description: "节点已完成并归档",
-    dotClass: "bg-primary",
-    chipClass: "border-primary/20 bg-accent text-primary",
+    dotClass: "bg-ink",
+    chipClass: "border-line bg-surface-muted text-ink",
   },
   active: {
     label: "执行中",
     description: "当前正在执行的任务节点",
-    dotClass: "bg-warn",
-    chipClass: "border-warn/25 bg-warn-wash text-warn",
+    dotClass: "bg-ink",
+    chipClass: "border-ink bg-ink text-surface",
   },
   variant: {
     label: "变异",
     description: "发生变异或受变异影响，需人工关注",
     dotClass: "bg-risk",
-    chipClass: "border-risk/20 bg-risk-wash text-risk",
+    chipClass: "border-risk/30 bg-risk-wash text-risk",
   },
   blocked: {
     label: "阻塞",
     description: "存在阻断性条件，任务不可继续",
     dotClass: "bg-risk",
-    chipClass: "border-risk/25 bg-risk-wash text-risk",
+    chipClass: "border-risk/30 bg-risk-wash text-risk",
   },
   pending: {
     label: "待执行",
     description: "尚未开始执行",
-    dotClass: "bg-muted-foreground/40",
-    chipClass: "border-line bg-secondary text-muted-foreground",
+    dotClass: "bg-muted-foreground/45",
+    chipClass: "border-line bg-surface text-muted-foreground",
   },
   unknown: {
     label: "UNKNOWN",
     description: "条件数据缺失或规则未知；下游禁止执行，等待补充",
     dotClass: "bg-warn",
-    chipClass: "border-warn/30 bg-warn-wash text-warn",
+    chipClass: "border-warn/35 bg-warn-wash text-warn",
   },
   not_selected: {
-    label: "未选路径",
+    label: "未选分支",
     description: "条件分支未选中；不生成可执行任务",
     dotClass: "bg-muted-foreground/30",
-    chipClass: "border-dashed border-line bg-secondary text-muted-foreground",
+    chipClass: "border-dashed border-line bg-surface-muted text-muted-foreground",
   },
 };
 
@@ -92,111 +91,82 @@ const HANDLE_STYLE = {
   pointerEvents: "none",
 } as const;
 
+/** V2：默认面只展示名称 + 状态 + 必要异常；角色/时限/证据/ID 进检查器 */
 const STATE_SURFACE: Record<PathwayNodeVisualState, string> = {
-  completed: "border-primary/35 bg-accent/55",
-  active: "border-warn/55 bg-warn-wash/60 ring-2 ring-warn/15",
-  variant: "border-dashed border-risk/55 bg-risk-wash/35",
-  blocked: "border-risk/50 bg-risk-wash/30",
-  pending: "border-line bg-card",
-  unknown: "border-warn/50 border-dashed bg-warn-wash/45",
-  not_selected: "border-dashed border-line bg-secondary/35 opacity-70",
+  completed: "border-line bg-surface",
+  active: "border-ink border-2 bg-surface",
+  variant: "border-risk bg-surface",
+  blocked: "border-risk bg-surface",
+  pending: "border-line bg-surface",
+  unknown: "border-dashed border-warn bg-surface",
+  not_selected: "border-dashed border-line bg-surface-muted/80 opacity-75",
 };
 
+function StateGlyph({ state }: { state: PathwayNodeVisualState }) {
+  if (state === "completed") return <CheckCircle2 className="size-3.5 shrink-0 text-ink" aria-hidden />;
+  if (state === "active") {
+    return (
+      <span className="relative flex size-3.5 shrink-0 items-center justify-center" aria-hidden>
+        <span className="size-2 rounded-full bg-ink" />
+      </span>
+    );
+  }
+  if (state === "variant" || state === "blocked") {
+    return state === "blocked" ? (
+      <Lock className="size-3.5 shrink-0 text-risk" aria-hidden />
+    ) : (
+      <TriangleAlert className="size-3.5 shrink-0 text-risk" aria-hidden />
+    );
+  }
+  if (state === "unknown") return <HelpCircle className="size-3.5 shrink-0 text-warn" aria-hidden />;
+  if (state === "not_selected") return <CircleDashed className="size-3.5 shrink-0 text-muted-foreground" aria-hidden />;
+  return <span className="size-2 shrink-0 rounded-full bg-muted-foreground/40" aria-hidden />;
+}
+
 function LivePathwayNodeCardImpl({ data }: NodeProps<LivePathwayNode>) {
-  const { node, state, showEvidence, selected } = data;
-  const meta = NODE_META[node.type];
-  const Icon = meta.icon;
+  const { node, state, selected } = data;
   const stateMeta = PATHWAY_STATE_META[state];
-  const timeLabel = formatConstraint(node.timeConstraint);
-  const evidenceCount = showEvidence ? (node.evidenceRefs?.length ?? 0) : 0;
   const isRisk = state === "variant" || state === "blocked";
-  const isUnknown = state === "unknown";
-  const isNotSelected = state === "not_selected";
 
   return (
     <div
       className={cn(
-        "relative w-[200px] rounded-lg border shadow-card transition-shadow duration-150",
+        "relative w-[168px] rounded-md border bg-surface px-3 py-2.5 transition-[box-shadow,border-color] duration-150",
         STATE_SURFACE[state],
-        selected && "shadow-pop ring-2 ring-primary/30",
-        isNotSelected && "border-dashed",
+        selected && "ring-2 ring-ink/25",
+        selected && state !== "active" && "border-ink",
       )}
+      aria-label={`${node.name} · ${stateMeta.label}${node.required ? " · 必做" : ""}`}
     >
-      {/* 变异/阻塞红色提示条 */}
       {isRisk && <span className="absolute inset-y-2 left-0 w-[2px] rounded-full bg-risk" aria-hidden />}
 
       <Handle type="target" position={Position.Top} style={HANDLE_STYLE} />
       <Handle type="source" position={Position.Bottom} style={HANDLE_STYLE} />
 
-      <div className="flex items-start gap-2 px-2.5 pt-2">
-        <span className={cn("mt-px flex size-6 shrink-0 items-center justify-center rounded-[5px]", meta.chip)}>
-          <Icon className="size-3.5" />
-        </span>
+      <div className="flex items-start gap-2">
+        <StateGlyph state={state} />
         <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-1.5">
-            <span className="label-micro truncate">{meta.label}</span>
-            {node.required && <span className="size-1.5 shrink-0 rounded-full bg-risk" title="必做节点" />}
-            {state === "completed" && <CheckCircle2 className="ml-auto size-3 shrink-0 text-primary" />}
-            {state === "active" && (
-              <span className="relative ml-auto flex size-2 shrink-0">
-                <span className="absolute inline-flex size-full animate-ping rounded-full bg-warn/60" />
-                <span className="relative inline-flex size-2 rounded-full bg-warn" />
+          <p className="line-clamp-2 text-[13px] leading-[18px] font-medium text-ink">{node.name}</p>
+          <div className="mt-1.5 flex flex-wrap items-center gap-1">
+            <span
+              className={cn(
+                "inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[11px] leading-[14px] font-medium",
+                "border",
+                stateMeta.chipClass,
+              )}
+            >
+              {stateMeta.label}
+            </span>
+            {node.required && (
+              <span
+                className="inline-flex items-center rounded border border-line bg-surface px-1.5 py-0.5 text-[11px] leading-[14px] text-muted-foreground"
+                title="必做节点"
+              >
+                必做
               </span>
             )}
-            {isRisk && <TriangleAlert className="ml-auto size-3 shrink-0 text-risk" />}
-            {isUnknown && <TriangleAlert className="ml-auto size-3 shrink-0 text-warn" />}
-            {isNotSelected && <span className="ml-auto text-[9px] text-muted-foreground">未选</span>}
           </div>
-          <p className="mt-0.5 line-clamp-2 text-[12px] leading-[1.35] font-medium text-foreground">{node.name}</p>
         </div>
-      </div>
-
-      <div className="mt-1.5 flex flex-wrap items-center gap-1 px-2.5">
-        <span
-          className={cn(
-            "inline-flex items-center gap-0.5 rounded-[3px] border px-1 py-px text-[9px] font-medium",
-            stateMeta.chipClass,
-          )}
-        >
-          <span className={cn("size-1 rounded-full", stateMeta.dotClass)} />
-          {stateMeta.label}
-        </span>
-        <span className="inline-flex items-center gap-1 rounded-[3px] border border-line bg-card/70 px-1 py-px text-[9px] text-muted-foreground">
-          <UserRound className="size-2.5" />
-          {ROLE_LABELS[node.responsibleRole]}
-        </span>
-        {timeLabel && (
-          <span className="inline-flex items-center gap-1 rounded-[3px] border border-line bg-card/70 px-1 py-px font-mono text-[9px] text-foreground/70">
-            <Clock3 className="size-2.5 text-muted-foreground" />
-            {timeLabel}
-          </span>
-        )}
-        {evidenceCount > 0 && (
-          <span
-            className="inline-flex items-center gap-1 rounded-[3px] border border-info/20 bg-info-wash px-1 py-px font-mono text-[9px] text-info"
-            title={`已绑定 ${evidenceCount} 条证据`}
-          >
-            <FileText className="size-2.5" />
-            {evidenceCount}
-          </span>
-        )}
-        {state === "blocked" && (
-          <span className="inline-flex items-center gap-1 rounded-[3px] border border-risk/20 bg-risk-wash px-1 py-px text-[9px] text-risk">
-            <Lock className="size-2.5" />
-            阻塞
-          </span>
-        )}
-        {state === "unknown" && (
-          <span className="inline-flex items-center gap-1 rounded-[3px] border border-warn/25 bg-warn-wash px-1 py-px text-[9px] text-warn">
-            <TriangleAlert className="size-2.5" />
-            待补充
-          </span>
-        )}
-      </div>
-
-      <div className="mt-1.5 flex items-center justify-between gap-2 border-t border-line/70 px-2.5 py-1">
-        <span className="truncate font-mono text-[9px] text-muted-foreground">{node.nodeKey}</span>
-        <span className="shrink-0 truncate text-[9px] text-muted-foreground/70">{node.stage}</span>
       </div>
     </div>
   );

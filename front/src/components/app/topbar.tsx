@@ -41,6 +41,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { crumbForPath } from "./nav-config";
 import { IS_SERVER_MODE } from "@/lib/data-mode";
+import { ModeToggle } from "@/components/mode-toggle";
 
 export function Topbar() {
   const location = useLocation();
@@ -55,7 +56,7 @@ export function Topbar() {
   const unread = NOTIFICATIONS.filter((n) => n.level !== "INFO").length;
 
   return (
-    <header className="sticky top-0 z-20 flex h-12 shrink-0 items-center gap-2 border-b border-line bg-card/90 px-3 backdrop-blur-md md:px-4">
+    <header className="sticky top-0 z-20 flex h-14 shrink-0 items-center gap-2 border-b border-line bg-card px-3 md:px-4">
       <SidebarTrigger className="-ml-1" />
       <Separator orientation="vertical" className="mr-1 hidden h-4 sm:block" />
       <div className="flex min-w-0 items-center gap-2">
@@ -169,6 +170,8 @@ export function Topbar() {
         >
           <CircleHelp className="size-4" />
         </button>
+
+        <ModeToggle />
 
         <span className="mx-0.5 h-5 w-px bg-line" />
 

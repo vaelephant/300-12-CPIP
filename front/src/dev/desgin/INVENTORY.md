@@ -67,3 +67,10 @@
 1. 先在 `/dev/desgin` 预览 **Viz Kit v1**（通用图表 12 件 + token）。
 2. 确认视觉与 API 后，再按页替换 `components/charts/*`，引擎层后置。
 3. 路径图 / 流程挖掘 / 证据图等复杂引擎组件不在本轮 kit 内。
+4. **路径阶段轨**：`/dev/desgin/pathway` · `kit/pathway.tsx`（A Spine / B Segments / C Milestones / D Focus）→ 选定后再替换 `StageProgressStrip`。
+5. **本阶段任务**：`/dev/desgin/tasks` · `kit/stage-tasks.tsx`（A–D 列表）+ `kit/stage-gantt.tsx`（E Gantt / F Swimlane）→ 选定后再替换 `TaskLine` / 现网 `GanttChart`。
+6. **组合预览**：`/dev/desgin/combo` · `kit/pathway-combo.tsx`（B Segments + F Swimlane 联动）。
+7. **已接入业务**：`components/patient/pathway-execution.tsx` → `pages/patients/detail.tsx` 路径区（替换 StageProgressStrip）。
+8. **工作空间概览**：`/dev/desgin#ov-overview` · `kit/overview.tsx`
+   - **OV-01** FactRail · **OV-02** GroupedSheet ✅ · **OV-03** VitalStrip · **OV-04** Snapshot · **OV-05** DenseTable
+   - 已接入：`components/patient/overview-grouped-sheet.tsx` → detail 左侧栏。

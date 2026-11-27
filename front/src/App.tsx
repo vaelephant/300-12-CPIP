@@ -3,6 +3,7 @@ import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-route
 import { QueryClient, QueryClientProvider, useQueryClient } from "@tanstack/react-query";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
+import { ThemeProvider } from "@/components/theme-provider";
 import { AppShell } from "@/components/app/app-shell";
 import LoginPage from "@/pages/login";
 import DashboardPage from "@/pages/dashboard";
@@ -29,6 +30,9 @@ import UsersPage from "@/pages/settings/users";
 import RolesPage from "@/pages/settings/roles";
 import AuditPage from "@/pages/settings/audit";
 import VizGalleryPage from "@/dev/desgin/Gallery";
+import PathwayGalleryPage from "@/dev/desgin/PathwayGallery";
+import StageTasksGalleryPage from "@/dev/desgin/StageTasksGallery";
+import ComboGalleryPage from "@/dev/desgin/ComboGallery";
 import { useSessionStore } from "@/stores/session-store";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -83,44 +87,49 @@ function LoginRoute() {
 
 export default function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider delayDuration={180}>
-        <BrowserRouter>
-          <SessionEffects />
-          <Routes>
-            <Route path="/login" element={<LoginRoute />} />
-            <Route path="/dev/desgin" element={<VizGalleryPage />} />
-            <Route element={<AppShell />}>
-              <Route path="/" element={<Navigate to="/dashboard" replace />} />
-              <Route path="/dashboard" element={<DashboardPage />} />
-              <Route path="/pathways" element={<PathwaysPage />} />
-              <Route path="/pathways/:id/studio" element={<PathwayStudioPage />} />
-              <Route path="/pathways/:id/versions" element={<PathwayVersionsPage />} />
-              <Route path="/approvals" element={<ApprovalsPage />} />
-              <Route path="/patients" element={<PatientsPage />} />
-              <Route path="/patients/:id" element={<PatientDetailPage />} />
-              <Route path="/patients/:id/map" element={<PatientMapPage />} />
-              <Route path="/patients/:id/replay" element={<PatientReplayPage />} />
-              <Route path="/patients/:id/pathway" element={<PatientPathwayPage />} />
-              <Route path="/planning/:instanceId" element={<PlanningPage />} />
-              <Route path="/tasks" element={<TasksPage />} />
-              <Route path="/variations" element={<VariationsPage />} />
-              <Route path="/followups" element={<FollowupsPage />} />
-              <Route path="/simulation" element={<SimulationPage />} />
-              <Route path="/knowledge" element={<KnowledgePage />} />
-              <Route path="/analytics" element={<AnalyticsPage />} />
-              <Route path="/executive" element={<ExecutivePage />} />
-              <Route path="/process-mining" element={<ProcessMiningPage />} />
-              <Route path="/about" element={<AboutPage />} />
-              <Route path="/settings/users" element={<UsersPage />} />
-              <Route path="/settings/roles" element={<RolesPage />} />
-              <Route path="/settings/audit" element={<AuditPage />} />
-              <Route path="*" element={<NotFound />} />
-            </Route>
-          </Routes>
-        </BrowserRouter>
-        <Toaster />
-      </TooltipProvider>
-    </QueryClientProvider>
+    <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider delayDuration={180}>
+          <BrowserRouter>
+            <SessionEffects />
+            <Routes>
+              <Route path="/login" element={<LoginRoute />} />
+              <Route path="/dev/desgin" element={<VizGalleryPage />} />
+              <Route path="/dev/desgin/pathway" element={<PathwayGalleryPage />} />
+              <Route path="/dev/desgin/tasks" element={<StageTasksGalleryPage />} />
+              <Route path="/dev/desgin/combo" element={<ComboGalleryPage />} />
+              <Route element={<AppShell />}>
+                <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                <Route path="/dashboard" element={<DashboardPage />} />
+                <Route path="/pathways" element={<PathwaysPage />} />
+                <Route path="/pathways/:id/studio" element={<PathwayStudioPage />} />
+                <Route path="/pathways/:id/versions" element={<PathwayVersionsPage />} />
+                <Route path="/approvals" element={<ApprovalsPage />} />
+                <Route path="/patients" element={<PatientsPage />} />
+                <Route path="/patients/:id" element={<PatientDetailPage />} />
+                <Route path="/patients/:id/map" element={<PatientMapPage />} />
+                <Route path="/patients/:id/replay" element={<PatientReplayPage />} />
+                <Route path="/patients/:id/pathway" element={<PatientPathwayPage />} />
+                <Route path="/planning/:instanceId" element={<PlanningPage />} />
+                <Route path="/tasks" element={<TasksPage />} />
+                <Route path="/variations" element={<VariationsPage />} />
+                <Route path="/followups" element={<FollowupsPage />} />
+                <Route path="/simulation" element={<SimulationPage />} />
+                <Route path="/knowledge" element={<KnowledgePage />} />
+                <Route path="/analytics" element={<AnalyticsPage />} />
+                <Route path="/executive" element={<ExecutivePage />} />
+                <Route path="/process-mining" element={<ProcessMiningPage />} />
+                <Route path="/about" element={<AboutPage />} />
+                <Route path="/settings/users" element={<UsersPage />} />
+                <Route path="/settings/roles" element={<RolesPage />} />
+                <Route path="/settings/audit" element={<AuditPage />} />
+                <Route path="*" element={<NotFound />} />
+              </Route>
+            </Routes>
+          </BrowserRouter>
+          <Toaster />
+        </TooltipProvider>
+      </QueryClientProvider>
+    </ThemeProvider>
   );
 }

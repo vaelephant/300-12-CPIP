@@ -316,7 +316,10 @@ export default function PatientMapPage() {
                     stateMap={stateMap}
                     mode={mode}
                     selectedKey={selectedKey}
-                    onNodeSelect={(key) => setSelectedKey(key)}
+                    onNodeSelect={(key) => {
+                      setSelectedKey(key);
+                      if (key) setInspectorOpen(true);
+                    }}
                     showEvidence={showEvidence}
                     height={586}
                     fitSignal={fitSignal}
@@ -370,19 +373,19 @@ export default function PatientMapPage() {
               )}
 
               {inspectorOpen && <div className="scrollbar-slim max-h-[640px] overflow-y-auto">
-                <div className="border-b border-line px-3.5 py-2.5">
-                  <p className="label-micro">NODE INSPECTOR</p>
-                  <p className="mt-1 text-[12px] font-semibold">节点检查器</p>
+                <div className="border-b border-line px-4 py-3">
+                  <p className="text-[12px] leading-[18px] text-muted-foreground">节点检查器</p>
+                  <p className="mt-0.5 text-[16px] leading-6 font-semibold tracking-[-0.02em] text-ink">选中节点详情</p>
                 </div>
                 {selectedNode && selectedMeta ? (
-                  <div className="space-y-3 p-3.5">
-                    <div className="flex items-start gap-2">
-                      <div className={cn("flex size-8 shrink-0 items-center justify-center rounded-[6px]", selectedMeta.chip)}>
+                  <div className="space-y-3 p-4">
+                    <div className="flex items-start gap-2.5">
+                      <div className={cn("flex size-8 shrink-0 items-center justify-center rounded-md", selectedMeta.chip)}>
                         <selectedMeta.icon className="size-4" />
                       </div>
                       <div className="min-w-0">
-                        <p className="text-[13px] leading-tight font-semibold">{selectedNode.name}</p>
-                        <p className="mt-0.5 font-mono text-[9.5px] text-muted-foreground">
+                        <p className="text-[14px] leading-[22px] font-semibold text-ink">{selectedNode.name}</p>
+                        <p className="mt-0.5 font-mono text-[12px] tabular-nums text-muted-foreground">
                           {selectedNode.type} · {selectedNode.nodeKey}
                         </p>
                       </div>

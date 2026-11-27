@@ -257,21 +257,19 @@ export function LivePathwayGraph({
         />
       </ReactFlowProvider>
 
-      {/* 只读态标识 */}
-      <div className="pointer-events-none absolute top-2.5 right-2.5 z-10 flex items-center gap-1 rounded-[3px] border border-line bg-card/90 px-1.5 py-0.5 font-mono text-[9px] text-muted-foreground backdrop-blur">
-        <span className="size-1 rounded-full bg-primary/60" />
-        READ-ONLY · {mode === "actual" ? "实际执行态" : "计划态"}
+      <div className="pointer-events-none absolute top-2.5 right-2.5 z-10 flex items-center gap-1.5 rounded-md border border-line bg-surface/95 px-2 py-1 text-[12px] leading-[18px] text-muted-foreground backdrop-blur">
+        <span className="size-1.5 rounded-full bg-ink/70" />
+        只读 · {mode === "actual" ? "实际执行态" : "计划态"}
       </div>
 
-      {/* 图例（可选） */}
       {showLegend && (
-        <div className="pointer-events-none absolute bottom-2.5 left-2.5 z-10 rounded-md border border-line bg-card/92 px-2.5 py-1.5 shadow-card backdrop-blur">
+        <div className="pointer-events-none absolute bottom-2.5 left-2.5 z-10 rounded-md border border-line bg-surface/95 px-3 py-2 backdrop-blur">
           <PathwayStateLegend compact />
         </div>
       )}
 
-      <div className="pointer-events-none absolute bottom-2.5 right-2.5 z-10 rounded-[3px] bg-card/85 px-1.5 py-0.5 font-mono text-[9px] text-muted-foreground/80 backdrop-blur">
-        SYNTHETIC · 演示路径图
+      <div className="pointer-events-none absolute bottom-2.5 right-2.5 z-10 rounded-md bg-surface/90 px-2 py-1 text-[12px] leading-[18px] text-muted-foreground/80 backdrop-blur">
+        演示路径图
       </div>
     </div>
   );
@@ -295,11 +293,11 @@ export function PathwayStateLegend({
 
   if (compact) {
     return (
-      <div className={cn("flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] text-muted-foreground", className)}>
+      <div className={cn("flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[12px] leading-[18px] text-muted-foreground", className)}>
         {states.map((state) => {
           const meta = PATHWAY_STATE_META[state];
           return (
-            <span key={state} className="inline-flex items-center gap-1">
+            <span key={state} className="inline-flex items-center gap-1.5">
               <span className={cn("size-1.5 rounded-full", meta.dotClass)} />
               {meta.label}
             </span>
@@ -315,10 +313,10 @@ export function PathwayStateLegend({
         const meta = PATHWAY_STATE_META[state];
         return (
           <div key={state} className="flex items-start gap-1.5">
-            <span className={cn("mt-1 size-1.5 shrink-0 rounded-full", meta.dotClass)} />
+            <span className={cn("mt-1.5 size-1.5 shrink-0 rounded-full", meta.dotClass)} />
             <div className="min-w-0">
-              <p className="text-[10.5px] leading-tight font-medium">{meta.label}</p>
-              <p className="mt-0.5 text-[9px] leading-relaxed text-muted-foreground">{meta.description}</p>
+              <p className="text-[13px] leading-[18px] font-medium text-ink">{meta.label}</p>
+              <p className="mt-0.5 text-[12px] leading-[18px] text-muted-foreground">{meta.description}</p>
             </div>
           </div>
         );

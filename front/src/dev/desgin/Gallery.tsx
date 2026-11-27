@@ -19,6 +19,13 @@ import {
   VizVBar,
 } from "./kit/charts";
 import {
+  OverviewDenseTable,
+  OverviewFactRail,
+  OverviewGroupedSheet,
+  OverviewSnapshot,
+  OverviewVitalStrip,
+} from "./kit/overview";
+import {
   HEAT_COLS,
   HEAT_ROWS,
   HEAT_VALUES,
@@ -47,19 +54,96 @@ export default function VizGalleryPage() {
             <h1 className="text-[16px] font-semibold tracking-[-0.02em]">Viz Kit</h1>
             <p className="text-[12px] text-[#66666d]">/dev/desgin · preview</p>
           </div>
-          <div
-            className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[12px]"
-            style={{ borderColor: VIZ.line, background: VIZ.card }}
-          >
-            <span className="size-1.5 rounded-full" style={{ background: VIZ.live }} />
-            v2 · skill
+          <div className="flex flex-wrap items-center gap-2">
+            <a
+              href="#ov-overview"
+              className="rounded-md border px-2.5 py-1 text-[12px] font-medium transition-colors hover:bg-white"
+              style={{ borderColor: VIZ.lineStrong, color: VIZ.ink, background: VIZ.card }}
+            >
+              OV 概览
+            </a>
+            <a
+              href="/dev/desgin/pathway"
+              className="rounded-md border px-2.5 py-1 text-[12px] font-medium transition-colors hover:bg-white"
+              style={{ borderColor: VIZ.line, color: VIZ.ink, background: VIZ.card }}
+            >
+              Pathway →
+            </a>
+            <a
+              href="/dev/desgin/tasks"
+              className="rounded-md border px-2.5 py-1 text-[12px] font-medium transition-colors hover:bg-white"
+              style={{ borderColor: VIZ.line, color: VIZ.ink, background: VIZ.card }}
+            >
+              Tasks →
+            </a>
+            <a
+              href="/dev/desgin/combo"
+              className="rounded-md border px-2.5 py-1 text-[12px] font-medium transition-colors hover:bg-white"
+              style={{ borderColor: VIZ.line, color: VIZ.ink, background: VIZ.card }}
+            >
+              Combo →
+            </a>
+            <div
+              className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[12px]"
+              style={{ borderColor: VIZ.line, background: VIZ.card }}
+            >
+              <span className="size-1.5 rounded-full" style={{ background: VIZ.live }} />
+              v2 · skill
+            </div>
           </div>
         </div>
       </header>
 
       <main className="mx-auto max-w-[1200px] space-y-4 px-4 py-4 pb-16">
-        {/* KPI — selectable strip */}
+        {/* OV · 工作空间左侧概览 */}
+        <section id="ov-overview" className="scroll-mt-16 space-y-3">
+          <div className="flex flex-wrap items-end justify-between gap-2">
+            <div>
+              <h2 className="text-[15px] font-semibold tracking-[-0.02em]" style={{ color: VIZ.ink }}>
+                OV · 工作空间概览
+              </h2>
+              <p className="mt-0.5 max-w-2xl text-[12px] leading-5" style={{ color: VIZ.muted }}>
+                替换 Patient 360 左侧「属性 / 分期 / 体征」三块散装 Panel。编号 OV-01…OV-05，确认后再接入。
+              </p>
+            </div>
+            <p className="font-mono text-[11px]" style={{ color: VIZ.muted }}>
+              kit/overview.tsx
+            </p>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5">
+            <OverviewFactRail />
+            <OverviewGroupedSheet />
+            <OverviewVitalStrip />
+            <OverviewSnapshot />
+            <OverviewDenseTable />
+          </div>
+          <div
+            className="rounded-[10px] border px-4 py-3 text-[12px] leading-5"
+            style={{ borderColor: VIZ.line, background: VIZ.card, color: VIZ.muted }}
+          >
+            <strong style={{ color: VIZ.ink }}>命名</strong>
+            {" · "}
+            <span className="font-mono">OV-01 FactRail</span>
+            {" · "}
+            <span className="font-mono">OV-02 GroupedSheet</span>
+            {" · "}
+            <span className="font-mono">OV-03 VitalStrip</span>
+            {" · "}
+            <span className="font-mono">OV-04 Snapshot</span>
+            {" · "}
+            <span className="font-mono">OV-05 DenseTable</span>
+          </div>
+        </section>
+
+        <div className="h-px" style={{ background: VIZ.line }} />
+
+        <div>
+          <h2 className="mb-3 text-[15px] font-semibold tracking-[-0.02em]" style={{ color: VIZ.ink }}>
+            Viz · 图表
+          </h2>
+          {/* KPI — selectable strip */}
           <VizKpiStrip items={KPI} selected={metric} onSelect={setMetric} />
+        </div>
 
         {/* Main trend + goal */}
         <div className="grid gap-4 lg:grid-cols-5">

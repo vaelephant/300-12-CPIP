@@ -50,6 +50,7 @@
   --color-ai-wash: var(--ai-wash);
   --color-canvas: var(--canvas);
   --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
 
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
@@ -76,72 +77,72 @@
 }
 
 :root {
-  --radius: 0.5rem;
+  /* Clinical Workspace V2.0 · docs/HCC-CIP-UI-UX-REFACTOR-V2.0.md */
+  --radius: 0.5rem; /* 8px · 普通控件 6–8px */
 
-  /* Near-monochrome · Linear quiet · one ink + one accent */
-  --canvas: #f7f7f8;
+  --canvas: #f6f7f8;
   --surface: #ffffff;
-  --surface-muted: #efeff1;
+  --surface-muted: #eef0f2;
 
   --background: var(--canvas);
-  --foreground: #111113;
+  --foreground: #17181a;
   --card: var(--surface);
-  --card-foreground: #111113;
+  --card-foreground: #17181a;
   --popover: #ffffff;
-  --popover-foreground: #111113;
+  --popover-foreground: #17181a;
 
-  --primary: #111113;
+  --primary: #17181a;
   --primary-foreground: #ffffff;
-  --secondary: #efeff1;
-  --secondary-foreground: #3c3c43;
-  --muted: #efeff1;
-  --muted-foreground: #8b8b93;
-  --accent: #efeff1;
-  --accent-foreground: #111113;
-  --destructive: #c23b3b;
+  --secondary: #eef0f2;
+  --secondary-foreground: #50545a;
+  --muted: #eef0f2;
+  --muted-foreground: #62676e;
+  --accent: #eef0f2;
+  --accent-foreground: #17181a;
+  --destructive: #b84242;
   --destructive-foreground: #ffffff;
-  --border: #e8e8eb;
-  --input: #d8d8de;
-  --ring: #111113;
+  --border: #e4e6e9;
+  --input: #d8dbe0;
+  --ring: #17181a;
 
-  --ink: #111113;
-  --ink-2: #3c3c43;
-  --ink-3: #8b8b93;
+  --ink: #17181a;
+  --ink-2: #50545a;
+  --ink-3: #62676e;
   --paper: var(--canvas);
   --line: var(--border);
-  --line-strong: #d8d8de;
+  --line-strong: #d8dbe0;
 
-  /* Accent only for brand mark / rare CTA hover — not for status floods */
-  --brand: #5e6ad2;
-  --brand-wash: #f0f1fa;
-  --ai: #5e6ad2;
-  --ai-wash: #f0f1fa;
+  /* 品牌标识用墨色，避免与风险红混淆；禁止紫蓝品牌洪水 */
+  --brand: #17181a;
+  --brand-wash: #eef0f2;
+  --ai: #50545a;
+  --ai-wash: #eef0f2;
 
-  /* Clinical semantics: muted, text/dot only */
-  --risk: #c23b3b;
-  --risk-wash: #f7f7f8;
+  /* 语义色：风险红仅真实风险/阻断 */
+  --risk: #b84242;
+  --risk-wash: #f7f1f1;
   --warn: #9a7b2f;
-  --warn-wash: #f7f7f8;
+  --warn-wash: #f7f5ef;
   --ok: #3d7a5a;
-  --ok-wash: #f7f7f8;
-  --info: #5e6ad2;
-  --info-wash: #f7f7f8;
+  --ok-wash: #eef5f1;
+  --info: #50545a;
+  --info-wash: #eef0f2;
 
-  /* Charts: grayscale ladder + single accent */
-  --chart-1: #111113;
-  --chart-2: #5e6ad2;
-  --chart-3: #6b6b73;
-  --chart-4: #9a9aa3;
-  --chart-5: #c4c4cb;
-  /* sidebar-07 inset：侧栏浅灰，主区白卡片浮起 */
-  --sidebar: #f4f4f5;
-  --sidebar-foreground: #111113;
-  --sidebar-primary: #111113;
+  /* 图表：中性阶梯；异常另用 risk + 文字 */
+  --chart-1: #17181a;
+  --chart-2: #50545a;
+  --chart-3: #7a7f86;
+  --chart-4: #a0a5ab;
+  --chart-5: #c8ccd1;
+
+  --sidebar: #f6f7f8;
+  --sidebar-foreground: #17181a;
+  --sidebar-primary: #17181a;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #e8e8eb;
-  --sidebar-accent-foreground: #111113;
-  --sidebar-border: #e0e0e4;
-  --sidebar-ring: #5e6ad2;
+  --sidebar-accent: #eef0f2;
+  --sidebar-accent-foreground: #17181a;
+  --sidebar-border: #e4e6e9;
+  --sidebar-ring: #17181a;
 }
 
 @layer base {
@@ -155,13 +156,25 @@
   }
   body {
     @apply bg-background text-foreground font-sans;
-    font-size: 13px;
+    /* V2.0：正文 14 / 22；临床关键内容禁止 9–10px */
+    font-size: 14px;
+    line-height: 22px;
     letter-spacing: -0.006em;
-    font-feature-settings: "cv05" 1, "ss01" 1, "cv11" 1;
+    font-feature-settings: "cv05" 1, "ss01" 1, "cv11" 1, "tnum" 0;
   }
   ::selection {
-    background: #e8e8eb;
-    color: #111113;
+    background: #e4e6e9;
+    color: #17181a;
+  }
+  h1 {
+    font-size: 24px;
+    line-height: 32px;
+    font-weight: 600;
+  }
+  h2 {
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 600;
   }
   :focus-visible {
     outline: 2px solid color-mix(in srgb, var(--ring) 40%, transparent);
@@ -318,13 +331,73 @@
   }
 }
 
+/* Clinical Workspace V2 · dark（中性墨色，无紫蓝品牌洪水） */
 .dark {
-  --sidebar: #141417;
-  --sidebar-foreground: #f3f3f5;
-  --sidebar-primary: #7b96ff;
-  --sidebar-primary-foreground: #0b0b0d;
-  --sidebar-accent: #1c1c20;
-  --sidebar-accent-foreground: #f3f3f5;
-  --sidebar-border: rgba(255, 255, 255, 0.08);
-  --sidebar-ring: #7b96ff;
+  color-scheme: dark;
+
+  --canvas: #0f1012;
+  --surface: #17181a;
+  --surface-muted: #1e2023;
+
+  --background: var(--canvas);
+  --foreground: #f2f3f4;
+  --card: var(--surface);
+  --card-foreground: #f2f3f4;
+  --popover: #1c1d20;
+  --popover-foreground: #f2f3f4;
+
+  --primary: #f2f3f4;
+  --primary-foreground: #17181a;
+  --secondary: #1e2023;
+  --secondary-foreground: #c4c7cc;
+  --muted: #1e2023;
+  --muted-foreground: #9a9ea6;
+  --accent: #1e2023;
+  --accent-foreground: #f2f3f4;
+  --destructive: #d15a5a;
+  --destructive-foreground: #ffffff;
+  --border: #2a2c30;
+  --input: #2a2c30;
+  --ring: #c4c7cc;
+
+  --ink: #f2f3f4;
+  --ink-2: #c4c7cc;
+  --ink-3: #9a9ea6;
+  --paper: var(--canvas);
+  --line: var(--border);
+  --line-strong: #3a3d42;
+
+  --brand: #f2f3f4;
+  --brand-wash: #1e2023;
+  --ai: #c4c7cc;
+  --ai-wash: #1e2023;
+
+  --risk: #d15a5a;
+  --risk-wash: #2a1c1c;
+  --warn: #c4a35a;
+  --warn-wash: #2a2618;
+  --ok: #5a9a78;
+  --ok-wash: #1a2420;
+  --info: #9a9ea6;
+  --info-wash: #1e2023;
+
+  --chart-1: #f2f3f4;
+  --chart-2: #c4c7cc;
+  --chart-3: #9a9ea6;
+  --chart-4: #6a6e76;
+  --chart-5: #3a3d42;
+
+  --sidebar: #0f1012;
+  --sidebar-foreground: #f2f3f4;
+  --sidebar-primary: #f2f3f4;
+  --sidebar-primary-foreground: #17181a;
+  --sidebar-accent: #1e2023;
+  --sidebar-accent-foreground: #f2f3f4;
+  --sidebar-border: #2a2c30;
+  --sidebar-ring: #c4c7cc;
+}
+
+.dark ::selection {
+  background: #2a2c30;
+  color: #f2f3f4;
 }
