@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "4a52f6f6-3e2a-48b6-a2d0-671f77ab586c",
+  "status": "current",
+  "command": "deliver",
+  "type": "explainer",
+  "input": "/Users/nihao/code/300-12-CPIP/.archify/explainer-vercel-calm-20261127-141212/candidate.archify.md",
+  "output": "/Users/nihao/code/300-12-CPIP/.archify/explainer-vercel-calm-20261127-141212/vercel-calm.html",
+  "specification": {
+    "sha256": "59e9849fa884eda8d932f5d01d8d5e2ab4fa732fbed2ef8968052a0e6bd5f89f",
+    "bytes": 6307
+  },
+  "artifact": {
+    "sha256": "2b6e521d718d786bc3c9c29cf0c9a002d78c8773e9a51408e2c5e760fc35b769",
+    "bytes": 912862
+  },
+  "explainer": {
+    "preparedSha256": "0cfe0e9546b8fac9cab266f511f20d9b519379bc09957ae5486a912417c2466a",
+    "dependencies": [
+      {
+        "kind": "diagram-spec",
+        "id": "noisy-stack",
+        "inline": true,
+        "sha256": "c41bbc303042b02f1c4baa1ca062bcbd9ba5bd4760a1cebbcfa6d772e72ef2f3",
+        "bytes": 1195
+      },
+      {
+        "kind": "diagram-spec",
+        "id": "calm-stack",
+        "inline": true,
+        "sha256": "7e1fcb32c93b41eb007e2f32ffee3a93f73cb8db624b75e71a093d0685fbb6b8",
+        "bytes": 949
+      }
+    ]
+  }
+}

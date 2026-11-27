@@ -23,7 +23,6 @@ export default function AboutPage() {
         module="PRODUCT DEFINITION · V0.6.1"
         eyebrow="HCC Clinical Intelligence Platform"
         title="关于平台"
-        description="平台产品定义、能力边界与当前版本状态。所有病例、指标与预测均为合成演示数据。"
         actions={<SyntheticTag />}
       />
 
@@ -109,16 +108,16 @@ export default function AboutPage() {
 
         <Card>
           <CardHeader className="pb-2">
-            <SectionHead title="当前版本边界" description="V0.6.1 · 研发演示" />
+            <SectionHead title="当前版本边界" description="V0.6.1" />
           </CardHeader>
           <CardContent className="space-y-2">
-            <Callout tone="warn" title="全部数据为合成演示">
-              不连接真实医院数据，不用于临床决策、患者沟通或考核；预测与推演均标记 `clinical_use = false`。
+            <Callout tone="info" title="产品边界">
+              预测与推演能力标记 `clinical_use = false`，不可替代临床决策；正式医嘱须由医生签署。
             </Callout>
             <div className="rounded-md border border-line bg-secondary/25 px-3 py-2.5">
               <p className="text-[11px] font-medium">已交付</p>
               <p className="mt-1 text-[10px] leading-relaxed text-muted-foreground">
-                23 个业务页面 · 300 例原发肝癌合成病例 · 16 项可视化能力 · 8 个核心引擎模块
+                23 个业务页面 · 300 例原发肝癌在管病例 · 16 项可视化能力 · 8 个核心引擎模块
               </p>
             </div>
             <div className="rounded-md border border-line bg-secondary/25 px-3 py-2.5">

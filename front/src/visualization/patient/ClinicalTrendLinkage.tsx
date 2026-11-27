@@ -56,7 +56,7 @@ const METRIC_COLOR_INDEX: Record<string, number> = { afp: 4, alt: 2, alb: 0, crp
  * - 参考区间 band 与上下限 markLine；异常点以风险色强调；
  * - 事件 markPoint（▲ + 标签）；`cursorIndex` 驱动垂直回放游标；
  * - `onHoverIndex` 在高亮数据点时回调，供回放页反向同步时间轴。
- * 颜色全部经 vizPalette() 解析；图表为合成演示数据。
+ * 颜色全部经 vizPalette() 解析；图表为。
  */
 export function ClinicalTrendLinkage({
   labels = MULTIMODAL_LABELS,
@@ -352,7 +352,7 @@ export function ClinicalTrendLinkage({
         option={option}
         height={height}
         onEvents={onEvents}
-        ariaLabel={`多模态临床指标联动图：${metric.label}（${metric.unit}）趋势、参考区间 ${metric.refLow}–${metric.refHigh}、临床事件标记与回放游标，合成演示数据`}
+        ariaLabel={`多模态临床指标联动图：${metric.label}（${metric.unit}）趋势、参考区间 ${metric.refLow}–${metric.refHigh}、临床事件标记与回放游标，`}
       />
 
       <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[9.5px] text-muted-foreground">
@@ -375,9 +375,6 @@ export function ClinicalTrendLinkage({
             <span className="h-3 w-px" style={{ background: palette.risk }} /> 回放游标 D{cursorIndex}
           </span>
         )}
-        <span className="ml-auto font-mono text-[9px] text-muted-foreground/70">
-          SYNTHETIC · 合成演示 · 不用于临床判读
-        </span>
       </div>
 
       {events.length > 0 && (

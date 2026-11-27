@@ -19,7 +19,7 @@ import { useSessionStore } from "@/stores/session-store";
 
 /** 统一的运行时任务操作：非法状态转换会以 toast.error 展示引擎返回的错误。 */
 export function useTaskRunner() {
-  const actor = useSessionStore((s) => s.user?.name ?? "演示医生");
+  const actor = useSessionStore((s) => s.user?.name ?? "责任医生");
   const startTask = useRuntimeStore((s) => s.startTask);
   const completeTask = useRuntimeStore((s) => s.completeTask);
   const cancelTask = useRuntimeStore((s) => s.cancelTask);
@@ -35,7 +35,7 @@ export function useTaskRunner() {
     actor,
     start: (task: Task) => report(startTask(task.id, actor), `已开始任务 · ${task.name}`),
     complete: (task: Task, note: string) =>
-      report(completeTask(task.id, actor, note.trim() || "已完成（演示）"), `已完成任务 · ${task.name}`),
+      report(completeTask(task.id, actor, note.trim() || "已完成"), `已完成任务 · ${task.name}`),
     cancel: (task: Task) => report(cancelTask(task.id, actor), `已取消任务 · ${task.name}`),
     skip: (task: Task) => report(skipTask(task.id, actor), `已跳过任务 · ${task.name}`),
   };
@@ -159,11 +159,11 @@ export function TaskActions({
               id={`task-result-${task.id}`}
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              placeholder="例如：体温 36.8°C，已完成评估并签名（演示输入，不会写入真实病历）"
+              placeholder="例如：体温 36.8°C，已完成评估并签名"
               className="mt-1.5"
             />
             <p className="mt-2 text-[10.5px] text-muted-foreground">
-              结果仅保存在当前浏览器会话的演示运行时中，不会上传。
+              结果保存在当前会话运行时。
             </p>
           </div>
           <DialogFooter>

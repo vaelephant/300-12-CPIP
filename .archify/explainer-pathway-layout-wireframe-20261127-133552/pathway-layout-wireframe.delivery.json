@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "ed9e9a56-472d-483e-8d4f-ddd2dab84de7",
+  "status": "current",
+  "command": "deliver",
+  "type": "explainer",
+  "input": "/Users/nihao/code/300-12-CPIP/.archify/explainer-pathway-layout-wireframe-20261127-133552/candidate.archify.md",
+  "output": "/Users/nihao/code/300-12-CPIP/.archify/explainer-pathway-layout-wireframe-20261127-133552/pathway-layout-wireframe.html",
+  "specification": {
+    "sha256": "37746e117ff0ae63dbab3da674cb42c06384b36145b721b4f0e076d0e51f5826",
+    "bytes": 5458
+  },
+  "artifact": {
+    "sha256": "e1cc70807edc30e2dffdbf5f21499dafd63a25f5317b270d8e80b544e4608b14",
+    "bytes": 564865
+  },
+  "explainer": {
+    "preparedSha256": "00f097470513edba2b8f4eb5c58f78b7a5a629e2f83f4f2fd10a69e67d3ebe96",
+    "dependencies": [
+      {
+        "kind": "diagram-spec",
+        "id": "layout-stack",
+        "inline": true,
+        "sha256": "92ae54a42733e0e0a26f31bd54c81908ecec791f58fa9237ef4ff54d3b672595",
+        "bytes": 1927
+      }
+    ]
+  }
+}

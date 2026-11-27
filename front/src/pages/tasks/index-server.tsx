@@ -104,7 +104,6 @@ export default function ServerTasksPage() {
       <PageHeader
         module="M07 · 任务执行 · 后端工作队列"
         title="任务中心"
-        description="任务来自服务端计划与状态机；依赖、角色、乐观锁和必需结果均由后端校验。"
         actions={<SyntheticTag />}
         meta={
           <>
@@ -227,7 +226,6 @@ export default function ServerTasksPage() {
             <EmptyState
               icon={<AlertTriangle />}
               title="没有匹配任务"
-              description="当前筛选条件下无任务；可切换状态或等待计划激活后生成任务。"
             />
           </div>
         )}

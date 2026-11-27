@@ -424,7 +424,7 @@ export function PatientJourneyTimeline({
         <span className="font-mono">
           {activeScale === "day" ? "日尺度" : activeScale === "week" ? "周尺度" : activeScale === "month" ? "月尺度" : "年尺度"}
         </span>
-        <span className="ml-auto font-mono">合成演示数据 · 来源 HIS / LIS / PACS / HCC-CIP</span>
+        <span className="ml-auto font-mono">来源 HIS / LIS / PACS / HCC-CIP</span>
       </div>
     </div>
   );

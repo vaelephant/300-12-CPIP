@@ -71,20 +71,15 @@ export function KeyLabTrendsCard({ className }: { className?: string }) {
       <CardHeader className="pb-2">
         <SectionHead
           title="关键指标趋势"
-          description="入院以来 ALT / TBIL / AFP 变化 · 参考区间来自院内检验标准（合成）"
+          description="入院以来 ALT / TBIL / AFP 变化 · 参考区间来自院内检验标准"
           action={
-            <div className="flex items-center gap-1.5">
-              <Badge variant="outline" className="font-mono text-[9px]">
-                SYNTHETIC · 趋势
-              </Badge>
-              <div className="flex items-center gap-1 rounded-md border border-line bg-secondary/40 p-0.5">
-                <Button size="xs" variant={view === "chart" ? "secondary" : "ghost"} onClick={() => setView("chart")}>
-                  <TrendingUp className="size-3" /> 图
-                </Button>
-                <Button size="xs" variant={view === "table" ? "secondary" : "ghost"} onClick={() => setView("table")}>
-                  <Table2 className="size-3" /> 表
-                </Button>
-              </div>
+            <div className="flex items-center gap-1 rounded-md border border-line bg-secondary/40 p-0.5">
+              <Button size="xs" variant={view === "chart" ? "secondary" : "ghost"} onClick={() => setView("chart")}>
+                <TrendingUp className="size-3" /> 图
+              </Button>
+              <Button size="xs" variant={view === "table" ? "secondary" : "ghost"} onClick={() => setView("table")}>
+                <Table2 className="size-3" /> 表
+              </Button>
             </div>
           }
         />
@@ -173,7 +168,7 @@ export function KeyLabTrendsCard({ className }: { className?: string }) {
                   </table>
                 )}
                 <p className="mt-0.5 flex items-center justify-between gap-2 font-mono text-[9px] text-muted-foreground/80">
-                  <span>4 个采集点 · LIS 合成 · 最近 {SHORT_TIME.format(new Date(LAB_TREND[LAB_TREND.length - 1].at))}</span>
+                  <span>4 个采集点 · LIS · 最近 {SHORT_TIME.format(new Date(LAB_TREND[LAB_TREND.length - 1].at))}</span>
                   <span className={cn(dir !== "normal" || overCount > 0 ? "text-warn" : "text-muted-foreground/80")}>
                     {overCount > 0 ? `${overCount} 点高于参考上限` : "均在参考区间"}
                   </span>
@@ -188,7 +183,7 @@ export function KeyLabTrendsCard({ className }: { className?: string }) {
           <p className="text-[10px] leading-relaxed text-muted-foreground">
             异常方向以「高于上限 / 低于下限」标注；参考区间底色仅为提示，异常结果需结合临床判断，不构成诊断结论。缺测不绘制、不填零；单位不一致不直接连线。
           </p>
-          <span className="font-mono text-[9px] text-muted-foreground/70">LAB_TREND · 合成演示数据</span>
+          <span className="font-mono text-[9px] text-muted-foreground/70">LAB_TREND · </span>
         </div>
       </CardContent>
     </Card>

@@ -15,7 +15,6 @@ import { useSessionStore } from "@/stores/session-store";
 import { DEMO_ACCOUNTS, USERS } from "@/data/org";
 import { ROLE_SYSTEM_LABELS } from "@/lib/clinical";
 import { BrandMark } from "@/components/app/brand-mark";
-import { StatusBadge } from "@/components/app/status-badge";
 import { SyntheticTag } from "@/components/app/section";
 import { PatientAvatar } from "@/components/app/patient-avatar";
 import { ApiError } from "@/services/http";
@@ -31,17 +30,23 @@ const schema = z.object({
 
 type FormValues = z.infer<typeof schema>;
 
-const CAPABILITIES = [
-  { zh: "可设计", en: "Design" },
-  { zh: "可挖掘", en: "Discover" },
-  { zh: "可规划", en: "Plan" },
-  { zh: "可执行", en: "Execute" },
-  { zh: "可预测", en: "Predict" },
-  { zh: "可优化", en: "Optimize" },
+const LAYERS = [
+  {
+    mark: "内核",
+    title: "医疗模型",
+    desc: "患者连续状态、风险与演化表征",
+  },
+  {
+    mark: "能力",
+    title: "专病 CDSS",
+    desc: "把模型与指南编成可审计建议",
+  },
+  {
+    mark: "应用",
+    title: "临床路径",
+    desc: "审核后执行、变异跟踪与随访",
+  },
 ];
-
-const PRODUCT_DEFINITION =
-  "以原发性肝癌为专病应用，以医学知识和真实患者数据为基础，提供临床路径设计、发现、规划、辅助决策、执行、监测及持续优化能力，并逐步接入医疗世界模型，实现预测驱动的全病程智能管理。";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -69,7 +74,7 @@ export default function LoginPage() {
       loginAs(userId);
       const user = USERS.find((u) => u.id === userId);
       toast.success(`已登录 · ${user?.name ?? ""}`, {
-        description: `当前角色：${user ? ROLE_SYSTEM_LABELS[user.role] : "演示账号"}，所有操作将写入审计日志（模拟）。`,
+        description: `当前角色：${user ? ROLE_SYSTEM_LABELS[user.role] : "账号"}，所有操作将写入审计日志。`,
         duration: 2800,
       });
       navigate(target?.from && target.from !== "/login" ? target.from : "/dashboard", { replace: true });
@@ -107,67 +112,76 @@ export default function LoginPage() {
   const selectedAccount = DEMO_ACCOUNTS.find((a) => a.user.id === selected)!;
 
   return (
-    <div className="grid min-h-screen lg:grid-cols-[1fr_1fr]">
-      <aside className="relative hidden flex-col justify-between overflow-hidden border-r border-line bg-card px-12 py-10 text-foreground lg:flex xl:px-16">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,color-mix(in_srgb,var(--brand)_10%,transparent),transparent_55%)]" />
+    <div className="grid min-h-screen lg:grid-cols-[1.05fr_0.95fr]">
+      <aside className="relative hidden flex-col justify-between overflow-hidden border-r border-line bg-[#1e2a3a] px-12 py-10 text-[#f4f5f3] lg:flex xl:px-16">
+        <div className="absolute inset-0 bg-[radial-gradient(900px_480px_at_85%_-10%,rgba(255,255,255,0.07),transparent_55%)]" />
 
         <div className="relative flex items-center gap-2.5">
-          <div className="flex size-7 items-center justify-center rounded-[6px] bg-brand text-white">
+          <div className="flex size-7 items-center justify-center rounded-[6px] bg-white/10 text-white">
             <BrandMark className="size-4" />
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-[14px] font-semibold tracking-[-0.02em]">HCC-CIP</span>
-            <span className="text-[11px] text-muted-foreground">0.6.1</span>
+            <span className="text-[14px] font-semibold tracking-[-0.02em]">DR.SeeK · HCC-CIP</span>
+            <span className="font-mono text-[11px] text-white/45">V0.6.1</span>
           </div>
         </div>
 
-        <div className="relative max-w-[480px]">
-          <p className="mb-3 text-[12px] font-medium text-muted-foreground">原发性肝癌 · 全病程</p>
-          <h1 className="text-[34px] leading-[1.15] font-semibold tracking-[-0.03em] text-balance">
-            智能临床路径平台
+        <div className="relative max-w-[520px]">
+          <p className="mb-4 text-[13px] font-medium text-white/50">原发性肝癌 · HCC-CIP</p>
+          <h1 className="text-[36px] leading-[1.18] font-semibold tracking-[-0.03em] text-balance">
+            以医疗模型为核心的
+            <br />
+            肝癌全病程平台
           </h1>
-          <p className="mt-4 max-w-[440px] text-[14px] leading-relaxed text-muted-foreground">
-            {PRODUCT_DEFINITION}
+          <p className="mt-3 font-mono text-[12px] tracking-[0.02em] text-white/40">
+            Model-driven Clinical Intelligence · HCC-CIP
+          </p>
+          <p className="mt-5 max-w-[28em] text-[15px] leading-relaxed text-white/65">
+            用患者状态模型组织诊断、规划与执行。
           </p>
 
-          <div className="mt-8 grid max-w-[440px] grid-cols-3 gap-3">
-            {CAPABILITIES.map((cap) => (
-              <div key={cap.zh} className="rounded-lg bg-secondary/70 px-3 py-2.5">
-                <p className="text-[13px] font-medium text-foreground">{cap.zh}</p>
-                <p className="mt-0.5 text-[11px] text-muted-foreground">{cap.en}</p>
+          <div className="mt-10 grid max-w-[520px] grid-cols-3 gap-0 border-t border-white/15">
+            {LAYERS.map((layer, i) => (
+              <div
+                key={layer.title}
+                className={cn("py-5 pr-5", i > 0 && "border-l border-white/15 pl-5")}
+              >
+                <p className="font-mono text-[11px] text-white/40">{layer.mark}</p>
+                <p className="mt-2 text-[15px] font-semibold tracking-[-0.015em]">{layer.title}</p>
+                <p className="mt-2 text-[12.5px] leading-relaxed text-white/55">{layer.desc}</p>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="relative max-w-[420px]">
-          <div className="rounded-[10px] border border-line bg-card p-4 shadow-pop">
+        <div className="relative max-w-[440px]">
+          <div className="border border-white/12 bg-white/[0.04] p-4">
             <div className="flex items-center justify-between">
-              <span className="flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground">
-                <span className="size-1.5 rounded-full bg-foreground" />
-                路径运行中
+              <span className="flex items-center gap-1.5 text-[11px] font-medium text-white/50">
+                <span className="size-1.5 rounded-full bg-white/80" />
+                路径运行中 · 合成演示
               </span>
-              <span className="font-mono text-[11px] text-muted-foreground">INST-HCC-001</span>
+              <span className="font-mono text-[11px] text-white/40">INST-HCC-001</span>
             </div>
             <div className="mt-3 flex items-center gap-2.5">
               <PatientAvatar name="陈志远" id="HCC-DEMO-001" size="sm" />
               <div className="min-w-0 flex-1">
                 <div className="flex items-center justify-between gap-2">
-                  <p className="text-[13px] font-medium">陈志远 · 肝细胞癌 Ⅰb 期</p>
-                  <span className="tabular text-[12px] text-muted-foreground">46%</span>
+                  <p className="text-[13px] font-medium text-white/90">陈志远 · 肝细胞癌 Ⅰb 期</p>
+                  <span className="tabular text-[12px] text-white/45">46%</span>
                 </div>
-                <div className="mt-1.5 h-1 w-full overflow-hidden rounded-full bg-secondary">
-                  <div className="h-full w-[46%] rounded-full bg-foreground" />
+                <div className="mt-1.5 h-1 w-full overflow-hidden rounded-full bg-white/10">
+                  <div className="h-full w-[46%] rounded-full bg-white/70" />
                 </div>
               </div>
             </div>
             <div className="mt-3 flex flex-wrap gap-1.5">
-              <span className="rounded-md bg-secondary px-2 py-0.5 text-[11px] text-muted-foreground">入院评估 已完成</span>
-              <span className="rounded-md bg-secondary px-2 py-0.5 text-[11px] font-medium text-foreground">术前检查 执行中</span>
-              <span className="rounded-md bg-secondary px-2 py-0.5 text-[11px] text-muted-foreground">治疗方案 待执行</span>
+              <span className="border border-white/12 px-2 py-0.5 text-[11px] text-white/45">入院评估 已完成</span>
+              <span className="border border-white/20 px-2 py-0.5 text-[11px] font-medium text-white/85">术前检查 执行中</span>
+              <span className="border border-white/12 px-2 py-0.5 text-[11px] text-white/45">治疗方案 待执行</span>
             </div>
           </div>
-          <p className="mt-4 text-[11px] text-muted-foreground">合成演示数据 · 不用于临床决策</p>
+          <p className="mt-3 text-[11px] text-white/35">模型驱动 · 路径承载 · 医生审核把关</p>
         </div>
       </aside>
 
@@ -183,10 +197,14 @@ export default function LoginPage() {
             <SyntheticTag />
           </div>
 
+          <div className="mb-7 hidden justify-end lg:flex">
+            <SyntheticTag />
+          </div>
+
           <div className="mb-7">
-            <h2 className="text-[22px] font-semibold tracking-[-0.025em]">登录</h2>
+            <h2 className="text-[22px] font-semibold tracking-[-0.025em]">登录工作台</h2>
             <p className="mt-1.5 text-[13px] text-muted-foreground">
-              使用院内工号进入工作台。角色决定可见模块与数据范围。
+              使用院内工号进入。角色决定可见模块与数据范围。
             </p>
           </div>
 
@@ -243,7 +261,7 @@ export default function LoginPage() {
 
           <div className="my-5 flex items-center gap-3">
             <span className="h-px flex-1 bg-line" />
-            <span className="text-[10px] tracking-wider text-muted-foreground">或使用演示角色快速登录</span>
+            <span className="text-[10px] tracking-wider text-muted-foreground">或使用角色快速登录</span>
             <span className="h-px flex-1 bg-line" />
           </div>
 
@@ -293,12 +311,12 @@ export default function LoginPage() {
           <div className="mt-5 rounded-md border border-line bg-secondary/40 px-3 py-2.5">
             <p className="flex items-start gap-1.5 text-[10.5px] leading-relaxed text-muted-foreground">
               <ShieldCheck className="mt-px size-3 shrink-0 text-ok" />
-              演示环境不校验真实密码，不包含任何真实患者数据。管理员账号默认无病历访问权限，所有越权请求将返回 403 并记录审计。
+              管理员账号默认无病历访问权限；越权请求将返回 403 并记录审计。
             </p>
           </div>
 
           <div className="mt-6 flex items-center justify-between text-[9.5px] text-muted-foreground/60">
-            <span>© 2026 仁和医院（演示） · HCC-CIP</span>
+            <span>© 2026 仁和医院 · HCC-CIP</span>
             <span className="flex items-center gap-2">
               <span>隐私</span>
               <span>安全</span>

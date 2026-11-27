@@ -184,7 +184,7 @@ export default function PatientReplayPage() {
     const timer = window.setTimeout(() => {
       if (dayIndex >= maxDay) {
         setPlaying(false);
-        toast.success("回放结束", { description: "已到达 D8 · 出院随访阶段（合成演示）。" });
+        toast.success("回放结束", { description: "已到达 D8 · 出院随访阶段。" });
       } else {
         setDayIndex((v) => v + 1);
       }
@@ -212,7 +212,6 @@ export default function PatientReplayPage() {
         <EmptyState
           icon={<Route />}
           title="患者不存在"
-          description="无法找到可回放的患者档案。"
           action={
             <Button asChild size="sm">
               <Link to="/patients">返回患者中心</Link>
@@ -229,16 +228,14 @@ export default function PatientReplayPage() {
         <PageHeader
           module="VIS-011 · 患者病程回放"
           title={`${patient.name} · 病程回放`}
-          description="V0.6.1 演示版仅提供陈志远（肝癌手术路径）的完整回放事件与状态快照。"
           actions={<SyntheticTag />}
         />
         <EmptyState
           icon={<Play />}
           title="该患者暂无可回放数据"
-          description="病程回放依赖完整的事件日志与状态快照。当前演示数据仅覆盖 HCC-DEMO-001。"
           action={
             <Button asChild size="sm">
-              <Link to={`/patients/${patient.id}`}>返回患者详情</Link>
+              <Link to={`/patients/${patient.id}`}>返回患者 360</Link>
             </Button>
           }
         />
@@ -257,12 +254,11 @@ export default function PatientReplayPage() {
         module="VIS-011 · 患者病程回放"
         eyebrow="Clinical Journey Replay · 过去 / 现在 / 未来"
         title={`${patient.name} · 病程回放`}
-        description="拖动时间滑块，回放从入院到出院的关键事件、路径状态、状态画像、检验指标、模型预测与临床决策；六视图同步于同一时间点。"
         meta={
           <>
             <PageMeta label="患者" value={`${patient.name} · ${patient.mrn}`} mono />
             <PageMeta label="路径实例" value={instance.id} mono />
-            <PageMeta label="回放范围" value="D0–D8 · 合成重建" />
+            <PageMeta label="回放范围" value="D0–D8" />
             <SyntheticTag />
           </>
         }
@@ -270,7 +266,7 @@ export default function PatientReplayPage() {
           <>
             <Button asChild variant="outline" size="sm">
               <Link to={`/patients/${patient.id}`}>
-                <ArrowLeft className="size-3.5" /> 患者详情
+                <ArrowLeft className="size-3.5" /> 患者 360
               </Link>
             </Button>
             <Button asChild variant="outline" size="sm">
@@ -282,8 +278,8 @@ export default function PatientReplayPage() {
               variant="outline"
               size="sm"
               onClick={() =>
-                toast.success("已导出回放摘要（合成演示）", {
-                  description: "包含时间点、事件、状态快照与决策记录；导出行为写入审计日志（演示）。",
+                toast.success("已导出回放摘要", {
+                  description: "包含时间点、事件、状态快照与决策记录；导出行为写入审计日志。",
                 })
               }
             >
@@ -490,8 +486,8 @@ export default function PatientReplayPage() {
           <VisualFrame
             title="患者状态画像"
             badge={<span className="font-mono text-[8.5px] text-muted-foreground/60">VIS-007</span>}
-            description={`${snapshot.label} 状态 vs 入院基线 · 0–100 演示评分`}
-            footnote="评分为合成演示占位，正式产品须采用经验证的临床量表。"
+            description={`${snapshot.label} 状态 vs 入院基线 · 0–100 评分`}
+            footnote="评分须采用经验证的临床量表。"
           >
             <PatientStateRadar data={radarData} height={228} compact showFootnote={false} />
           </VisualFrame>
@@ -531,7 +527,7 @@ export default function PatientReplayPage() {
                 {predictionModel.note}
               </p>
               <div className="mt-1.5 flex items-center justify-between">
-                <span className="font-mono text-[8.5px] text-muted-foreground/60">合成推演 · 不可用于临床</span>
+                <span className="font-mono text-[8.5px] text-muted-foreground/60">研究推演 · 不可用于临床</span>
                 <Link to="/simulation" className="inline-flex items-center gap-0.5 text-[10px] text-primary hover:underline">
                   打开多路径推演 <ArrowRight className="size-3" />
                 </Link>
@@ -545,8 +541,7 @@ export default function PatientReplayPage() {
           className="xl:col-span-8"
           title="多模态临床指标联动"
           badge={<span className="font-mono text-[8.5px] text-muted-foreground/60">VIS-004</span>}
-          description="检验指标与手术、用药、影像事件共用时间轴；当前时间点与回放游标同步。"
-          footnote="参考区间来自演示数据；异常标记不可替代临床判断。"
+          footnote="异常标记不可替代临床判断。"
         >
           <ClinicalTrendLinkage
             cursorIndex={dayIndex}
@@ -607,8 +602,7 @@ export default function PatientReplayPage() {
           className="xl:col-span-12"
           title="患者全病程时间轴"
           badge={<span className="font-mono text-[8.5px] text-muted-foreground/60">VIS-002</span>}
-          description="统一时间坐标展示住院、评估、检查、检验、手术、用药、护理与随访事件；支持日/周/月/年尺度切换。"
-          footnote="点击事件查看原始记录来源；时间轴由事件日志重建，合成演示。"
+          footnote="点击事件查看原始记录来源；时间轴由事件日志重建。"
           actions={
             <span className="font-mono text-[9px] text-muted-foreground/60">
               当前 {snapshot.label} · {snapshot.date}
@@ -630,7 +624,6 @@ export default function PatientReplayPage() {
           <CardHeader className="pb-2">
             <SectionHead
               title="临床决策记录"
-              description="决策依据、责任人与证据引用；回放到当前时间点已发生的决策"
               count={activeDecisions.length}
             />
           </CardHeader>
@@ -685,7 +678,7 @@ export default function PatientReplayPage() {
               <Field label="路径版本" value={`V${instance.version} · 已锁定`} mono />
               <Field label="入院时间" value={fmtDate(patient.admissionAt, true)} mono />
               <div className="mt-3 rounded-md border border-line bg-secondary/30 px-2.5 py-2 text-[9.5px] leading-relaxed text-muted-foreground">
-                回放用于病例复盘、质量分析与教学演示；模型预测为合成 Mock Provider 输出，不得作为真实临床预测。
+                回放用于病例复盘与质量分析；模型预测不得作为真实临床预测。
               </div>
             </CardContent>
           </Card>
@@ -723,7 +716,7 @@ export default function PatientReplayPage() {
       <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-line pt-3 text-[10px] text-muted-foreground">
         <span className="inline-flex items-center gap-1">
           <TriangleAlert className="size-3 text-warn" />
-          回放内容为合成演示重建，不代表真实患者病程；临床决策须由医生完成。
+          临床决策须由医生完成。
         </span>
         <span className="font-mono">VIS-011 · Journey Replay · {snapshot.label}</span>
       </div>

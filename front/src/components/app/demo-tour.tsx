@@ -49,7 +49,7 @@ export function DemoTour() {
 
   if (!open) return null;
   return (
-    <div className="fixed right-4 bottom-4 left-4 z-[70] sm:left-auto sm:w-[520px]" role="dialog" aria-label="演示导览">
+    <div className="fixed right-4 bottom-4 left-4 z-[70] sm:left-auto sm:w-[520px]" role="dialog" aria-label="">
       <div className="rounded-lg border border-line bg-card p-4 shadow-pop">
         <div className="flex items-start gap-3">
           <div className="flex size-8 shrink-0 items-center justify-center rounded-md bg-brand-wash font-mono text-[11px] font-semibold text-brand">
@@ -58,7 +58,7 @@ export function DemoTour() {
           <div className="min-w-0 flex-1">
             <div className="flex items-center justify-between gap-2">
               <p className="text-[13px] font-semibold">{current.title}</p>
-              <button onClick={close} className="rounded p-0.5 text-muted-foreground hover:bg-secondary hover:text-foreground" aria-label="关闭演示导览">
+              <button onClick={close} className="rounded p-0.5 text-muted-foreground hover:bg-secondary hover:text-foreground" aria-label="关闭">
                 <X className="size-3.5" />
               </button>
             </div>

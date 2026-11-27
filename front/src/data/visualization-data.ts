@@ -1,5 +1,5 @@
 // ---------------------------------------------------------------------------
-// Clinical Visualization Engine · 演示数据（全部为合成数据，不用于临床）
+// Clinical Visualization Engine · 演示数据（，不用于临床）
 // 供动态路径图、病程回放、多路径推演、流程挖掘与院长驾驶舱消费。
 // ---------------------------------------------------------------------------
 import type {
@@ -245,7 +245,7 @@ function buildTrajectory(horizon: 30 | 90 | 180): TrajectoryDataset {
       provider: "Mock Provider",
       applicability: "肝癌手术演示队列 · 30–180 天推演",
       clinicalUse: false,
-      trainedOn: "合成演示数据（100 例）",
+      trainedOn: "（100 例）",
       note: "确定性演示曲线，不包含随机概率；不得用于真实患者预测。",
     },
   };

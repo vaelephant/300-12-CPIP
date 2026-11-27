@@ -32,7 +32,6 @@ import { StatCard } from "@/components/app/stat-card";
 import { StatusBadge } from "@/components/app/status-badge";
 import { FilterPill, SearchInput } from "@/components/app/toolbar";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Input, Textarea } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -276,7 +275,7 @@ function DemoPathwaysPage() {
 
   const exportPathway = (pathway: Pathway) => {
     toast.success(`已导出「${pathway.name}」JSON`, {
-      description: `包含 ${pathway.currentVersion} 版本元数据与图摘要（演示导出）。`,
+      description: `包含 ${pathway.currentVersion} 版本元数据与图摘要。`,
     });
   };
 
@@ -326,7 +325,6 @@ function DemoPathwaysPage() {
       <PageHeader
         module="M03 · 路径设计"
         title="路径库"
-        description="管理全院临床路径模板：从图结构设计、版本审核到发布生效。仅具备权限的角色可修改与发布，全部内容为合成演示数据。"
         meta={
           <>
             <PageMeta label="数据范围" value="全院 · M03" />
@@ -389,8 +387,8 @@ function DemoPathwaysPage() {
           value={fmt(inPathwayPatients)}
           unit="例"
           trend={[62, 68, 74, 81, 88, 100]}
-          hint="当前基于这些路径模板执行中的患者实例总数（合成）。"
-          footer="较上月 +13.6% · 数据为合成演示"
+          hint="当前基于这些路径模板执行中的患者实例总数。"
+          footer="较上月 +13.6%"
         />
       </div>
 
@@ -477,7 +475,6 @@ function DemoPathwaysPage() {
                   <EmptyState
                     icon={<Search className="size-4" />}
                     title="没有匹配的路径模板"
-                    description="尝试调整状态标签、科室或搜索关键字。当前筛选条件组合下无结果。"
                     action={
                       <Button variant="outline" size="sm" onClick={resetFilters}>
                         清除筛选条件
@@ -596,15 +593,7 @@ function DemoPathwaysPage() {
             显示 <span className="tabular font-mono text-foreground/80">{filtered.length}</span> /{" "}
             <span className="tabular font-mono">{pathways.length}</span> 条路径模板
           </span>
-          <span className="flex items-center gap-3">
-            <span>图结构版本由修订单管理，发布后不可回改</span>
-            <span className="inline-flex items-center gap-1">
-              <Badge variant="outline" className="font-mono text-[9px]">
-                SYNTHETIC
-              </Badge>
-              合成演示数据
-            </span>
-          </span>
+          <span>图结构版本由修订单管理，发布后不可回改</span>
         </div>
       </div>
 

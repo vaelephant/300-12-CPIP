@@ -1,0 +1,490 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "finalize",
+  "status": "pass",
+  "type": "explainer",
+  "quality": "showcase",
+  "startedAt": "2026-11-27T05:13:03.087Z",
+  "specification": {
+    "path": "/Users/nihao/code/300-12-CPIP/.archify/explainer-vercel-calm-20261127-141212/candidate.archify.md",
+    "sha256": "59e9849fa884eda8d932f5d01d8d5e2ab4fa732fbed2ef8968052a0e6bd5f89f",
+    "bytes": 6307
+  },
+  "artifact": {
+    "path": "/Users/nihao/code/300-12-CPIP/.archify/explainer-vercel-calm-20261127-141212/vercel-calm.html",
+    "sha256": "2b6e521d718d786bc3c9c29cf0c9a002d78c8773e9a51408e2c5e760fc35b769",
+    "bytes": 912862
+  },
+  "stages": {
+    "browser-check": {
+      "status": "not-run",
+      "execution": "not-requested"
+    },
+    "validate": {
+      "status": "pass",
+      "exitCode": 0,
+      "durationMs": null,
+      "execution": "embedded-in-deliver",
+      "command": [
+        "/Users/nihao/.nvm/versions/node/v24.16.0/bin/node",
+        "/Users/nihao/.agents/skills/archify/bin/archify.mjs",
+        "deliver",
+        "explainer",
+        "/Users/nihao/code/300-12-CPIP/.archify/explainer-vercel-calm-20261127-141212/candidate.archify.md",
+        "/Users/nihao/code/300-12-CPIP/.archify/explainer-vercel-calm-20261127-141212/vercel-calm.html",
+        "--quality",
+        "showcase",
+        "--json"
+      ],
+      "receipt": {
+        "schemaVersion": 1,
+        "ok": true,
+        "command": "validate",
+        "specification": {
+          "sha256": "59e9849fa884eda8d932f5d01d8d5e2ab4fa732fbed2ef8968052a0e6bd5f89f",
+          "bytes": 6307
+        },
+        "validation": {
+          "checksPassed": 4,
+          "checkCount": 4,
+          "compositionProfile": "showcase",
+          "compositionStatus": "pass",
+          "errors": 0,
+          "warnings": 0
+        }
+      }
+    },
+    "deliver": {
+      "status": "pass",
+      "exitCode": 0,
+      "durationMs": 795,
+      "command": [
+        "/Users/nihao/.nvm/versions/node/v24.16.0/bin/node",
+        "/Users/nihao/.agents/skills/archify/bin/archify.mjs",
+        "deliver",
+        "explainer",
+        "/Users/nihao/code/300-12-CPIP/.archify/explainer-vercel-calm-20261127-141212/candidate.archify.md",
+        "/Users/nihao/code/300-12-CPIP/.archify/explainer-vercel-calm-20261127-141212/vercel-calm.html",
+        "--quality",
+        "showcase",
+        "--json"
+      ],
+      "receipt": {
+        "schemaVersion": 1,
+        "receiptId": "4a52f6f6-3e2a-48b6-a2d0-671f77ab586c",
+        "ok": true,
+        "command": "deliver",
+        "type": "explainer",
+        "input": "/Users/nihao/code/300-12-CPIP/.archify/explainer-vercel-calm-20261127-141212/candidate.archify.md",
+        "output": "/Users/nihao/code/300-12-CPIP/.archify/explainer-vercel-calm-20261127-141212/vercel-calm.html",
+        "explainer": {
+          "preparedSha256": "0cfe0e9546b8fac9cab266f511f20d9b519379bc09957ae5486a912417c2466a",
+          "dependencies": [
+            {
+              "kind": "diagram-spec",
+              "id": "noisy-stack",
+              "inline": true,
+              "sha256": "c41bbc303042b02f1c4baa1ca062bcbd9ba5bd4760a1cebbcfa6d772e72ef2f3",
+              "bytes": 1195
+            },
+            {
+              "kind": "diagram-spec",
+              "id": "calm-stack",
+              "inline": true,
+              "sha256": "7e1fcb32c93b41eb007e2f32ffee3a93f73cb8db624b75e71a093d0685fbb6b8",
+              "bytes": 949
+            }
+          ]
+        },
+        "specification": {
+          "sha256": "59e9849fa884eda8d932f5d01d8d5e2ab4fa732fbed2ef8968052a0e6bd5f89f",
+          "bytes": 6307
+        },
+        "artifact": {
+          "sha256": "2b6e521d718d786bc3c9c29cf0c9a002d78c8773e9a51408e2c5e760fc35b769",
+          "bytes": 912862
+        },
+        "validation": {
+          "checksPassed": 4,
+          "checkCount": 4,
+          "compositionProfile": "showcase",
+          "compositionStatus": "pass",
+          "errors": 0,
+          "warnings": 0
+        },
+        "update": {
+          "status": "unavailable",
+          "installedVersion": null,
+          "availableVersion": null,
+          "releaseNotes": null,
+          "checkedAt": null,
+          "source": null,
+          "noticeRequired": false,
+          "noticeText": null,
+          "reason": "disabled"
+        }
+      }
+    },
+    "check": {
+      "status": "pass",
+      "exitCode": 0,
+      "durationMs": 275,
+      "command": [
+        "/Users/nihao/.nvm/versions/node/v24.16.0/bin/node",
+        "/Users/nihao/.agents/skills/archify/bin/archify.mjs",
+        "check",
+        "/Users/nihao/code/300-12-CPIP/.archify/explainer-vercel-calm-20261127-141212/vercel-calm.html",
+        "--require-provenance"
+      ],
+      "receipt": {
+        "ok": true,
+        "file": "/Users/nihao/code/300-12-CPIP/.archify/explainer-vercel-calm-20261127-141212/vercel-calm.html",
+        "family": "explainer",
+        "artifact": {
+          "sha256": "2b6e521d718d786bc3c9c29cf0c9a002d78c8773e9a51408e2c5e760fc35b769",
+          "bytes": 912862
+        },
+        "checks": [
+          {
+            "name": "explainer_structure",
+            "ok": true,
+            "details": [
+              "77 unique DOM IDs"
+            ]
+          },
+          {
+            "name": "explainer_payload_identity",
+            "ok": true,
+            "details": []
+          },
+          {
+            "name": "explainer_dependencies",
+            "ok": true,
+            "details": [
+              "2 frozen dependencies"
+            ]
+          },
+          {
+            "name": "explainer_native_diagrams",
+            "ok": true,
+            "details": [
+              "noisy-stack: pass",
+              "calm-stack: pass"
+            ]
+          }
+        ],
+        "composition": {
+          "schemaVersion": 1,
+          "profile": "showcase",
+          "status": "pass",
+          "summary": {
+            "errors": 0,
+            "warnings": 0
+          },
+          "issues": [],
+          "nativeDiagrams": [
+            {
+              "id": "noisy-stack",
+              "receipt": {
+                "ok": true,
+                "file": "/var/folders/_3/677zc_q137336dx55swz21z00000gn/T/archify-explainer-check-k1MDja/child.html",
+                "artifact": {
+                  "sha256": "3c2422d44f53003fcc5cea6fd05f9b0200bf59f287cff5de9b9ea14fa3463973",
+                  "bytes": 812453
+                },
+                "checks": [
+                  {
+                    "name": "single_svg",
+                    "ok": true,
+                    "details": [
+                      "found 1 <svg> block(s)"
+                    ]
+                  },
+                  {
+                    "name": "finite_svg",
+                    "ok": true,
+                    "details": []
+                  },
+                  {
+                    "name": "orthogonal_arrows",
+                    "ok": true,
+                    "details": []
+                  },
+                  {
+                    "name": "label_route_clearance",
+                    "ok": true,
+                    "details": []
+                  },
+                  {
+                    "name": "relationship_crossings",
+                    "ok": true,
+                    "details": []
+                  },
+                  {
+                    "name": "relationship_corridors",
+                    "ok": true,
+                    "details": []
+                  },
+                  {
+                    "name": "container_border_runs",
+                    "ok": true,
+                    "details": []
+                  },
+                  {
+                    "name": "route_rhythm",
+                    "ok": true,
+                    "details": []
+                  },
+                  {
+                    "name": "legend_clearance",
+                    "ok": true,
+                    "details": []
+                  }
+                ],
+                "composition": {
+                  "schemaVersion": 1,
+                  "profile": "showcase",
+                  "status": "pass",
+                  "summary": {
+                    "errors": 0,
+                    "warnings": 0
+                  },
+                  "metrics": {
+                    "properCrossings": 0,
+                    "resolvedCrossovers": 0,
+                    "ambiguousCorridors": 0,
+                    "arrowheadCollisions": 0,
+                    "containerBorderRuns": 0,
+                    "labelRouteClearanceIssues": 0,
+                    "labelCanvasOverflowIssues": 0,
+                    "minLabelRouteClearance": 146.4,
+                    "desktopReadabilityIssues": 0,
+                    "viewportHeightIssues": 0,
+                    "minProjectedNodeTextPx": 6.721598002496879,
+                    "maxBends": 0,
+                    "routesOverSuggestedBends": 0,
+                    "maxStretch": 1,
+                    "routesOverSuggestedStretch": 0,
+                    "minSegmentPx": 101,
+                    "minInteriorSegmentPx": null,
+                    "shortSegmentCount": 0,
+                    "shortEndpointSegmentCount": 0,
+                    "shortInteriorSegmentCount": 0,
+                    "microSegmentCount": 0
+                  },
+                  "suggestedLimits": {
+                    "bendsPerRelationship": 2,
+                    "stretch": 1.35,
+                    "segmentPx": 16,
+                    "microSegmentPx": 8
+                  },
+                  "routeReview": {
+                    "crossings": [],
+                    "detours": []
+                  },
+                  "leadingSpace": {
+                    "measured": true,
+                    "emptyTopPx": 80,
+                    "emptyTopRatio": 0.385,
+                    "occupiedTop": 80,
+                    "viewBoxTop": 0,
+                    "canvasHeight": 208,
+                    "typicalNodeHeight": 60,
+                    "reviewSuggested": false
+                  },
+                  "desktopReadability": {
+                    "budgetBasis": "recognized-declared-wide",
+                    "readerContract": "declared-wide-v1",
+                    "availableDiagramWidth": 1346,
+                    "actualBudgetPx": 1346,
+                    "actualReaderWidth": 1376,
+                    "desiredReaderWidth": 1531.875,
+                    "viewportCap": 1376,
+                    "limit": "viewport-cap",
+                    "requestedTargetPx": 7.5,
+                    "requestedTargetMet": false,
+                    "hardFloorPx": 6,
+                    "hardFloorMet": true,
+                    "minimumOwner": {
+                      "kind": "edge",
+                      "id": "bands-to-flow-1",
+                      "from": "bands",
+                      "to": "flow"
+                    },
+                    "minimumSourceTextPx": 8,
+                    "minimumProjectedTextPx": 6.721598002496879,
+                    "semanticTextCount": 9
+                  },
+                  "issues": []
+                }
+              }
+            },
+            {
+              "id": "calm-stack",
+              "receipt": {
+                "ok": true,
+                "file": "/var/folders/_3/677zc_q137336dx55swz21z00000gn/T/archify-explainer-check-aQB3Es/child.html",
+                "artifact": {
+                  "sha256": "a3bbde665f7bd272c2743822040af2b4be8dfba0a5bc115ebcc4c177a0b78118",
+                  "bytes": 808770
+                },
+                "checks": [
+                  {
+                    "name": "single_svg",
+                    "ok": true,
+                    "details": [
+                      "found 1 <svg> block(s)"
+                    ]
+                  },
+                  {
+                    "name": "finite_svg",
+                    "ok": true,
+                    "details": []
+                  },
+                  {
+                    "name": "orthogonal_arrows",
+                    "ok": true,
+                    "details": []
+                  },
+                  {
+                    "name": "label_route_clearance",
+                    "ok": true,
+                    "details": []
+                  },
+                  {
+                    "name": "relationship_crossings",
+                    "ok": true,
+                    "details": []
+                  },
+                  {
+                    "name": "relationship_corridors",
+                    "ok": true,
+                    "details": []
+                  },
+                  {
+                    "name": "container_border_runs",
+                    "ok": true,
+                    "details": []
+                  },
+                  {
+                    "name": "route_rhythm",
+                    "ok": true,
+                    "details": []
+                  },
+                  {
+                    "name": "legend_clearance",
+                    "ok": true,
+                    "details": []
+                  }
+                ],
+                "composition": {
+                  "schemaVersion": 1,
+                  "profile": "showcase",
+                  "status": "pass",
+                  "summary": {
+                    "errors": 0,
+                    "warnings": 0
+                  },
+                  "metrics": {
+                    "properCrossings": 0,
+                    "resolvedCrossovers": 0,
+                    "ambiguousCorridors": 0,
+                    "arrowheadCollisions": 0,
+                    "containerBorderRuns": 0,
+                    "labelRouteClearanceIssues": 0,
+                    "labelCanvasOverflowIssues": 0,
+                    "minLabelRouteClearance": 228.6,
+                    "desktopReadabilityIssues": 0,
+                    "viewportHeightIssues": 0,
+                    "minProjectedNodeTextPx": 7.5,
+                    "maxBends": 0,
+                    "routesOverSuggestedBends": 0,
+                    "maxStretch": 1,
+                    "routesOverSuggestedStretch": 0,
+                    "minSegmentPx": 153,
+                    "minInteriorSegmentPx": null,
+                    "shortSegmentCount": 0,
+                    "shortEndpointSegmentCount": 0,
+                    "shortInteriorSegmentCount": 0,
+                    "microSegmentCount": 0
+                  },
+                  "suggestedLimits": {
+                    "bendsPerRelationship": 2,
+                    "stretch": 1.35,
+                    "segmentPx": 16,
+                    "microSegmentPx": 8
+                  },
+                  "routeReview": {
+                    "crossings": [],
+                    "detours": []
+                  },
+                  "leadingSpace": {
+                    "measured": true,
+                    "emptyTopPx": 80,
+                    "emptyTopRatio": 0.385,
+                    "occupiedTop": 80,
+                    "viewBoxTop": 0,
+                    "canvasHeight": 208,
+                    "typicalNodeHeight": 60,
+                    "reviewSuggested": false
+                  },
+                  "desktopReadability": {
+                    "budgetBasis": "recognized-declared-wide",
+                    "readerContract": "declared-wide-v1",
+                    "availableDiagramWidth": 1233.75,
+                    "actualBudgetPx": 1233.75,
+                    "actualReaderWidth": 1263.75,
+                    "desiredReaderWidth": 1263.75,
+                    "viewportCap": 1376,
+                    "limit": "source-size",
+                    "requestedTargetPx": 7.5,
+                    "requestedTargetMet": true,
+                    "hardFloorPx": 6,
+                    "hardFloorMet": true,
+                    "minimumOwner": {
+                      "kind": "edge",
+                      "id": "stages-to-flow-1",
+                      "from": "stages",
+                      "to": "flow"
+                    },
+                    "minimumSourceTextPx": 8,
+                    "minimumProjectedTextPx": 7.5,
+                    "semanticTextCount": 6
+                  },
+                  "issues": []
+                }
+              }
+            }
+          ]
+        },
+        "diagnostics": [],
+        "provenance": "current",
+        "deliveryReceiptId": "4a52f6f6-3e2a-48b6-a2d0-671f77ab586c"
+      }
+    }
+  },
+  "browserCheck": {
+    "requested": false,
+    "ran": false
+  },
+  "diagnostics": [],
+  "evidence": {
+    "receipt": "/Users/nihao/code/300-12-CPIP/.archify/explainer-vercel-calm-20261127-141212/vercel-calm.finalize.json",
+    "summaryReceipt": "/Users/nihao/code/300-12-CPIP/.archify/explainer-vercel-calm-20261127-141212/vercel-calm.finalize-summary.json"
+  },
+  "visualReview": "not-requested",
+  "finishedAt": "2026-11-27T05:13:04.318Z",
+  "durationMs": 1230,
+  "update": {
+    "status": "unavailable",
+    "installedVersion": null,
+    "availableVersion": null,
+    "releaseNotes": null,
+    "checkedAt": null,
+    "source": null,
+    "noticeRequired": false,
+    "noticeText": null,
+    "reason": "cache-unavailable"
+  }
+}

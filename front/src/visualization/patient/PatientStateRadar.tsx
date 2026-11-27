@@ -26,7 +26,7 @@ export interface PatientStateRadarProps {
  * 通过 ECharts radar 对比「入院基线 / 当前状态 / 参考范围」三个状态向量，
  * 六个维度（肝功能、肾功能、营养状态、体能状态、炎症负荷、凝血功能）统一 0–100 分。
  * 颜色全部由 vizPalette() 解析（ECharts canvas 不可直接使用 CSS var()）。
- * 数据为确定性合成演示数据，评分不代表任何临床量表结论。
+ * 数据为确定性，评分不代表任何临床量表结论。
  */
 export function PatientStateRadar({
   data = PATIENT_STATE_RADAR,
@@ -113,11 +113,11 @@ export function PatientStateRadar({
       <EChart
         option={option}
         height={height ?? (compact ? 196 : 236)}
-        ariaLabel="患者疾病状态雷达图：入院基线、当前状态与参考范围，合成演示数据"
+        ariaLabel="患者疾病状态雷达图：入院基线、当前状态与参考范围，"
       />
       {showFootnote && (
         <p className="px-1 pt-0.5 text-[9px] leading-relaxed text-muted-foreground/75">
-          评分由合成状态向量映射（0–100），用于演示信息组织方式，不代表任何临床量表结论；参考范围为演示阈值。
+          评分映射为 0–100，用于信息组织，不代表任何临床量表结论。
         </p>
       )}
     </div>

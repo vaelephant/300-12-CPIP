@@ -87,7 +87,7 @@ export function Sidebar() {
             </span>
             <span className="min-w-0 flex-1">
               <span className="block truncate text-[12.5px] font-medium text-foreground">{ORGANIZATION.name}</span>
-              <span className="block text-[11px] text-muted-foreground">私有化 · 演示环境</span>
+              <span className="block text-[11px] text-muted-foreground">私有化部署</span>
             </span>
             <ChevronsLeft className="size-3 rotate-[-90deg] text-muted-foreground/70" />
           </button>
@@ -124,9 +124,9 @@ export function Sidebar() {
             <div className="rounded-md bg-secondary/70 px-2.5 py-2">
               <div className="flex items-center gap-1.5">
                 <CircleDot className="size-2.5 text-ok" />
-                <span className="text-[11px] font-medium text-foreground/80">演示环境</span>
+                <span className="text-[11px] font-medium text-foreground/80">系统正常</span>
               </div>
-              <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">合成数据 · 不用于临床决策</p>
+              <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">私有化部署 · 院内数据</p>
             </div>
             <button
               onClick={toggle}

@@ -119,7 +119,7 @@ export function ValidationPanel({ issues, open, onToggle, onJump, onSimulateFix 
                           variant="outline"
                           size="xs"
                           onClick={() => onSimulateFix(issue)}
-                          title="演示操作：模拟修复该错误，用于体验提交审核流程"
+                          title="模拟修复该错误后继续提交审核"
                         >
                           <Sparkles className="size-3" />
                           模拟修复

@@ -111,7 +111,6 @@ export default function ServerPlanningPage() {
         <EmptyState
           icon={<AlertTriangle />}
           title="无法读取规划"
-          description="实例不存在，或当前账号无对象级权限。"
           action={<Button asChild variant="outline" size="sm"><Link to="/patients"><ArrowLeft className="size-3.5" /> 返回患者中心</Link></Button>}
         />
       </Page>
@@ -126,7 +125,6 @@ export default function ServerPlanningPage() {
       <PageHeader
         module="M06 · 个体化规划 · 后端计划视图"
         title="个体化路径规划"
-        description="读取服务端实例与计划；提交、审核、激活均由后端状态机与安全规则校验。"
         actions={<SyntheticTag />}
         meta={
           <>
@@ -229,7 +227,6 @@ export default function ServerPlanningPage() {
         <EmptyState
           icon={<Sparkles />}
           title="尚无计划"
-          description="该实例还没有生成计划；需要先完成入径与快照，再调用计划生成接口。"
           action={<Button asChild variant="outline" size="sm"><Link to="/patients"><ArrowLeft className="size-3.5" /> 返回患者中心</Link></Button>}
         />
       )}

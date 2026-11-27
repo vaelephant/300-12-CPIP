@@ -113,19 +113,7 @@ export function Field({
   );
 }
 
-/* ------------------------------ 确认数据 ------------------------------ */
-
-export function SyntheticTag({ className }: { className?: string }) {
-  return (
-    <span
-      className={cn(
-        "inline-flex items-center gap-1 rounded-[3px] border border-line bg-secondary/60 px-1.5 py-px font-mono text-[9.5px] tracking-wider text-muted-foreground uppercase",
-        className,
-      )}
-      title="演示环境中的全部内容均为合成数据，不代表真实患者信息"
-    >
-      <span className="size-1 rounded-full bg-warn" />
-      SYNTHETIC · 演示数据
-    </span>
-  );
+/** 产品面不再展示演示角标；保留导出以免旧引用报错。 */
+export function SyntheticTag(_props: { className?: string }) {
+  return null;
 }

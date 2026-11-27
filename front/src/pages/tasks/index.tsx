@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import {
   AlertTriangle,
   ArrowUpRight,
+  CalendarRange,
   ClipboardList,
   Columns3,
   List,
@@ -23,6 +24,16 @@ import { StatCard } from "@/components/app/stat-card";
 import { StatusBadge } from "@/components/app/status-badge";
 import { SearchInput, Toolbar, CountBadge } from "@/components/app/toolbar";
 import { Card } from "@/components/ui/card";
+import {
+  KitTaskTimeline,
+  KitTimeRangePills,
+  overlapsKitTimeWindow,
+  resolveKitTimeWindow,
+  startOfLocalDay,
+  toDateInputValue,
+  type KitTimeRangeKey,
+  type KitTimelineItem,
+} from "@/dev/desgin/kit/task-timeline";
 import { CHART_COLOR, CHART_SEMANTIC } from "@/components/charts/chart-kit";
 import { DonutChart, GroupedBarChart } from "@/components/charts/advanced";
 import { Button } from "@/components/ui/button";
@@ -40,7 +51,7 @@ import ServerTasksPage from "./index-server";
 const PAGE_SIZE = 24;
 
 type TabKey = "mine" | "all" | "overdue";
-type ViewMode = "list" | "board";
+type ViewMode = "list" | "board" | "timeline";
 
 const ROLE_OPTIONS: ClinicalRole[] = ["DOCTOR", "NURSE", "SURGEON", "ANESTHESIOLOGIST", "PHARMACIST", "COORDINATOR"];
 const STAGE_OPTIONS = ["术前评估", "术前检查", "治疗方案确认", "手术及术后", "出院与随访"];
@@ -227,6 +238,14 @@ function DemoTasksPage() {
   const [stage, setStage] = useState("ALL");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [timeRange, setTimeRange] = useState<KitTimeRangeKey>("today");
+  const [customFrom, setCustomFrom] = useState(() => toDateInputValue(startOfLocalDay()));
+  const [customTo, setCustomTo] = useState(() => toDateInputValue(startOfLocalDay()));
+
+  const timeWindow = useMemo(
+    () => resolveKitTimeWindow(timeRange, customFrom, customTo),
+    [timeRange, customFrom, customTo],
+  );
 
   const stats = useMemo(
     () => ({
@@ -266,9 +285,31 @@ function DemoTasksPage() {
         (t.summary ?? "").toLowerCase().includes(q);
       const matchesRole = role === "ALL" || t.role === role;
       const matchesStage = stage === "ALL" || t.stage === stage;
-      return matchesQuery && matchesRole && matchesStage;
+      const matchesTime =
+        overlapsKitTimeWindow(t.earliestStartAt, t.dueAt, timeWindow.start, timeWindow.end) ||
+        (t.overdue && !isTerminalTask(t.status) && timeRange === "today");
+      return matchesQuery && matchesRole && matchesStage && matchesTime;
     });
-  }, [tabTasks, search, role, stage]);
+  }, [tabTasks, search, role, stage, timeWindow, timeRange]);
+
+  const timelineItems = useMemo<KitTimelineItem[]>(
+    () =>
+      filtered.map((t) => {
+        const patient = resolveTaskPatient(t);
+        const status = TASK_STATUS_META[t.status];
+        return {
+          id: t.id,
+          name: t.name,
+          subtitle: patient.name,
+          href: patient.patientId ? `/patients/${patient.patientId}/pathway` : undefined,
+          start: t.earliestStartAt,
+          end: t.dueAt,
+          overdue: t.overdue && !isTerminalTask(t.status),
+          tone: t.overdue && !isTerminalTask(t.status) ? "risk" : status.tone === "ok" ? "ok" : "neutral",
+        };
+      }),
+    [filtered],
+  );
 
   const pageCount = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const safePage = Math.min(page, pageCount);
@@ -278,6 +319,9 @@ function DemoTasksPage() {
     setRole("ALL");
     setStage("ALL");
     setSearch("");
+    setTimeRange("today");
+    setCustomFrom(toDateInputValue(startOfLocalDay()));
+    setCustomTo(toDateInputValue(startOfLocalDay()));
     setPage(1);
   };
 
@@ -291,13 +335,12 @@ function DemoTasksPage() {
       <PageHeader
         module="M07 · 路径执行"
         title="任务中心"
-        description="跨路径实例的诊疗任务队列：我的任务、科室任务与超时任务统一调度；任务状态由运行时状态机校验。"
         actions={
           <>
             <Button
               variant="outline"
               size="sm"
-              onClick={() => toast.info("任务分派需进入患者执行页或由护士长批量分派（演示）")}
+              onClick={() => toast.info("任务分派需进入患者执行页或由护士长批量分派")}
             >
               <UserRound className="size-3.5" />
               分派任务
@@ -378,7 +421,6 @@ function DemoTasksPage() {
         <Card className="px-4 py-3 xl:col-span-2">
           <SectionHead
             title="阶段任务负荷"
-            description="按 5 个路径阶段统计任务总量、完成与超时；用于识别瓶颈阶段"
           />
           <div className="pt-3">
             <GroupedBarChart
@@ -495,6 +537,23 @@ function DemoTasksPage() {
                 ))}
               </SelectContent>
             </Select>
+            <KitTimeRangePills
+              value={timeRange}
+              onChange={(key) => {
+                setTimeRange(key);
+                setPage(1);
+              }}
+              customFrom={customFrom}
+              customTo={customTo}
+              onCustomFromChange={(v) => {
+                setCustomFrom(v);
+                setPage(1);
+              }}
+              onCustomToChange={(v) => {
+                setCustomTo(v);
+                setPage(1);
+              }}
+            />
             <Button variant="ghost" size="sm" onClick={resetFilters}>
               <RotateCcw className="size-3.5" /> 重置
             </Button>
@@ -508,6 +567,16 @@ function DemoTasksPage() {
                 )}
               >
                 <List className="size-3" /> 列表
+              </button>
+              <button
+                type="button"
+                onClick={() => setView("timeline")}
+                className={cn(
+                  "inline-flex h-6 items-center gap-1 rounded px-2 text-[11px] font-medium transition-colors",
+                  view === "timeline" ? "bg-card text-foreground shadow-card" : "text-muted-foreground hover:text-foreground",
+                )}
+              >
+                <CalendarRange className="size-3" /> 时间轴
               </button>
               <button
                 type="button"
@@ -546,6 +615,8 @@ function DemoTasksPage() {
               </Button>
             }
           />
+        ) : view === "timeline" ? (
+          <KitTaskTimeline items={timelineItems} window={timeWindow} rangeKey={timeRange} />
         ) : view === "list" ? (
           <>
             <Table>
@@ -580,9 +651,8 @@ function DemoTasksPage() {
             <div className="flex flex-wrap items-center justify-between gap-2 px-1 pb-2.5 text-[11px] text-muted-foreground">
               <span className="inline-flex items-center gap-1">
                 <SlidersHorizontal className="size-3" />
-                看板按状态分列 · 显示筛选结果 {filtered.length} 项
+                {filtered.length} 项
               </span>
-              <span className="font-mono text-[10px]">READY / IN_PROGRESS / PENDING / COMPLETED</span>
             </div>
             <div className="overflow-x-auto pb-1 scrollbar-slim">
               <div className="grid min-w-[980px] grid-cols-4 gap-3">
@@ -634,7 +704,7 @@ function DemoTasksPage() {
       <div className="mt-3 flex flex-wrap items-center justify-between gap-2 px-1 text-[10.5px] text-muted-foreground">
         <span className="inline-flex items-center gap-1">
           <UserRound className="size-3 text-muted-foreground/70" />
-          当前账号：{user?.name ?? "未登录"} · {user ? ROLE_SYSTEM_LABELS[user.role] : "—"} · 任务操作仅影响当前浏览器会话的演示运行时。
+          当前账号：{user?.name ?? "未登录"} · {user ? ROLE_SYSTEM_LABELS[user.role] : "—"} · 任务操作写入当前会话运行时。
         </span>
         <Link to="/patients" className="inline-flex items-center gap-0.5 text-primary hover:underline">
           前往患者中心

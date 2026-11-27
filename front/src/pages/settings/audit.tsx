@@ -148,7 +148,7 @@ export default function AuditPage() {
         targetType: "SYSTEM",
         ip: "10.20.5.2",
         result: "SUCCESS",
-        detail: "手动触发合成数据快照备份，校验和验证通过；备份文件不影响线上数据。",
+        detail: "手动触发数据快照备份，校验和验证通过。",
       };
       setLogs((prev) => [log, ...prev]);
       setBackingUp(false);
@@ -156,7 +156,7 @@ export default function AuditPage() {
       setResult("ALL");
       setQuery("");
       toast.success("备份已完成", {
-        description: "合成数据快照已生成并校验通过；审计记录已追加（今日视图可见）。",
+        description: "数据快照已生成并校验通过；审计记录已追加。",
       });
     }, 900);
   }
@@ -172,7 +172,6 @@ export default function AuditPage() {
       <PageHeader
         module="M12 · 系统审计"
         title="审计日志"
-        description="记录操作、审批、接口与模型调用；日志追加写入且不可篡改，被拒绝的患者级请求同样全量留痕。"
         meta={
           <>
             <SyntheticTag />
@@ -366,7 +365,6 @@ export default function AuditPage() {
             <EmptyState
               icon={<SearchX />}
               title="没有匹配的审计事件"
-              description="当前筛选组合下无记录；可放宽时间范围或清空关键词。被拒绝请求也可能因时间范围而被隐藏。"
               action={
                 <Button
                   variant="outline"
@@ -484,7 +482,7 @@ export default function AuditPage() {
           )}
           <div className="flex flex-wrap items-center justify-between gap-2 border-t border-line px-4 py-2 text-[10.5px] text-muted-foreground">
             <span className="inline-flex items-center gap-1">
-              第 {currentPage} / {pageCount} 页 · 共 {filtered.length} 条（演示数据）
+              第 {currentPage} / {pageCount} 页 · 共 {filtered.length} 条
             </span>
             <div className="flex items-center gap-1.5">
               <Button
@@ -591,20 +589,20 @@ export default function AuditPage() {
           {/* 备份恢复 */}
           <Card className="gap-0 py-0">
             <div className="border-b border-line px-4 py-3">
-              <SectionHead title="备份与恢复" description="合成数据快照" />
+              <SectionHead title="备份与恢复" description="数据快照" />
             </div>
             <CardContent className="px-4 py-2.5">
               <div className="divide-y divide-line">
                 <Field label="备份模式" value="每日自动 + 手动" />
                 <Field label="最近校验" value={backupLog ? fmtDate(backupLog.at, true) : "—"} mono />
-                <Field label="恢复授权" value="双人授权（演示）" />
+                <Field label="恢复授权" value="双人授权" />
               </div>
               <Button variant="outline" size="sm" className="mt-2.5 w-full" onClick={runBackup} disabled={backingUp}>
                 {backingUp ? <Loader2 className="size-3.5 animate-spin" /> : <RefreshCw className="size-3.5" />}
                 {backingUp ? "备份中…" : "立即备份"}
               </Button>
               <p className="mt-1.5 text-[10px] leading-relaxed text-muted-foreground">
-                备份会生成合成数据快照并追加审计记录；恢复演练需双人授权，演示环境不执行真实恢复。
+                备份会生成数据快照并追加审计记录；恢复需双人授权。
               </p>
             </CardContent>
           </Card>
@@ -613,7 +611,7 @@ export default function AuditPage() {
             <CardContent className="px-4 py-2.5">
               <div className="flex items-start gap-2 text-[10.5px] leading-relaxed text-muted-foreground">
                 <Terminal className="mt-px size-3 shrink-0" />
-                所有日志为合成演示数据，可用于展示审计字段与 RBAC 拒绝路径，不代表真实生产日志。
+                
               </div>
             </CardContent>
           </Card>

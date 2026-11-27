@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight, ArrowUpRight, CheckCircle2, ClipboardList, GitBranch, ShieldCheck, Sparkles } from "lucide-react";
 import { Page, PageHeader } from "@/components/app/page-header";
 import { StatusBadge } from "@/components/app/status-badge";
-import { EmptyState, SyntheticTag } from "@/components/app/section";
+import { EmptyState } from "@/components/app/section";
 import { FilterPill } from "@/components/app/toolbar";
 import { PatientAvatar } from "@/components/app/patient-avatar";
 import { Button } from "@/components/ui/button";
@@ -16,14 +16,6 @@ import { NODE_META, RISK_META, TASK_STATUS_META, VARIATION_TYPE_META } from "@/l
 import { cn, fmtDate, fmtTime, relTime } from "@/lib/utils";
 
 const CLINICAL_STAGES = ["术前评估", "术前检查", "治疗方案确认", "手术及术后", "出院与随访"] as const;
-
-function greeting(hour: number) {
-  if (hour < 6) return "凌晨好";
-  if (hour < 12) return "上午好";
-  if (hour < 14) return "中午好";
-  if (hour < 18) return "下午好";
-  return "晚上好";
-}
 
 function isToday(iso: string) {
   const d = new Date(iso);
@@ -42,7 +34,6 @@ export default function DashboardPage() {
   const has = useSessionStore((s) => s.has);
   const tasks = useRuntimeStore((s) => s.tasks);
   const [taskTab, setTaskTab] = useState<"mine" | "all">("mine");
-  const hour = new Date().getHours();
 
   const canViewTasks = has("task.view");
   const canViewPatients = has("patient.view");
@@ -116,46 +107,54 @@ export default function DashboardPage() {
     {
       label: "在径患者",
       value: PATIENT_SUMMARY.inPathway,
-      hint: `高风险 ${PATIENT_SUMMARY.highRisk}`,
+      hint: PATIENT_SUMMARY.highRisk ? `高风险 ${PATIENT_SUMMARY.highRisk}` : undefined,
       to: canViewPatients ? "/patients" : undefined,
       show: canViewPatients,
     },
     {
       label: "今日待办",
       value: todayTasks.length,
-      hint: overdue ? `超时 ${overdue}` : "按截止排序",
+      hint: overdue ? `超时 ${overdue}` : undefined,
       to: canViewTasks ? "/tasks" : undefined,
       show: canViewTasks,
     },
     {
       label: "待审核",
       value: pendingApprovals.length,
-      hint: "路径 / 计划",
+      hint: undefined,
       to: canApprove ? "/approvals" : undefined,
       show: canApprove,
     },
     {
       label: "开放变异",
       value: alerts.length,
-      hint: "需处置",
+      hint: undefined,
       to: canViewVariations ? "/variations" : undefined,
       show: canViewVariations,
     },
   ].filter((m) => m.show);
 
+  const copilotPatient = canViewPatients ? focusPatients[0]?.patient : undefined;
+
   return (
     <Page className="bg-canvas">
       <PageHeader
-        module="工作台"
-        title={`${greeting(hour)}，${user?.name ?? "同事"}`}
-        description="以今日待办与风险患者为主；审批与变异按权限显示。合成演示数据，不可用于临床决策。"
+        module="概览"
+        title="工作台"
         actions={
           <div className="flex items-center gap-2">
-            <SyntheticTag />
+            {copilotPatient && (
+              <Button asChild size="sm" variant="outline">
+                <Link to={`/patients/${copilotPatient.id}`}>
+                  <Sparkles className="size-3.5" />
+                  副驾驶
+                </Link>
+              </Button>
+            )}
             {canViewTasks && (
               <Button asChild size="sm">
                 <Link to="/tasks">
-                  打开任务中心
+                  任务中心
                   <ArrowRight className="size-3.5" />
                 </Link>
               </Button>
@@ -164,22 +163,6 @@ export default function DashboardPage() {
         }
       />
 
-      {/* 临床副驾驶入口提示 · 仍落在患者上下文，非独立 Chat 页 */}
-      {canViewPatients && focusPatients[0] && (
-        <Link
-          to={`/patients/${focusPatients[0].patient.id}`}
-          className="mb-3 flex items-center gap-2 border-b border-line pb-3 text-[13px] transition-colors hover:text-ink"
-        >
-          <Sparkles className="size-3.5 shrink-0 text-muted-foreground" />
-          <span className="min-w-0 flex-1 truncate text-muted-foreground">
-            副驾驶 · 打开「{focusPatients[0].patient.name}」右栏提问
-            <span className="text-muted-foreground/70"> · AI 非医嘱</span>
-          </span>
-          <ArrowUpRight className="size-3.5 shrink-0 text-muted-foreground" />
-        </Link>
-      )}
-
-      {/* 精简指标条 · 可下钻 */}
       {metrics.length > 0 && (
         <div className="mb-4 grid grid-cols-2 divide-x divide-y divide-line overflow-hidden rounded-md border border-line bg-surface sm:grid-cols-4 sm:divide-y-0">
           {metrics.map((m) => {
@@ -187,7 +170,9 @@ export default function DashboardPage() {
               <div className="px-4 py-3">
                 <div className="flex items-baseline justify-between gap-2">
                   <span className="text-[12px] leading-[18px] text-muted-foreground">{m.label}</span>
-                  <span className="text-[12px] leading-[18px] text-muted-foreground">{m.hint}</span>
+                  {m.hint ? (
+                    <span className="text-[12px] leading-[18px] text-muted-foreground">{m.hint}</span>
+                  ) : null}
                 </div>
                 <p className="mt-1 font-mono text-[24px] leading-8 font-semibold tracking-[-0.03em] tabular-nums text-ink">
                   {m.value}
@@ -205,7 +190,6 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* 主区：待办 + 风险患者 · 辅区：阶段 / 变异 / 审核 */}
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)_300px]">
         {canViewTasks && (
           <section className="min-w-0 overflow-hidden rounded-md border border-line bg-surface">
@@ -213,9 +197,6 @@ export default function DashboardPage() {
               <div className="flex items-baseline gap-2">
                 <h2 className="text-[16px] leading-6 font-semibold tracking-[-0.02em] text-ink">今日待办</h2>
                 <span className="font-mono text-[12px] tabular-nums text-muted-foreground">{taskPool.length}</span>
-                <span className="text-[12px] text-muted-foreground">
-                  {taskTab === "mine" ? "指派给我 · 超时优先" : "全科队列 · 超时优先"}
-                </span>
               </div>
               <div className="flex items-center gap-1">
                 <FilterPill active={taskTab === "mine"} onClick={() => setTaskTab("mine")}>
@@ -236,7 +217,6 @@ export default function DashboardPage() {
               <EmptyState
                 icon={<CheckCircle2 />}
                 title={taskTab === "mine" ? "我的今日任务已完成" : "今日任务已完成"}
-                description="可切换「全科」或前往任务中心查看后续队列。"
                 action={
                   taskTab === "mine" ? (
                     <Button size="sm" variant="outline" onClick={() => setTaskTab("all")}>
@@ -305,14 +285,11 @@ export default function DashboardPage() {
                 to="/patients"
                 className="inline-flex items-center gap-0.5 text-[12px] text-muted-foreground hover:text-ink"
               >
-                患者中心 <ArrowUpRight className="size-3.5" />
+                全部 <ArrowUpRight className="size-3.5" />
               </Link>
             </div>
-            <p className="border-b border-line bg-canvas/60 px-4 py-2 text-[12px] leading-[18px] text-muted-foreground">
-              排序：高风险 → 中风险 → 关联超时任务 → 路径进度较低
-            </p>
             {focusPatients.length === 0 ? (
-              <EmptyState title="暂无重点患者" description="当前无在径高/中风险患者。" />
+              <EmptyState title="暂无重点患者" />
             ) : (
               <ul className="divide-y divide-line">
                 {focusPatients.map(({ patient: p, hasOverdue }) => (
@@ -360,9 +337,6 @@ export default function DashboardPage() {
                 </Link>
               </div>
               <div className="space-y-3 px-4 py-3">
-                <p className="text-[12px] leading-[18px] text-muted-foreground">
-                  未完成任务按临床阶段分布（全科聚合，非单患者样例）
-                </p>
                 {stageProgress.map((s) => (
                   <div key={s.stage}>
                     <div className="mb-1 flex justify-between gap-2 text-[13px] leading-[18px]">
@@ -456,38 +430,12 @@ export default function DashboardPage() {
               <EmptyState
                 icon={<ClipboardList />}
                 title="当前角色无可展示工作台模块"
-                description="请联系管理员确认权限，或切换具备 task / patient / variation / approve 权限的演示账号。"
               />
             </section>
           )}
         </aside>
       </div>
 
-      <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-line pt-3 text-[12px] leading-[18px] text-muted-foreground">
-        <span>合成演示数据 · 指标来自本地演示集聚合，非真实院内统计</span>
-        <div className="flex flex-wrap items-center gap-3">
-          {canViewTasks && (
-            <Link to="/tasks" className="hover:text-ink">
-              任务中心
-            </Link>
-          )}
-          {canViewPatients && (
-            <Link to="/patients" className="hover:text-ink">
-              患者中心
-            </Link>
-          )}
-          {canViewVariations && (
-            <Link to="/variations" className="hover:text-ink">
-              变异管理
-            </Link>
-          )}
-          {canApprove && (
-            <Link to="/approvals" className="hover:text-ink">
-              审核中心
-            </Link>
-          )}
-        </div>
-      </div>
     </Page>
   );
 }

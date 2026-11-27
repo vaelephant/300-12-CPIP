@@ -148,7 +148,7 @@ export function ClinicalCopilot({
           onChange={(e) => setCustomQ(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
-              toast.info("演示未接真实 LLM，请用上方芯片提问。");
+              toast.info("请用上方芯片提问。");
             }
           }}
           placeholder="提问…"
@@ -159,7 +159,7 @@ export function ClinicalCopilot({
           size="sm"
           variant="ghost"
           className="h-8 px-2"
-          onClick={() => toast.info("演示未接真实 LLM，请用上方芯片提问。")}
+          onClick={() => toast.info("请用上方芯片提问。")}
         >
           问
         </Button>

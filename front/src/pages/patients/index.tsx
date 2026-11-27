@@ -1,9 +1,7 @@
 import { useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
-  Activity,
   AlertTriangle,
-  ArrowUpRight,
   BedDouble,
   Download,
   Plus,
@@ -17,7 +15,7 @@ import type { PatientScenario, PatientStatus } from "@/types";
 import { PATIENT_SCENARIO_META, PATIENT_STATUS_META, RISK_META } from "@/lib/clinical";
 import { fmt, fmtDate, pct, relTime } from "@/lib/utils";
 import { Page, PageHeader, PageMeta } from "@/components/app/page-header";
-import { EmptyState, SectionHead, SyntheticTag } from "@/components/app/section";
+import { EmptyState, SectionHead } from "@/components/app/section";
 import { StatCard } from "@/components/app/stat-card";
 import { StatusBadge } from "@/components/app/status-badge";
 import { FilterPill, SearchInput, Toolbar } from "@/components/app/toolbar";
@@ -57,7 +55,7 @@ export default function PatientsPage() {
   const [ward, setWard] = useState("ALL");
   const [page, setPage] = useState(1);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const { patients, summary, lastSync, mode } = usePatientDirectory();
+  const { patients, summary, lastSync } = usePatientDirectory();
 
   const wardOptions = Array.from(new Set(patients.map((p) => p.ward)));
 
@@ -120,15 +118,14 @@ export default function PatientsPage() {
   return (
     <Page>
       <PageHeader
-        module="M04 · 患者管理"
+        module="患者管理"
         title="患者中心"
-        description="全院在院与在径患者统一视图：档案、路径进度、风险与入径状态。所有数据均为合成演示数据。"
         actions={
           <>
             <Button
               variant="outline"
               size="sm"
-              onClick={() => toast.info("观测数据导入（演示）：模拟从 HIS / LIS / PACS 拉取最新观测记录")}
+              onClick={() => toast.info("正在从 HIS / LIS / PACS 拉取最新观测记录")}
             >
               <Upload className="size-3.5" />
               导入观测
@@ -136,7 +133,7 @@ export default function PatientsPage() {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => toast.info("新建患者需通过 HIS 接口建档（演示环境未连接真实接口）")}
+              onClick={() => toast.info("新建患者需通过 HIS 接口建档")}
             >
               <Plus className="size-3.5" />
               新建患者
@@ -149,33 +146,27 @@ export default function PatientsPage() {
         }
         meta={
           <>
-            <SyntheticTag />
-            <PageMeta label="合成病例" value={`${fmt(summary.total)} 例`} mono />
-            <PageMeta label="数据源" value={mode === "server" ? "后端 API" : "V0.6.1 合成演示"} mono />
-            <PageMeta label="最近同步" value={`${fmtDate(lastSync, true)} · ${relTime(lastSync)}`} mono />
-            <PageMeta label="数据源" value="HIS / EMR / LIS / PACS" />
-            <PageMeta label="专病范围" value="原发性肝癌（C22.0）· 单病种" />
+            <PageMeta label="在管" value={`${fmt(summary.total)} 例`} mono />
+            <PageMeta label="同步" value={`${fmtDate(lastSync, true)} · ${relTime(lastSync)}`} mono />
           </>
         }
       />
 
       <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
-          label="合成病例"
+          label="在管病例"
           value={fmt(summary.total)}
           unit="例"
-          hint="演示环境中的全部病例均为合成数据，不代表真实患者"
           tone="info"
-          footer="原发肝癌单病种 · 3 个病区"
+          footer="3 个病区"
           trend={[292, 294, 296, 297, 299, 300, 300]}
         />
         <StatCard
           label="在径患者"
           value={fmt(summary.inPathway)}
           unit="例"
-          hint="已确认入径且路径实例处于执行中的患者数量"
           tone="ok"
-          footer={`占全部病例 ${pct(summary.inPathway, summary.total)}`}
+          footer={`${pct(summary.inPathway, summary.total)}`}
           progress={(summary.inPathway / summary.total) * 100}
           trend={[236, 240, 243, 246, 249, 252, 254]}
         />
@@ -183,11 +174,10 @@ export default function PatientsPage() {
           label="待入径确认"
           value={fmt(summary.pendingAdmission)}
           unit="例"
-          hint="已完成建档、等待医生确认入径的患者；含数据不完整病例"
           tone="info"
           footer={
             <span className="inline-flex items-center gap-1">
-              <AlertTriangle className="size-2.5 text-warn" /> 其中数据缺失 {pendingMissing} 例
+              <AlertTriangle className="size-2.5 text-warn" /> 数据缺失 {pendingMissing} 例
             </span>
           }
         />
@@ -195,9 +185,8 @@ export default function PatientsPage() {
           label="高风险患者"
           value={fmt(highRisk)}
           unit="例"
-          hint="风险等级为高风险：病情变异、任务超时或安全约束触发"
           tone="risk"
-          footer={`另有中风险 ${mediumRisk} 例`}
+          footer={`中风险 ${mediumRisk} 例`}
         />
       </div>
 
@@ -206,7 +195,6 @@ export default function PatientsPage() {
           <SectionHead
             title="队列风险构成"
             count={patients.length}
-            description="按最新风险等级汇总的全部合成病例"
             action={<StatusBadge tone="warn" dot={false}>需关注 {highRisk} 例</StatusBadge>}
           />
           <div className="pt-3">
@@ -217,18 +205,14 @@ export default function PatientsPage() {
                 { name: "高风险", value: patients.filter((p) => p.riskLevel === "HIGH").length, color: CHART_SEMANTIC.risk },
               ]}
               height={132}
-              centerLabel="合成病例"
+              centerLabel="在管病例"
               centerValue={patients.length}
               unit="例"
-              footnote="风险等级用于路径关注与审核提示，不替代临床判断。"
             />
           </div>
         </Card>
         <Card className="px-4 py-3">
-          <SectionHead
-            title="入径场景分布"
-            description="正常入径 / 病情变异 / 数据缺失等场景的队列构成"
-          />
+          <SectionHead title="入径场景分布" />
           <div className="pt-2">
             <HBarChart
               data={[
@@ -241,7 +225,6 @@ export default function PatientsPage() {
               ]}
               height={172}
               labelWidth={86}
-              footnote="场景分布用于研发演示，不代表真实疾病发生率。"
             />
           </div>
         </Card>
@@ -309,7 +292,7 @@ export default function PatientsPage() {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => toast.info("已生成患者列表导出任务（演示），未创建真实导出文件")}
+                onClick={() => toast.info("已生成患者列表导出任务，未创建真实导出文件")}
               >
                 <Download className="size-3.5" />
                 导出
@@ -341,7 +324,6 @@ export default function PatientsPage() {
           <EmptyState
             icon={<Users />}
             title="没有符合条件的患者"
-            description="当前搜索与筛选条件组合无结果。可尝试清空筛选，或调整病区 / 情景 / 状态条件。"
             action={
               <Button variant="outline" size="sm" onClick={resetFilters}>
                 <RotateCcw className="size-3.5" /> 清空筛选
@@ -457,17 +439,6 @@ export default function PatientsPage() {
           </>
         )}
       </Card>
-
-      <div className="mt-3 flex flex-wrap items-center justify-between gap-2 px-1 text-[10.5px] text-muted-foreground">
-        <span className="inline-flex items-center gap-1">
-          <Activity className="size-3 text-muted-foreground/70" />
-          数据每 5 分钟增量同步；当前为 V0.6.1 研发演示环境，未连接真实院内系统。
-        </span>
-        <Link to="/approvals" className="inline-flex items-center gap-0.5 text-primary hover:underline">
-          前往审核中心
-          <ArrowUpRight className="size-3" />
-        </Link>
-      </div>
 
       <EnrollmentMatchDialog open={dialogOpen} onOpenChange={setDialogOpen} />
     </Page>

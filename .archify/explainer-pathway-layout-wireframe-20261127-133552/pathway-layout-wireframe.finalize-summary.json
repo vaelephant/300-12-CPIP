@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "finalize",
+  "status": "pass",
+  "type": "explainer",
+  "quality": "showcase",
+  "specification": {
+    "path": "/Users/nihao/code/300-12-CPIP/.archify/explainer-pathway-layout-wireframe-20261127-133552/candidate.archify.md",
+    "sha256": "37746e117ff0ae63dbab3da674cb42c06384b36145b721b4f0e076d0e51f5826",
+    "bytes": 5458
+  },
+  "artifact": {
+    "path": "/Users/nihao/code/300-12-CPIP/.archify/explainer-pathway-layout-wireframe-20261127-133552/pathway-layout-wireframe.html",
+    "sha256": "e1cc70807edc30e2dffdbf5f21499dafd63a25f5317b270d8e80b544e4608b14",
+    "bytes": 564865
+  },
+  "gates": {
+    "validate": "pass",
+    "deliver": "pass",
+    "check": "pass",
+    "browser-check": "not-run"
+  },
+  "diagnostics": [],
+  "diagnosticSummary": {
+    "total": 0,
+    "shown": 0,
+    "truncated": false
+  },
+  "evidence": {
+    "receipt": "/Users/nihao/code/300-12-CPIP/.archify/explainer-pathway-layout-wireframe-20261127-133552/pathway-layout-wireframe.finalize.json",
+    "summaryReceipt": "/Users/nihao/code/300-12-CPIP/.archify/explainer-pathway-layout-wireframe-20261127-133552/pathway-layout-wireframe.finalize-summary.json"
+  },
+  "visualReview": "not-requested",
+  "durationMs": 867,
+  "browserCheck": {
+    "requested": false,
+    "ran": false
+  }
+}

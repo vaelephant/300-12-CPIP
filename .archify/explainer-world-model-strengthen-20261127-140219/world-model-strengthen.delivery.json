@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "2eedfe15-4fe0-4150-94db-6f8452dbcebe",
+  "status": "current",
+  "command": "deliver",
+  "type": "explainer",
+  "input": "/Users/nihao/code/300-12-CPIP/.archify/explainer-world-model-strengthen-20261127-140219/candidate.archify.md",
+  "output": "/Users/nihao/code/300-12-CPIP/.archify/explainer-world-model-strengthen-20261127-140219/world-model-strengthen.html",
+  "specification": {
+    "sha256": "08ee3fe574d5a73a5451bfe6a12ef38b03b2deb46edbee23d4c2a9e07e6cbe68",
+    "bytes": 5051
+  },
+  "artifact": {
+    "sha256": "26e353b2fe88f596b16c0b4a59003f45e74134b7016f9cbc5ea574240c7da216",
+    "bytes": 532651
+  },
+  "explainer": {
+    "preparedSha256": "213e6d4494986f92811c7c526548e034dc5e302b46ba0f0d865804733a38c177",
+    "dependencies": [
+      {
+        "kind": "diagram-spec",
+        "id": "wm-pillars",
+        "inline": true,
+        "sha256": "0b4af9529a074c78674f0dc60ac93fea26b034a6773be587b492398774bf4bc6",
+        "bytes": 1086
+      }
+    ]
+  }
+}

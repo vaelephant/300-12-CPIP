@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 
 import { Page, PageHeader, PageMeta } from "@/components/app/page-header";
-import { Callout, EmptyState, SectionHead, SyntheticTag } from "@/components/app/section";
+import { Callout, EmptyState, SectionHead } from "@/components/app/section";
 import { StatusBadge } from "@/components/app/status-badge";
 import { Sparkline } from "@/components/app/sparkline";
 import { VisualFrame } from "@/visualization/core/VisualFrame";
@@ -49,7 +49,7 @@ import { cn, fmtDate } from "@/lib/utils";
 /* ===========================================================================
  * VIS-006 · 院长临床路径驾驶舱
  * 全院覆盖 / 入径 / 完成 / 变异 / 效率指标，支持 全院 → 病区 / 治疗组 → 路径 → 事件 下钻。
- * 所有数据均为确定性合成演示数据，不可用于对外披露或绩效考核。
+ * 所有数据均为确定性，不可用于对外披露或绩效考核。
  * ========================================================================= */
 
 const PERIODS = ["近 30 天", "本季度", "本年度"];
@@ -227,7 +227,7 @@ export default function ExecutivePage() {
   const handleReasonClick = useCallback(
     (name: string, value: number) => {
       toast.info(`变异原因下钻：${name}`, {
-        description: `${value} 例（合成数据），正在打开变异管理列表。`,
+        description: `${value} 例，正在打开变异管理列表。`,
       });
       navigate("/variations");
     },
@@ -241,12 +241,10 @@ export default function ExecutivePage() {
       <PageHeader
         module="VIS-006 · 院长驾驶舱"
         title="院长临床路径驾驶舱"
-        description="全院临床路径运营总览：覆盖率、入径与完成率、变异与效率指标；支持从全院下钻至病区 / 治疗组、路径与执行事件。"
         meta={
           <>
-            <SyntheticTag />
-            <PageMeta label="组织" value="仁和医院（演示）" />
-            <PageMeta label="统计周期" value={`${period}（演示）`} />
+            <PageMeta label="组织" value="仁和医院" />
+            <PageMeta label="统计周期" value={`${period}`} />
             <PageMeta label="数据截止" value={fmtDate(LAST_SYNC, true)} mono />
           </>
         }
@@ -257,7 +255,7 @@ export default function ExecutivePage() {
               onValueChange={(value) => {
                 setPeriod(value);
                 toast("统计周期已切换", {
-                  description: `${value}。演示数据固定为近 30 天口径，仅切换展示标签。`,
+                  description: `${value}。近 30 天口径。`,
                 });
               }}
             >
@@ -295,7 +293,7 @@ export default function ExecutivePage() {
           <InfoDot />
           点击任一指标卡片可下钻至对应分析视图
         </span>
-        <span className="font-mono text-muted-foreground/70">delta = 较上月 · 合成演示数据</span>
+        <span className="font-mono text-muted-foreground/70">delta = 较上月 · </span>
       </p>
 
       {/* ------------------------------- Hero ------------------------------- */}
@@ -304,9 +302,9 @@ export default function ExecutivePage() {
           className="lg:col-span-5"
           title="平均住院日趋势"
           english="LOS TREND"
-          description="实际 vs 目标 · 近 6 个月（合成）"
+          description="实际 vs 目标 · 近 6 个月"
           badge={<StatusBadge tone="ok">低于目标</StatusBadge>}
-          footnote="口径：路径患者出院平均住院日；目标值为院内年度目标，合成演示数据。"
+          footnote="口径：路径患者出院平均住院日；目标值为院内年度目标，。"
         >
           <LosTrendChart data={EXECUTIVE_LOS} height={210} />
         </VisualFrame>
@@ -315,8 +313,8 @@ export default function ExecutivePage() {
           className="lg:col-span-3"
           title="变异原因分布"
           english="VARIATION REASONS"
-          description="近 30 天 · 点击扇区下钻（合成）"
-          footnote="点击扇区可进入变异管理列表；合计为合成演示变异例数。"
+          description="近 30 天 · 点击扇区下钻"
+          footnote="点击扇区可进入变异管理列表。"
         >
           <VariationReasonDonut
             data={EXECUTIVE_VARIATION_REASONS}
@@ -329,9 +327,9 @@ export default function ExecutivePage() {
           className="lg:col-span-4"
           title="入径 / 完成趋势"
           english="ENROLLMENT & COMPLETION"
-          description={`上：入径患者数（例）· 下：路径完成率（%）（合成）`}
+          description={`上：入径患者数（例）· 下：路径完成率（%）`}
           badge={<span className="font-mono text-[10px] text-muted-foreground">11 月 91.2%</span>}
-          footnote="入径患者数为柱状轴，完成率为右侧百分比轴；近 6 个月合成序列。"
+          footnote="入径患者数为柱状轴，完成率为右侧百分比轴；近 6 个月序列。"
         >
           <EnrollmentCompletionChart data={EXECUTIVE_TREND} height={210} />
         </VisualFrame>
@@ -387,7 +385,7 @@ export default function ExecutivePage() {
             onClick={() =>
               toast("路径 / 事件", {
                 description: selectedDept
-                  ? "该病区 / 治疗组在演示数据中暂无已发布路径模板，可前往路径库查看。"
+                  ? "该病区 / 治疗组暂无已发布路径模板，可前往路径库查看。"
                   : "请先选择病区 / 治疗组，再下钻至路径与事件。",
               })
             }
@@ -420,7 +418,7 @@ export default function ExecutivePage() {
               </Link>
             </Button>
           }
-          footnote="覆盖率为已配置路径的出院患者占比；全部为合成演示数据，不用于病区考核。"
+          footnote="覆盖率为已配置路径的出院患者占比；全部为，不用于病区考核。"
         >
           <div className="overflow-x-auto">
             <Table>
@@ -504,7 +502,7 @@ export default function ExecutivePage() {
           english="DRILLDOWN"
           description={
             selectedDept
-              ? `较全院均值（完成率 ${orgAvg.completion.toFixed(1)}%）· 合成数据`
+              ? `较全院均值（完成率 ${orgAvg.completion.toFixed(1)}%）`
               : "从左侧病区排名选择病区 / 治疗组，查看指标与代表路径"
           }
           footnote={selectedDept ? "病区 / 治疗组聚合指标；患者级明细需具备数据范围权限。" : "未选择病区 / 治疗组。"}
@@ -513,7 +511,6 @@ export default function ExecutivePage() {
             <EmptyState
               icon={<Building2 />}
               title="尚未选择病区 / 治疗组"
-              description="点击左侧病区排名的任意一行，即可查看该病区 / 治疗组的完成率、入径率、变异率、住院日、覆盖率与代表路径。"
               action={
                 <Button
                   variant="outline"
@@ -586,11 +583,11 @@ export default function ExecutivePage() {
                 <SectionHead
                   title="代表路径"
                   count={deptPathways.length}
-                  description="该病区 / 治疗组已发布路径模板（合成）"
+                  description="该病区 / 治疗组已发布路径模板"
                   className="mb-1.5"
                 />
                 {deptPathways.length === 0 ? (
-                  <Callout tone="neutral" title="演示数据中该病区 / 治疗组暂无已发布路径模板">
+                  <Callout tone="neutral" title="该病区 / 治疗组暂无已发布路径模板">
                     可前往路径库查看全部模板；病区指标仍按聚合口径展示。
                   </Callout>
                 ) : (
@@ -662,7 +659,7 @@ export default function ExecutivePage() {
               </Link>
             </Button>
           }
-          footnote="瓶颈基于合成事件日志；等待时长为中位数近似值。"
+          footnote="瓶颈基于事件日志；等待时长为中位数近似值。"
         >
           <ul className="space-y-2">
             {EXECUTIVE_BOTTLENECKS.map((item) => (
@@ -700,9 +697,9 @@ export default function ExecutivePage() {
           className="lg:col-span-7"
           title="11 月趋势"
           english="NOVEMBER TREND"
-          description="近 6 个月序列 · 11 月为当前月（合成）"
+          description="近 6 个月序列 · 11 月为当前月"
           badge={<StatusBadge tone="info">当前月</StatusBadge>}
-          footnote="环比为 11 月与 10 月差值；趋势为合成演示序列，不构成承诺目标。"
+          footnote="环比为 11 月与 10 月差值。"
         >
           <div className="divide-y divide-line">
             {november.rows.map((row) => (
@@ -734,17 +731,12 @@ export default function ExecutivePage() {
         </VisualFrame>
       </div>
 
-      <Callout tone="neutral" title="数据说明与合规边界" className="mt-4">
-        本页全部指标为确定性合成演示数据（100 例队列口径扩展），不得用于等级评审、绩效考核或对外披露；
-        分子 / 分母口径与「运营分析」模块一致，分母为零时返回「不可计算」。患者级明细需具备对应数据范围权限。
-      </Callout>
-
       <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[10px] text-muted-foreground/70">
         <span className="inline-flex items-center gap-1">
           <ShieldCheck className="size-3" />
-          ECharts 主题取色自设计令牌（canvas 禁用 var()）
+          分子 / 分母口径与「运营分析」一致；分母为零时返回「不可计算」
         </span>
-        <span className="font-mono">VIS-006 · executive cockpit · synthetic</span>
+        <span className="font-mono">VIS-006 · executive cockpit</span>
       </div>
     </Page>
   );

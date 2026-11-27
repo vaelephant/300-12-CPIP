@@ -32,9 +32,11 @@ import AuditPage from "@/pages/settings/audit";
 import VizGalleryPage from "@/dev/desgin/Gallery";
 import PathwayGalleryPage from "@/dev/desgin/PathwayGallery";
 import StageTasksGalleryPage from "@/dev/desgin/StageTasksGallery";
+import TaskTimelineGalleryPage from "@/dev/desgin/TaskTimelineGallery";
 import ComboGalleryPage from "@/dev/desgin/ComboGallery";
 import LivePathwayGalleryPage from "@/dev/desgin/LivePathwayGallery";
 import WorldModelGalleryPage from "@/dev/desgin/WorldModelGallery";
+import ProductDemoPage from "@/dev/desgin/ProductDemo";
 import { useSessionStore } from "@/stores/session-store";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -99,9 +101,11 @@ export default function App() {
               <Route path="/dev/desgin" element={<VizGalleryPage />} />
               <Route path="/dev/desgin/pathway" element={<PathwayGalleryPage />} />
               <Route path="/dev/desgin/tasks" element={<StageTasksGalleryPage />} />
+              <Route path="/dev/desgin/timeline" element={<TaskTimelineGalleryPage />} />
               <Route path="/dev/desgin/combo" element={<ComboGalleryPage />} />
               <Route path="/dev/desgin/live-pathway" element={<LivePathwayGalleryPage />} />
               <Route path="/dev/desgin/world-model" element={<WorldModelGalleryPage />} />
+              <Route path="/dev/desgin/product-demo" element={<ProductDemoPage />} />
               <Route element={<AppShell />}>
                 <Route path="/" element={<Navigate to="/dashboard" replace />} />
                 <Route path="/dashboard" element={<DashboardPage />} />

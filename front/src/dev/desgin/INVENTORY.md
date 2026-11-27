@@ -69,6 +69,10 @@
 3. 路径图 / 流程挖掘 / 证据图等复杂引擎组件不在本轮 kit 内。
 4. **路径阶段轨**：`/dev/desgin/pathway` · `kit/pathway.tsx`（A Spine / B Segments / C Milestones / D Focus）→ 选定后再替换 `StageProgressStrip`。
 5. **本阶段任务**：`/dev/desgin/tasks` · `kit/stage-tasks.tsx`（A–D 列表）+ `kit/stage-gantt.tsx`（E Gantt / F Swimlane）→ 选定后再替换 `TaskLine` / 现网 `GanttChart`。
+5b. **任务时间维 / 时间轴**：`/dev/desgin/timeline` · `kit/task-timeline.tsx`
+   - **KitTimeRangePills**（今天 / 本周 / 本月 / 自定义）
+   - **KitTaskTimeline**（Notion 风格条带；今日小时轴 / 周月日轴）
+   - 已接入：`pages/tasks`（列表 / 时间轴 / 看板共用顶栏时间维）
 6. **组合预览**：`/dev/desgin/combo` · `kit/pathway-combo.tsx`（B Segments + F Swimlane 联动）。
 7. **已接入业务**：`components/patient/pathway-execution.tsx` → `pages/patients/detail.tsx` 路径区（替换 StageProgressStrip）。
 8. **工作空间概览**：`/dev/desgin#ov-overview` · `kit/overview.tsx`
@@ -76,6 +80,9 @@
    - 已接入：`components/patient/overview-grouped-sheet.tsx` → detail 左侧栏。
 9. **动态路径图**：`/dev/desgin/live-pathway` · `kit/live-pathway.tsx`
    - **LP-01** QuietGraph · **LP-02** StageSwim · **LP-03** FocusPath → 选定后替换 VIS-001 `LivePathwayGraph`。
-10. **世界模型画布**：`/dev/desgin/world-model` · `kit/world-model.tsx`
-   - **WM-01** WorldModelCanvas（上：传统路径阶段轨 · 下：Past|Now|Future）· **WM-02** WorldModelStrip
-   - 阶段轨兼顾临床路径认知；Past 事件挂阶段、可聚焦过滤；Future · `clinical_use=false`。
+10. **世界模型画布**：`/dev/desgin/world-model` · `kit/world-model.tsx` + `kit/world-model-flow.tsx`
+   - **WM-01** WorldModelCanvas（上：阶段轨 · 下：Past|Now|Future **React Flow**）· **WM-02** WorldModelStrip
+   - 滚轮缩放 / Controls 适应画布；Future · `clinical_use=false`。
+11. **产品定位 Demo**：`/dev/desgin/product-demo` · `ProductDemo.tsx`
+   - 共用 `components/patient/clinical-observatory.tsx`（CDSS ↔ WM 双向联动 + 激活闸门）。
+   - 已嵌入患者详情 Tab「观测台」· fixture 数据，未接生产计划引擎。

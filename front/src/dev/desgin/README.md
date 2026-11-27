@@ -8,6 +8,7 @@
 - http://127.0.0.1:5173/dev/desgin/combo — B Segments + F Swimlane 组合
 - http://127.0.0.1:5173/dev/desgin/live-pathway — 动态路径图（LP-01…03）
 - http://127.0.0.1:5173/dev/desgin/world-model — 世界模型画布（WM-01/02 · Past|Now|Future）
+- http://127.0.0.1:5173/dev/desgin/product-demo — 产品定位 Demo（路径 × CDSS × 世界模型）
 
 按 Quiet / Wordless 重做：近单色 + `#3e63dd`；暖色只标问题；卡片 label+大数字；pastel 柱 + 一亮柱；热力 pill 分级；Few bullet；tick 目标条；3px 底部分享条；深色大数字 tooltip。
 

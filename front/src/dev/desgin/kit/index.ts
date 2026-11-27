@@ -1,6 +1,22 @@
 export { VIZ, VIZ_AXIS, seriesColor, mix, niceTicks, compactNum, sharePct } from "./tokens";
 export { VizFrame, VizBox, VizTip, VizTooltip, VizDelta, MetricTile } from "./primitives";
 export {
+  KitTimeRangePills,
+  KitTaskTimeline,
+  resolveKitTimeWindow,
+  overlapsKitTimeWindow,
+  toDateInputValue,
+  startOfLocalDay,
+  startOfWeekMonday,
+  endOfLocalDay,
+  KIT_DAY_HOUR_START,
+  KIT_DAY_HOUR_END,
+  type KitTimeRangeKey,
+  type KitTimeWindow,
+  type KitTimelineItem,
+  type KitTimelineTone,
+} from "./task-timeline";
+export {
   VizSparkline,
   VizMiniBars,
   VizLineTrend,

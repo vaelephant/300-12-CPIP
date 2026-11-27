@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------
 // VIS-012 · 医疗世界模型多路径推演
 // 候选路径 A/B/C × 时间尺度切换 × 不确定性区间 × 临床干预点 × 实际对照
-// 全部为确定性合成演示数据，clinical_use = false。
+// 全部为确定性，clinical_use = false。
 // ---------------------------------------------------------------------------
 import { useMemo, useState } from "react";
 import { Activity, Info, Layers, RotateCcw } from "lucide-react";
@@ -102,7 +102,7 @@ export function TrajectorySimulator({
     if (actual) {
       series.push({
         type: "line",
-        name: "实际观察（演示）",
+        name: "实际观察",
         z: 4,
         symbol: "circle",
         symbolSize: 4,
@@ -162,7 +162,7 @@ export function TrajectorySimulator({
             })
             .join("");
           return `<div style="min-width:230px">
-            <div style="font-family:monospace;font-size:10px;color:${colors.muted}">D${day} · 合成推演</div>
+            <div style="font-family:monospace;font-size:10px;color:${colors.muted}">D${day}</div>
             ${medians}
             <div style="margin-top:6px;border-top:1px solid ${colors.line};padding-top:5px;font-size:9px;color:${colors.muted}">
               区间为 P10–P90 不确定性带；不构成临床预测。
@@ -252,7 +252,7 @@ export function TrajectorySimulator({
             实际观察（D0–D8）
           </span>
         )}
-        <span className="ml-auto font-mono text-[9px] text-muted-foreground/60">合成演示 · 非临床预测</span>
+        
       </div>
 
       {!compact && (

@@ -243,7 +243,7 @@ export const APPROVAL_TYPE_MIX = [
   { name: "变异重规划", value: 1, color: "var(--chart-5)" },
 ];
 
-/* --------------------------- 路径库结构分布（演示） --------------------------- */
+/* --------------------------- 路径库结构分布 --------------------------- */
 
 export const PATHWAY_STATUS_MIX = [
   { name: "已发布", value: 4, color: "var(--chart-1)" },

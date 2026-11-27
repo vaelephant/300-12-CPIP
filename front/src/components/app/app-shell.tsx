@@ -6,7 +6,6 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { crumbForPath } from "./nav-config";
 import { Topbar } from "./topbar";
 import { CommandPalette } from "./command-palette";
-import { DemoTour } from "./demo-tour";
 import { AccessDenied } from "./access-denied";
 
 const ROUTE_RULES: { prefix: string; module: string; permissions: string[] }[] = [
@@ -51,22 +50,19 @@ export function AppShell() {
       <SidebarInset>
         <Topbar />
         <div className="min-w-0 flex-1">{allowed ? <Outlet /> : <AccessDenied module={rule?.module ?? "该模块"} />}</div>
-        {!location.pathname.endsWith("/studio") && (
+        {!location.pathname.endsWith("/studio") &&
+          !/\/patients\/[^/]+\/(map|replay)$/.test(location.pathname) && (
           <footer className="mt-auto border-t border-line px-4 py-1.5">
             <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] text-muted-foreground">
-              <span>HCC-CIP 0.6.1 · 研发演示</span>
-              <span className="flex items-center gap-3">
-                <span>合成数据 · 不用于临床</span>
-                <button onClick={() => navigate("/dashboard")} className="text-foreground hover:opacity-70">
-                  工作台
-                </button>
-              </span>
+              <span>HCC-CIP 0.6.1</span>
+              <button onClick={() => navigate("/dashboard")} className="text-foreground hover:opacity-70">
+                工作台
+              </button>
             </div>
           </footer>
         )}
       </SidebarInset>
       <CommandPalette />
-      <DemoTour />
     </SidebarProvider>
   );
 }

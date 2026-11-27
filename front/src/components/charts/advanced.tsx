@@ -228,7 +228,7 @@ export function SankeyFlow({ data, height = 300, className }: SankeyFlowProps) {
       </ResponsiveContainer>
       <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-[10px] text-muted-foreground">
         <span className="flex items-center gap-1.5">
-          <span className="h-[2px] w-4 rounded-full bg-line-strong" /> 流转例数（近 30 天，合成）
+          <span className="h-[2px] w-4 rounded-full bg-line-strong" /> 流转例数（近 30 天）
         </span>
         <span className="flex items-center gap-1.5">
           <span className="size-1.5 rounded-full bg-ok" /> 正常完成
@@ -675,7 +675,7 @@ export function GanttChart({ rows, maxHeight = 420, now, className, labelWidth =
             <span className="h-3 w-px bg-risk/60" /> 当前时间
           </span>
         )}
-        <span className="ml-auto font-mono">Gantt · 合成演示计划</span>
+        <span className="ml-auto font-mono">Gantt · 计划</span>
       </div>
     </div>
   );
@@ -758,7 +758,7 @@ export function FanChart({ data, series, height = 220, unit = "%", yDomain = [0,
             {s.label}（中位数 + P10–P90 区间）
           </span>
         ))}
-        <span className="ml-auto font-mono text-[9px] text-muted-foreground/60">合成推演 · 非临床预测</span>
+        
       </div>
     </div>
   );
@@ -921,9 +921,9 @@ export function CostEffectScatter({
                   rows={[
                     { name: "次均费用", value: `¥${point.cost.toLocaleString("zh-CN")}` },
                     { name: "路径完成率", value: `${point.completion}%` },
-                    { name: "合成队列", value: `n = ${point.cohort ?? 100}` },
+                    { name: "分析队列", value: `n = ${point.cohort ?? 100}` },
                   ]}
-                  footnote={point.recommended ? "模型推荐候选（合成推演）" : "候选方案"}
+                  footnote={point.recommended ? "模型推荐候选" : "候选方案"}
                 />
               );
             }}
@@ -939,7 +939,7 @@ export function CostEffectScatter({
         <span className="flex items-center gap-1.5">
           <span className="size-2 rounded-full bg-chart-4" /> 其他候选
         </span>
-        <span className="ml-auto font-mono text-[9px] text-muted-foreground/60">气泡 = 合成队列规模 · 虚线 = 目标基线</span>
+        <span className="ml-auto font-mono text-[9px] text-muted-foreground/60">气泡 = 队列规模 · 虚线 = 目标基线</span>
       </div>
     </div>
   );

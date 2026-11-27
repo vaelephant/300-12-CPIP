@@ -35,9 +35,13 @@ export function PatientHeaderCard({
   return (
     <div className={cn("w-full", className)}>
       <div className="mb-1.5 flex items-center justify-between gap-2 text-[12px] text-muted-foreground">
-        <Link to={backTo} className="inline-flex items-center gap-1 hover:text-ink">
-          <ArrowLeft className="size-3.5" /> 患者中心
-        </Link>
+        <div className="inline-flex items-center gap-1.5">
+          <Link to={backTo} className="inline-flex items-center gap-1 hover:text-ink">
+            <ArrowLeft className="size-3.5" /> 患者中心
+          </Link>
+          <span className="text-line-strong">/</span>
+          <span className="text-ink">患者 360</span>
+        </div>
         <div className="flex items-center gap-2 truncate">
           <span className="font-mono tabular-nums">{patient.mrn}</span>
           {dataAsOf && (

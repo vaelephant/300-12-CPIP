@@ -1,11 +1,12 @@
 import { Link } from "react-router-dom";
-import { WorldModelCanvas, WorldModelStrip, WM } from "./kit/world-model";
+import { WorldModelCanvas, WorldModelStrip, useAppWmTone } from "./kit/world-model";
 
 /**
  * 世界模型工作台 · Past | Now | Future
- * /dev/desgin/world-model
+ * /dev/desgin/world-model · 跟随系统主题
  */
 export default function WorldModelGalleryPage() {
+  const WM = useAppWmTone();
   return (
     <div
       className="min-h-screen"
@@ -13,7 +14,10 @@ export default function WorldModelGalleryPage() {
     >
       <header
         className="sticky top-0 z-10 border-b backdrop-blur-md"
-        style={{ borderColor: WM.line, background: "rgba(7,9,12,0.92)" }}
+        style={{
+          borderColor: WM.line,
+          background: WM.mode === "dark" ? "rgba(7,9,12,0.92)" : "rgba(255,255,255,0.92)",
+        }}
       >
         <div className="mx-auto flex max-w-[1100px] flex-wrap items-center justify-between gap-3 px-4 py-3">
           <div>
@@ -33,6 +37,7 @@ export default function WorldModelGalleryPage() {
                 ["/dev/desgin", "Viz Kit"],
                 ["/dev/desgin/live-pathway", "Live"],
                 ["/dev/desgin/combo", "Combo"],
+                ["/dev/desgin/product-demo", "Demo"],
               ] as const
             ).map(([to, label]) => (
               <Link
@@ -56,8 +61,8 @@ export default function WorldModelGalleryPage() {
 
       <main className="mx-auto max-w-[1100px] space-y-5 px-4 py-6 pb-20">
         <p className="max-w-2xl text-[13px] leading-6" style={{ color: WM.mute }}>
-          上轨是传统临床路径阶段（医生已熟悉），下画布是 Past / Now / Future：左侧实线回放已执行事件，中间锋线是当前状态，右侧青绿虚线是研究情景。
-          点阶段可过滤回放；选分支只改推演面板，不会激活计划。
+          上轨是传统临床路径阶段，下画布是 Past / Now / Future。
+          点击阶段、回放节点、现在节点或推演节点，左下检视面板会展开时间/执行人/结果/证据或前置条件；选分支只改研究情景，不会激活计划。
         </p>
 
         <section>

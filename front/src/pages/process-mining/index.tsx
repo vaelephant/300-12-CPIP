@@ -26,7 +26,7 @@ import { cn, fmt } from "@/lib/utils";
 
 const MODE_LABEL: Record<ProcessViewMode, { label: string; description: string }> = {
   standard: { label: "标准路径", description: "仅展示与标准临床路径一致的合规流程" },
-  actual: { label: "实际流程", description: "基于 100 例合成事件日志发现的真实执行流程" },
+  actual: { label: "实际流程", description: "基于近 30 天事件日志发现的执行流程" },
   deviation: { label: "偏差高亮", description: "仅高亮偏离标准路径的流转与偏差节点" },
 };
 
@@ -58,11 +58,10 @@ export default function ProcessMiningPage() {
         module="VIS-009 · 临床流程挖掘"
         eyebrow="Process Mining · 从事件日志发现真实流程"
         title="临床流程发现"
-        description="不依赖专家绘制的标准路径，直接从 100 例合成临床事件日志中发现真实诊疗流程、合规偏差与等待瓶颈；偏离标准路径不一定是质量问题，也可能是合理个体化。"
         meta={
           <>
-            <PageMeta label="分析队列" value="100 例合成患者" />
-            <PageMeta label="事件日志" value="PM4Py 演示数据" mono />
+            <PageMeta label="分析队列" value="分析队列" />
+            <PageMeta label="事件日志" value="事件日志" mono />
             <PageMeta label="分析口径" value="近 30 天 · 已脱敏" />
             <SyntheticTag />
           </>
@@ -72,7 +71,7 @@ export default function ProcessMiningPage() {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => toast.info("一致性检查报告生成中（演示）", { description: "报告将包含 5 类流程变体与 4 个瓶颈节点。" })}
+              onClick={() => toast.info("一致性检查报告生成中", { description: "报告将包含 5 类流程变体与 4 个瓶颈节点。" })}
             >
               <GitCompareArrows className="size-3.5" /> 一致性检查
             </Button>
@@ -80,8 +79,8 @@ export default function ProcessMiningPage() {
               variant="outline"
               size="sm"
               onClick={() =>
-                toast.success("已导出流程发现报告（合成演示）", {
-                  description: "导出行为写入审计日志（演示）；不包含患者身份信息。",
+                toast.success("已导出流程发现报告", {
+                  description: "导出行为写入审计日志；不包含患者身份信息。",
                 })
               }
             >
@@ -94,7 +93,7 @@ export default function ProcessMiningPage() {
       {/* 统计 */}
       <div className="mb-4 grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-5">
         {[
-          { label: "分析患者", value: `${PROCESS_STATS.patients}`, unit: "例", hint: "近 30 天合成事件日志", tone: "info" as const },
+          { label: "分析患者", value: `${PROCESS_STATS.patients}`, unit: "例", hint: "近 30 天事件日志", tone: "info" as const },
           { label: "路径合规率", value: `${PROCESS_STATS.conformance}%`, unit: "", hint: "与标准路径一致的流程占比", tone: "ok" as const },
           { label: "标准路径执行", value: `${PROCESS_STATS.standardRate}%`, unit: "", hint: "完整按照标准路径执行的病例", tone: "ok" as const },
           { label: "平均住院日", value: `${PROCESS_STATS.avgDays}`, unit: "天", hint: "流程端到端平均耗时", tone: "neutral" as const },
@@ -193,7 +192,7 @@ export default function ProcessMiningPage() {
                       variant="outline"
                       size="xs"
                       onClick={() =>
-                        toast.info(`查看 ${selectedNode.label} 的事件明细（演示）`, {
+                        toast.info(`查看 ${selectedNode.label} 的事件明细`, {
                           description: "该下钻在正式版本中按权限返回脱敏患者事件列表。",
                         })}
                     >
@@ -270,15 +269,14 @@ export default function ProcessMiningPage() {
           className="xl:col-span-4"
           title="流程瓶颈分析"
           badge={<span className="rounded-[3px] border border-line bg-secondary/60 px-1.5 py-px font-mono text-[8.5px] text-muted-foreground">PM4PY</span>}
-          description="按平均等待时长排序；虚线为管理目标上限。"
-          footnote="等待时长来自合成事件日志；真实项目需按医院事件数据重算。"
+          footnote="等待时长来自事件日志聚合。"
         >
           <BottleneckBar data={PROCESS_STATS.bottlenecks} height={214} />
         </VisualFrame>
 
         <Card className="xl:col-span-4">
           <CardHeader className="pb-2">
-            <SectionHead title="流程变体构成" description="100 例合成患者 · 5 类执行模式" />
+            <SectionHead title="流程变体构成" description="分析队列 · 5 类执行模式" />
           </CardHeader>
           <CardContent>
             <VariantDonut data={PROCESS_STATS.variantsList.map((v) => ({ name: v.name, count: v.count }))} height={172} />

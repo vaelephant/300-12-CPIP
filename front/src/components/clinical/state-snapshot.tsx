@@ -9,7 +9,7 @@ export function StateSnapshot({
   risk,
   completeness,
   asOf,
-  source = "SYNTHETIC",
+  source = "HIS / EMR",
   className,
 }: {
   stage: string;
@@ -42,7 +42,7 @@ export function StateSnapshot({
       </div>
       <div className="ml-auto flex items-center gap-3 text-[10px] text-muted-foreground">
         <span className="inline-flex items-center gap-1"><Database className="size-3" /> {source}</span>
-        <span className="inline-flex items-center gap-1 text-ok"><ShieldCheck className="size-3" /> 合成数据 · 非临床使用</span>
+        <span className="inline-flex items-center gap-1 text-ok"><ShieldCheck className="size-3" /> 院内数据</span>
       </div>
     </Card>
   );

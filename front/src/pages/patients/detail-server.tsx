@@ -76,7 +76,6 @@ export default function ServerPatientDetailPage() {
         <EmptyState
           icon={<UserRound />}
           title="需要后端登录"
-          description="当前为 server 模式，但浏览器中没有后端凭证。请从登录页重新登录。"
           action={
             <Button asChild size="sm">
               <Link to="/login">返回登录</Link>
@@ -100,8 +99,7 @@ export default function ServerPatientDetailPage() {
       <Page>
         <EmptyState
           icon={<AlertTriangle />}
-          title="无法读取患者详情"
-          description="后端未返回该患者，或当前账号无对象级访问权限。"
+          title="无法读取患者 360"
           action={
             <Button asChild variant="outline" size="sm">
               <Link to="/patients">

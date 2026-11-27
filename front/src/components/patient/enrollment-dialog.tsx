@@ -306,7 +306,7 @@ export function EnrollmentMatchDialog({
               onClick={() => {
                 if (!selected) return;
                 toast.success(`已提交入径确认 · ${patient.name} → ${selected.pathway.name}`);
-                toast.info("演示环境：入径结果不会写入真实 HIS / EMR");
+                toast.info("入径结果不会写入真实 HIS / EMR");
                 onOpenChange(false);
               }}
             >

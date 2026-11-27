@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "finalize",
+  "status": "pass",
+  "type": "explainer",
+  "quality": "showcase",
+  "specification": {
+    "path": "/Users/nihao/code/300-12-CPIP/.archify/explainer-world-model-strengthen-20261127-140219/candidate.archify.md",
+    "sha256": "08ee3fe574d5a73a5451bfe6a12ef38b03b2deb46edbee23d4c2a9e07e6cbe68",
+    "bytes": 5051
+  },
+  "artifact": {
+    "path": "/Users/nihao/code/300-12-CPIP/.archify/explainer-world-model-strengthen-20261127-140219/world-model-strengthen.html",
+    "sha256": "26e353b2fe88f596b16c0b4a59003f45e74134b7016f9cbc5ea574240c7da216",
+    "bytes": 532651
+  },
+  "gates": {
+    "validate": "pass",
+    "deliver": "pass",
+    "check": "pass",
+    "browser-check": "not-run"
+  },
+  "diagnostics": [],
+  "diagnosticSummary": {
+    "total": 0,
+    "shown": 0,
+    "truncated": false
+  },
+  "evidence": {
+    "receipt": "/Users/nihao/code/300-12-CPIP/.archify/explainer-world-model-strengthen-20261127-140219/world-model-strengthen.finalize.json",
+    "summaryReceipt": "/Users/nihao/code/300-12-CPIP/.archify/explainer-world-model-strengthen-20261127-140219/world-model-strengthen.finalize-summary.json"
+  },
+  "visualReview": "not-requested",
+  "durationMs": 881,
+  "browserCheck": {
+    "requested": false,
+    "ran": false
+  }
+}

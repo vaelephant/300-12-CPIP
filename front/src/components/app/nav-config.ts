@@ -107,13 +107,28 @@ export function crumbForPath(pathname: string): { label: string; to?: string }[]
   } else if (pathname.startsWith("/pathways/") && pathname.includes("/versions")) {
     crumbs.push({ label: "路径库", to: "/pathways" }, { label: "版本管理" });
   } else if (pathname.startsWith("/patients/") && pathname.endsWith("/replay")) {
-    crumbs.push({ label: "患者中心", to: "/patients" }, { label: "病程回放" });
+    const id = parts[1];
+    crumbs.push(
+      { label: "患者中心", to: "/patients" },
+      { label: "患者 360", to: `/patients/${id}` },
+      { label: "病程回放" },
+    );
   } else if (pathname.startsWith("/patients/") && pathname.endsWith("/map")) {
-    crumbs.push({ label: "患者中心", to: "/patients" }, { label: "动态路径图" });
+    const id = parts[1];
+    crumbs.push(
+      { label: "患者中心", to: "/patients" },
+      { label: "患者 360", to: `/patients/${id}` },
+      { label: "动态路径图" },
+    );
   } else if (pathname.startsWith("/patients/") && pathname.includes("/pathway")) {
-    crumbs.push({ label: "患者中心", to: "/patients" }, { label: "患者路径" });
+    const id = parts[1];
+    crumbs.push(
+      { label: "患者中心", to: "/patients" },
+      { label: "患者 360", to: `/patients/${id}` },
+      { label: "路径执行" },
+    );
   } else if (pathname.startsWith("/patients/")) {
-    crumbs.push({ label: "患者中心", to: "/patients" }, { label: "患者详情" });
+    crumbs.push({ label: "患者中心", to: "/patients" }, { label: "患者 360" });
   } else if (pathname.startsWith("/planning/")) {
     crumbs.push({ label: "患者中心", to: "/patients" }, { label: "路径规划" });
   } else if (parts.length > 1) {

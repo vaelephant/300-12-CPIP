@@ -1,0 +1,1496 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HCC-CIP · 原发性肝癌智能临床路径平台 · 产品介绍 v2</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+SC:wght@400;500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #14181f;
+      --ink-2: #3d4450;
+      --muted: #6b7380;
+      --faint: #9aa1ab;
+      --paper: #f3f4f2;
+      --surface: #fbfbfa;
+      --line: #d8d8dc;
+      --line-soft: #e6e7e4;
+      --navy: #1e2a3a;
+      --navy-mid: #2c3d52;
+      --steel: #5b6f86;
+      --risk: #a83a3a;
+      --rail: 5px;
+      --pad-x: 72px;
+      --pad-y: 44px;
+      --stage-w: 1440px;
+      --stage-h: 810px;
+      --font: "IBM Plex Sans SC", "IBM Plex Sans", "PingFang SC", "Hiragino Sans GB",
+        "Noto Sans SC", sans-serif;
+      --mono: "IBM Plex Mono", ui-monospace, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      background: #0c1016;
+      color: var(--ink);
+      font-family: var(--font);
+      font-weight: 400;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      overflow: hidden;
+    }
+
+    .viewport {
+      position: fixed;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+    }
+
+    .stage-shell {
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+    }
+
+    .deck {
+      width: var(--stage-w);
+      height: var(--stage-h);
+      position: absolute;
+      top: 0;
+      left: 0;
+      overflow: hidden;
+      transform-origin: top left;
+    }
+
+    .slide {
+      display: none;
+      position: absolute;
+      inset: 0;
+      width: var(--stage-w);
+      height: var(--stage-h);
+      background: var(--paper);
+      padding: var(--pad-y) var(--pad-x) 56px;
+      flex-direction: column;
+      border-left: var(--rail) solid var(--navy);
+    }
+
+    .slide.active { display: flex; }
+
+    .slide.dark {
+      background: var(--navy);
+      color: #f4f5f3;
+      border-left-color: #c8d0da;
+    }
+
+    .slide.dark .muted,
+    .slide.dark .lede { color: rgba(244, 245, 243, 0.72); }
+
+    .slide.dark .rule { background: rgba(244, 245, 243, 0.16); }
+
+    .slide.shot-slide {
+      padding-bottom: 48px;
+    }
+
+    /* —— type —— */
+    .meta {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 24px;
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: 0.02em;
+      margin-bottom: clamp(20px, 3.2vh, 36px);
+    }
+
+    .meta strong {
+      color: var(--navy);
+      font-weight: 600;
+    }
+
+    .slide.dark .meta strong { color: #fff; }
+    .slide.dark .meta { color: rgba(244, 245, 243, 0.5); }
+
+    .meta .sec {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--faint);
+    }
+
+    .title {
+      font-size: clamp(26px, 3.1vw, 40px);
+      line-height: 1.22;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      max-width: 18em;
+      color: var(--ink);
+      word-break: keep-all;
+      line-break: strict;
+    }
+
+    .slide.dark .title { color: #fff; }
+
+    .lede {
+      margin-top: 14px;
+      font-size: clamp(15px, 1.15vw, 18px);
+      line-height: 1.55;
+      color: var(--ink-2);
+      max-width: 36em;
+      font-weight: 400;
+    }
+
+    .rule {
+      height: 1px;
+      background: var(--line);
+      margin: clamp(18px, 2.8vh, 28px) 0;
+      border: 0;
+      width: 100%;
+    }
+
+    .foot {
+      margin-top: auto;
+      padding-top: 16px;
+      font-size: 12.5px;
+      line-height: 1.5;
+      color: var(--muted);
+      max-width: 52em;
+      border-top: 1px solid var(--line-soft);
+    }
+
+    .slide.dark .foot {
+      color: rgba(244, 245, 243, 0.55);
+      border-top-color: rgba(244, 245, 243, 0.12);
+    }
+
+    .foot.warn { color: var(--risk); }
+
+    /* —— cover —— */
+    .cover-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      max-width: 14em;
+    }
+
+    .cover-kicker {
+      font-size: 13px;
+      color: rgba(244, 245, 243, 0.5);
+      margin-bottom: 22px;
+      font-weight: 500;
+    }
+
+    .cover-title {
+      font-size: 48px;
+      line-height: 1.2;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: #fff;
+      word-break: keep-all;
+      line-break: strict;
+    }
+
+    .cover-en {
+      margin-top: 14px;
+      font-size: 13px;
+      color: rgba(244, 245, 243, 0.42);
+      font-family: var(--mono);
+      letter-spacing: 0.02em;
+    }
+
+    .cover-lede {
+      margin-top: 22px;
+      font-size: 17px;
+      line-height: 1.55;
+      color: rgba(244, 245, 243, 0.62);
+      max-width: 18em;
+      font-weight: 400;
+    }
+
+    .slide.dark .foot {
+      border-top: none;
+      padding-top: 0;
+      color: rgba(244, 245, 243, 0.38);
+      font-size: 12px;
+    }
+
+    /* —— columns without cards —— */
+    .cols {
+      display: grid;
+      gap: 0;
+      flex: 1;
+      min-height: 0;
+      align-content: center;
+      align-items: start;
+      padding: 12px 0 8px;
+    }
+
+    .cols-3 { grid-template-columns: repeat(3, 1fr); }
+    .cols-4 { grid-template-columns: repeat(4, 1fr); }
+    .cols-2 { grid-template-columns: 1fr 1fr; }
+
+    .col {
+      padding: 28px 32px 8px;
+      border-left: 1px solid var(--line);
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .col:first-child {
+      padding-left: 0;
+      border-left: none;
+    }
+
+    .col.hl {
+      background: transparent;
+    }
+
+    .col .mark {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--steel);
+      margin-bottom: 14px;
+      font-weight: 500;
+    }
+
+    .col h3 {
+      font-size: 22px;
+      font-weight: 650;
+      letter-spacing: -0.015em;
+      margin-bottom: 14px;
+      line-height: 1.3;
+    }
+
+    .col p, .col li {
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--ink-2);
+    }
+
+    .col ul {
+      list-style: none;
+      display: grid;
+      gap: 6px;
+    }
+
+    .col li::before {
+      content: "– ";
+      color: var(--faint);
+    }
+
+    .col .out {
+      margin-top: 16px;
+      font-size: 12.5px;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .col.hl .out {
+      color: var(--navy);
+      font-weight: 600;
+    }
+
+    .col .badge {
+      display: inline-block;
+      margin-left: 6px;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--steel);
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 1px;
+    }
+
+    /* —— ledger table —— */
+    .ledger {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      margin-top: 4px;
+    }
+
+    .ledger th,
+    .ledger td {
+      text-align: left;
+      padding: 14px 16px 14px 0;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+      line-height: 1.45;
+    }
+
+    .ledger th {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+      padding-top: 0;
+      padding-bottom: 12px;
+      border-bottom-color: var(--ink);
+    }
+
+    .ledger td:first-child,
+    .ledger th:first-child {
+      width: 4.5em;
+      color: var(--faint);
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .ledger th:last-child,
+    .ledger td:last-child {
+      color: var(--ink);
+      font-weight: 550;
+      padding-right: 0;
+    }
+
+    .ledger tbody tr:last-child td { border-bottom: none; }
+
+    /* —— timeline —— */
+    .timeline {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      position: relative;
+      margin-top: 8px;
+    }
+
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 11px;
+      height: 1px;
+      background: var(--line);
+    }
+
+    .t-item {
+      position: relative;
+      padding: 0 20px 0 0;
+    }
+
+    .t-item:last-child { padding-right: 0; }
+
+    .t-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--navy);
+      border: 2px solid var(--paper);
+      box-shadow: 0 0 0 1px var(--navy);
+      margin-bottom: 18px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .t-item .n {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--steel);
+      margin-bottom: 8px;
+    }
+
+    .t-item h3 {
+      font-size: 16px;
+      font-weight: 650;
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
+    }
+
+    .t-item p {
+      font-size: 13.5px;
+      line-height: 1.5;
+      color: var(--ink-2);
+      max-width: 18em;
+    }
+
+    /* —— capability rows —— */
+    .cap-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0 48px;
+    }
+
+    .cap {
+      display: grid;
+      grid-template-columns: 2.2em 1fr;
+      gap: 12px;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--line-soft);
+    }
+
+    .cap .n {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--steel);
+      padding-top: 3px;
+      font-weight: 500;
+    }
+
+    .cap h3 {
+      font-size: 17px;
+      font-weight: 650;
+      margin-bottom: 6px;
+      letter-spacing: -0.01em;
+    }
+
+    .cap p {
+      font-size: 13.5px;
+      line-height: 1.5;
+      color: var(--ink-2);
+    }
+
+    /* —— screenshot —— */
+    .shot-frame {
+      flex: 1;
+      min-height: 0;
+      margin-top: 8px;
+      display: grid;
+      gap: 10px;
+      grid-template-columns: 1.15fr 0.85fr;
+      background: #10151c;
+      border-radius: 2px;
+      overflow: hidden;
+      border: 1px solid #1a222c;
+    }
+
+    .shot-frame.solo { grid-template-columns: 1fr; }
+
+    .shot-frame figure {
+      margin: 0;
+      height: 100%;
+      min-height: 0;
+      overflow: hidden;
+      display: flex;
+    }
+
+    .shot-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top left;
+      display: block;
+    }
+
+    .points {
+      margin-top: 4px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 20px;
+      font-size: 13.5px;
+      color: var(--ink-2);
+      line-height: 1.4;
+    }
+
+    .points span::before {
+      content: "";
+      display: inline-block;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--navy);
+      margin-right: 8px;
+      vertical-align: 3px;
+    }
+
+    /* —— safety —— */
+    .safety {
+      display: grid;
+      gap: 0;
+      margin-top: 4px;
+    }
+
+    .s-row {
+      display: grid;
+      grid-template-columns: 7.5em 1fr;
+      gap: 24px;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--line-soft);
+      align-items: baseline;
+    }
+
+    .s-row:last-child { border-bottom: none; }
+
+    .s-row strong {
+      font-size: 15px;
+      font-weight: 650;
+      color: var(--navy);
+    }
+
+    .s-row span {
+      font-size: 15px;
+      line-height: 1.5;
+      color: var(--ink-2);
+    }
+
+    /* —— value —— */
+    .value-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      margin-top: 8px;
+      flex: 1;
+      align-content: start;
+    }
+
+    .v-col {
+      padding: 8px 28px 8px 0;
+      border-right: 1px solid var(--line);
+    }
+
+    .v-col:last-child {
+      border-right: none;
+      padding-right: 0;
+    }
+
+    .v-col:nth-child(2),
+    .v-col:nth-child(3) { padding-left: 28px; }
+
+    .v-col .who {
+      font-size: 12.5px;
+      color: var(--steel);
+      margin-bottom: 10px;
+      font-weight: 500;
+    }
+
+    .v-col h3 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+      line-height: 1.25;
+    }
+
+    .v-col p {
+      font-size: 14px;
+      line-height: 1.55;
+      color: var(--ink-2);
+      max-width: 22em;
+    }
+
+    /* —— appendix gate —— */
+    .app-list {
+      margin-top: 8px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0 48px;
+      max-width: 40em;
+    }
+
+    .app-list li {
+      list-style: none;
+      display: grid;
+      grid-template-columns: 2.4em 1fr;
+      gap: 12px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--line-soft);
+      font-size: 16px;
+      color: var(--ink);
+      font-weight: 500;
+    }
+
+    .app-list .c {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--steel);
+      font-weight: 500;
+      padding-top: 2px;
+    }
+
+    /* —— architecture —— */
+    .arch {
+      display: grid;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .arch-band {
+      display: grid;
+      gap: 1px;
+      background: var(--line);
+      border: 1px solid var(--line);
+    }
+
+    .arch-band.g3 { grid-template-columns: repeat(3, 1fr); }
+    .arch-band.g2 { grid-template-columns: 1fr 1fr; }
+    .arch-band.g1 { grid-template-columns: 1fr; }
+
+    .arch-cell {
+      background: var(--surface);
+      padding: 14px 16px;
+    }
+
+    .arch-cell.core {
+      background: var(--navy);
+      color: #fff;
+    }
+
+    .arch-cell .k {
+      font-size: 11px;
+      color: var(--steel);
+      margin-bottom: 4px;
+      font-family: var(--mono);
+      font-weight: 500;
+    }
+
+    .arch-cell.core .k { color: rgba(255,255,255,0.55); }
+
+    .arch-cell h3 {
+      font-size: 15px;
+      font-weight: 650;
+      margin-bottom: 4px;
+      letter-spacing: -0.01em;
+    }
+
+    .arch-cell p {
+      font-size: 12.5px;
+      line-height: 1.45;
+      color: var(--ink-2);
+    }
+
+    .arch-cell.core p { color: rgba(255,255,255,0.75); }
+    .arch-cell.core h3 { color: #fff; }
+
+    /* —— flow —— */
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0;
+      margin-top: 8px;
+      border-top: 1px solid var(--ink);
+      padding-top: 16px;
+    }
+
+    .flow.f4 { grid-template-columns: repeat(4, 1fr); }
+
+    .f-node {
+      padding-right: 16px;
+      position: relative;
+    }
+
+    .f-node:not(:last-child)::after {
+      content: "→";
+      position: absolute;
+      right: 4px;
+      top: 0;
+      color: var(--faint);
+      font-family: var(--mono);
+      font-size: 12px;
+    }
+
+    .f-node strong {
+      display: block;
+      font-size: 14px;
+      font-weight: 650;
+      margin-bottom: 6px;
+      letter-spacing: -0.01em;
+    }
+
+    .f-node span {
+      font-size: 12.5px;
+      line-height: 1.45;
+      color: var(--ink-2);
+    }
+
+    /* —— dual panel —— */
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      border-top: 1px solid var(--ink);
+      margin-top: 4px;
+    }
+
+    .split > div {
+      padding: 22px 28px 8px 0;
+    }
+
+    .split > div + div {
+      padding-left: 28px;
+      border-left: 1px solid var(--line);
+    }
+
+    .split .k {
+      font-size: 12px;
+      color: var(--steel);
+      margin-bottom: 8px;
+      font-weight: 500;
+      font-family: var(--mono);
+    }
+
+    .split h3 {
+      font-size: 18px;
+      font-weight: 650;
+      margin-bottom: 10px;
+      letter-spacing: -0.015em;
+    }
+
+    .split p {
+      font-size: 14px;
+      line-height: 1.55;
+      color: var(--ink-2);
+    }
+
+    .split .formula {
+      margin-top: 14px;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    .pill-row span {
+      font-size: 12px;
+      color: var(--ink-2);
+      border-bottom: 1px solid var(--line);
+      padding: 2px 0;
+    }
+
+    /* —— chrome —— */
+    .progress {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 2px;
+      z-index: 6;
+      background: transparent;
+    }
+
+    .progress > i {
+      display: block;
+      height: 100%;
+      width: 0;
+      background: #9eb0c4;
+      transition: width 180ms ease;
+    }
+
+    .hud {
+      position: absolute;
+      right: 16px;
+      bottom: 12px;
+      z-index: 8;
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .hud .page {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: rgba(244, 245, 243, 0.55);
+      min-width: 4.2em;
+      text-align: right;
+    }
+
+    .hud button {
+      appearance: none;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(12, 16, 22, 0.78);
+      color: #e8eaed;
+      font-size: 12px;
+      font-family: var(--mono);
+      width: 32px;
+      height: 28px;
+      border-radius: 2px;
+      cursor: pointer;
+    }
+
+    .hud button:hover { background: rgba(12, 16, 22, 0.95); }
+
+    .brand-foot {
+      position: absolute;
+      left: calc(var(--pad-x) + var(--rail));
+      bottom: 14px;
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--faint);
+      letter-spacing: 0.04em;
+      z-index: 5;
+      pointer-events: none;
+    }
+
+    .slide.dark ~ .brand-foot,
+    body:has(.slide.dark.active) .brand-foot {
+      color: rgba(244, 245, 243, 0.35);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .progress > i { transition: none; }
+    }
+
+    @media print {
+      body { background: #fff; overflow: visible; }
+      .viewport { position: static; display: block; }
+      .stage-shell {
+        width: auto !important;
+        height: auto !important;
+        box-shadow: none;
+        overflow: visible;
+      }
+      .deck {
+        transform: none !important;
+        position: relative;
+        width: auto;
+        height: auto;
+      }
+      .slide {
+        display: flex !important;
+        position: relative;
+        page-break-after: always;
+        width: auto;
+        height: auto;
+        min-height: 100vh;
+        border-left: none;
+      }
+      .hud, .progress { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress" aria-hidden="true"><i id="progressBar"></i></div>
+  <div class="viewport">
+  <div class="stage-shell" id="shell">
+  <div class="deck" id="deck">
+
+    <!-- 01 -->
+    <section class="slide dark active" data-label="01">
+      <div class="meta">
+        <strong>DR.SeeK</strong>
+        <span class="sec">2026.11 · BRIEFING</span>
+      </div>
+      <div class="cover-body">
+        <div class="cover-kicker">原发性肝癌 · HCC-CIP</div>
+        <h1 class="cover-title">以医疗模型为核心的<br />肝癌全病程平台</h1>
+        <div class="cover-en">Model-driven Clinical Intelligence · HCC-CIP</div>
+        <p class="cover-lede">用患者状态模型组织诊断、规划与执行。</p>
+      </div>
+      <p class="foot">合成演示 · 非临床决策依据</p>
+    </section>
+
+    <!-- 02 -->
+    <section class="slide" data-label="02">
+      <div class="meta">
+        <strong>核心判断</strong>
+        <span class="sec">02</span>
+      </div>
+      <h2 class="title">先建医疗模型内核<br />再长出可运行的临床系统</h2>
+      <p class="lede">以医疗模型为驱动核心，以临床路径为业务承载，以医生审核为安全边界。</p>
+      <hr class="rule" />
+      <div class="cols cols-3">
+        <div class="col hl">
+          <div class="mark">内核 · 医疗模型</div>
+          <h3>连续状态如何表征</h3>
+          <p>患者状态建模、风险与演化估计；世界模型路线逐步接入，形成长期技术壁垒。</p>
+        </div>
+        <div class="col">
+          <div class="mark">能力 · CDSS</div>
+          <h3>当前如何判断</h3>
+          <p>把模型与指南编成可审计建议：分期辅助、规则校验、风险提示与循证解释。</p>
+        </div>
+        <div class="col">
+          <div class="mark">应用 · CPIP</div>
+          <h3>全程如何安排</h3>
+          <p>把建议落成可审核路径：设计、个体化规划、任务执行、变异分析与随访。</p>
+        </div>
+      </div>
+      <p class="foot">一期以规则与约束规划可运行；预测与世界模型 clinical_use = false，不可替代医生决策。</p>
+    </section>
+
+    <!-- 03 -->
+    <section class="slide" data-label="03">
+      <div class="meta">
+        <strong>核心差异</strong>
+        <span class="sec">03</span>
+      </div>
+      <h2 class="title">从流程规范、单点决策，到连续状态驱动的诊疗规划</h2>
+      <p class="lede">不替代现有系统，而是将决策与路径组织成闭环。</p>
+      <hr class="rule" />
+      <table class="ledger">
+        <thead>
+          <tr>
+            <th></th>
+            <th>传统临床路径</th>
+            <th>传统 CDSS</th>
+            <th>我们的 HCC 平台</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>做法</td>
+            <td>按标准流程执行</td>
+            <td>辅助当前临床决策</td>
+            <td>面向全病程动态规划</td>
+          </tr>
+          <tr>
+            <td>要点</td>
+            <td>模板 · 任务 · 执行 · 变异</td>
+            <td>规则 · 诊断 · 用药 · 风险</td>
+            <td>专病 CDSS · 状态 · 执行 · 反馈</td>
+          </tr>
+          <tr>
+            <td>核心</td>
+            <td>流程规范化</td>
+            <td>知识与推理</td>
+            <td>知识 + 数据 + 模型</td>
+          </tr>
+          <tr>
+            <td>对象</td>
+            <td>标准流程</td>
+            <td>临床决策点</td>
+            <td>患者连续状态与路径</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="foot">对比为典型能力定位，不是厂商测评；先进产品可能已有部分重叠能力。</p>
+    </section>
+
+    <!-- 04 -->
+    <section class="slide" data-label="04">
+      <div class="meta">
+        <strong>临床场景</strong>
+        <span class="sec">04</span>
+      </div>
+      <h2 class="title">同一术后异常，三种系统如何响应</h2>
+      <p class="lede">HCC 术后康复阶段 · 新检验结果触发医院审核过的异常规则</p>
+      <hr class="rule" />
+      <div class="cols cols-3">
+        <div class="col">
+          <div class="mark">传统路径</div>
+          <h3>记录路径变异</h3>
+          <ul>
+            <li>标记异常任务</li>
+            <li>记录偏离原因</li>
+            <li>等待人工处理</li>
+          </ul>
+          <div class="out">输出：变异记录</div>
+        </div>
+        <div class="col">
+          <div class="mark">传统 CDSS</div>
+          <h3>提示临床风险</h3>
+          <ul>
+            <li>匹配异常规则</li>
+            <li>展示风险与证据</li>
+            <li>提醒医生复核</li>
+          </ul>
+          <div class="out">输出：决策提示</div>
+        </div>
+        <div class="col hl">
+          <div class="mark">我们的平台</div>
+          <h3>生成待审核新路径</h3>
+          <ul>
+            <li>更新患者状态</li>
+            <li>联动 CDSS 与受影响任务</li>
+            <li>生成候选计划并留痕</li>
+          </ul>
+          <div class="out">输出：可追溯的新路径</div>
+        </div>
+      </div>
+      <p class="foot warn">虚构场景，仅说明产品交互；不构成诊疗建议，实际调整由医生确认。</p>
+    </section>
+
+    <!-- 05 -->
+    <section class="slide" data-label="05">
+      <div class="meta">
+        <strong>首条路径</strong>
+        <span class="sec">05</span>
+      </div>
+      <h2 class="title">从入院到院外随访，建立连续的肝癌诊疗过程</h2>
+      <hr class="rule" />
+      <div class="timeline">
+        <div class="t-item">
+          <div class="t-dot"></div>
+          <div class="n">01</div>
+          <h3>入院与术前评估</h3>
+          <p>诊断、分期、肝功能 · 手术风险及可切除性评估</p>
+        </div>
+        <div class="t-item">
+          <div class="t-dot"></div>
+          <div class="n">02</div>
+          <h3>方案确认与手术</h3>
+          <p>医生审核 · 手术记录、术中事件、病理</p>
+        </div>
+        <div class="t-item">
+          <div class="t-dot"></div>
+          <div class="n">03</div>
+          <h3>术后康复与出院</h3>
+          <p>指标监测、并发症管理 · 出院评估及随访计划</p>
+        </div>
+        <div class="t-item">
+          <div class="t-dot"></div>
+          <div class="n">04</div>
+          <h3>长期随访</h3>
+          <p>复查与异常监测 · 复发评估及再治疗转介</p>
+        </div>
+      </div>
+      <p class="foot">标准路径由医院专家审核；系统不自主决定治疗或下达医嘱。</p>
+    </section>
+
+    <!-- 06 -->
+    <section class="slide" data-label="06">
+      <div class="meta">
+        <strong>核心功能</strong>
+        <span class="sec">06</span>
+      </div>
+      <h2 class="title">第一期已形成可运行的业务闭环</h2>
+      <hr class="rule" />
+      <div class="cap-grid">
+        <div class="cap">
+          <div class="n">01</div>
+          <div>
+            <h3>路径设计 / 版本</h3>
+            <p>可视化模板 · 节点规则与时间约束 · 版本审批发布后不可变</p>
+          </div>
+        </div>
+        <div class="cap">
+          <div class="n">02</div>
+          <div>
+            <h3>患者状态 / CDSS</h3>
+            <p>结构化状态 · 分期辅助、规则校验、循证依据</p>
+          </div>
+        </div>
+        <div class="cap">
+          <div class="n">03</div>
+          <div>
+            <h3>入径 · 规划 · 执行</h3>
+            <p>三值入径 · 条件分支与任务依赖 · 医生审核后激活 · 变异重规划</p>
+          </div>
+        </div>
+        <div class="cap">
+          <div class="n">04</div>
+          <div>
+            <h3>可视化 / 随访</h3>
+            <p>路径图、时间轴、指标趋势 · 随访任务与人工接管</p>
+          </div>
+        </div>
+      </div>
+      <p class="foot">第一期为规则驱动的可运行工具；预测模型通过标准接口逐步接入。</p>
+    </section>
+
+    <!-- 07 -->
+    <section class="slide shot-slide" data-label="07">
+      <div class="meta">
+        <strong>可运行界面</strong>
+        <span class="sec">07 · V0.6.1</span>
+      </div>
+      <h2 class="title">患者 360：状态、路径与证据同屏</h2>
+      <div class="points">
+        <span>左状态 · 中路径 · 右任务证据</span>
+        <span>完成 / 执行中 / 变异 / UNKNOWN / 未选分支</span>
+        <span>Server 模式不回退 mock</span>
+      </div>
+      <div class="shot-frame">
+        <figure>
+          <img src="../front/docs/preview/clinical-workspace-v2/patient360-demo-1440.png" alt="患者360工作空间" />
+        </figure>
+        <figure>
+          <img src="../front/docs/preview/clinical-workspace-v2/pathway-map-demo-1440.png" alt="动态路径图" />
+        </figure>
+      </div>
+      <p class="foot">合成演示数据 · 展示交互与信息结构，不代表临床验证。</p>
+    </section>
+
+    <!-- 08 -->
+    <section class="slide shot-slide" data-label="08">
+      <div class="meta">
+        <strong>工作台与任务</strong>
+        <span class="sec">08 · V0.6.1</span>
+      </div>
+      <h2 class="title">从患者状态到今日任务，同一套服务端状态</h2>
+      <div class="points">
+        <span>今日待办（超时优先）</span>
+        <span>重点风险可解释排序</span>
+        <span>不用单病例冒充全局统计</span>
+      </div>
+      <div class="shot-frame solo">
+        <figure>
+          <img src="../front/docs/preview/clinical-workspace-v2/dashboard-demo-1440.png" alt="临床工作台" />
+        </figure>
+      </div>
+      <p class="foot">V0.6.1 · SYNTHETIC DEMO</p>
+    </section>
+
+    <!-- 09 -->
+    <section class="slide" data-label="09">
+      <div class="meta">
+        <strong>临床安全边界</strong>
+        <span class="sec">09</span>
+      </div>
+      <h2 class="title">AI 不替医生做决定，系统替医生守住边界</h2>
+      <p class="lede">每个建议都可解释、可拒绝、可追溯——而不是「模型多聪明」。</p>
+      <hr class="rule" />
+      <div class="safety">
+        <div class="s-row"><strong>真实时间轴</strong><span>事件时间与录入时间分列 · 缺失不补造</span></div>
+        <div class="s-row"><strong>三值规则</strong><span>未知 = UNKNOWN，不通过；排除与安全条件未知必须阻断</span></div>
+        <div class="s-row"><strong>对象级授权</strong><span>患者、科室、角色逐层校验；越权返回 403 并留痕</span></div>
+        <div class="s-row"><strong>人工审核</strong><span>计划必须由非提交人审核、绑定执行指纹后才能激活</span></div>
+        <div class="s-row"><strong>审计与重评</strong><span>成功业务与审计同事务；状态变化触发重评而非自动改治疗</span></div>
+      </div>
+      <p class="foot">HCC-CIP 仍为研发演示；临床签署、真实数据合规与生产验证为独立门槛。</p>
+    </section>
+
+    <!-- 10 -->
+    <section class="slide" data-label="10">
+      <div class="meta">
+        <strong>产品价值</strong>
+        <span class="sec">10</span>
+      </div>
+      <h2 class="title">以专病工具进入医院，以数据闭环积累长期资产</h2>
+      <hr class="rule" />
+      <div class="value-row">
+        <div class="v-col">
+          <div class="who">医院 · 管理</div>
+          <h3>路径可核查</h3>
+          <p>标准化、执行可追踪、变异可分析、质量指标可核查。</p>
+        </div>
+        <div class="v-col">
+          <div class="who">医生 · 临床</div>
+          <h3>决策权仍在医生</h3>
+          <p>减少信息查找负担，辅助评估与规划，保留最终决策权。</p>
+        </div>
+        <div class="v-col">
+          <div class="who">研发 · 技术</div>
+          <h3>长期资产沉淀</h3>
+          <p>专病数据集、知识规则、状态模型与持续验证体系。</p>
+        </div>
+      </div>
+      <p class="foot">临床价值需真实试点验证，不预先承诺疗效、费用或住院日改善。</p>
+    </section>
+
+    <!-- 11 -->
+    <section class="slide" data-label="11">
+      <div class="meta">
+        <strong>下一步</strong>
+        <span class="sec">11</span>
+      </div>
+      <h2 class="title">先确定数据、专家与试点范围，再进入临床验证</h2>
+      <hr class="rule" />
+      <div class="timeline">
+        <div class="t-item">
+          <div class="t-dot"></div>
+          <div class="n">01</div>
+          <h3>数据盘点</h3>
+          <p>治疗类型与病例数 · 纵向记录、影像、病理、随访结局</p>
+        </div>
+        <div class="t-item">
+          <div class="t-dot"></div>
+          <div class="n">02</div>
+          <h3>临床共建</h3>
+          <p>医院专家参与 · 确认入径条件、节点、规则及审核流程</p>
+        </div>
+        <div class="t-item">
+          <div class="t-dot"></div>
+          <div class="n">03</div>
+          <h3>试点集成</h3>
+          <p>HIS / EMR / LIS · 角色、权限、审计与验收</p>
+        </div>
+        <div class="t-item">
+          <div class="t-dot"></div>
+          <div class="n">04</div>
+          <h3>安全验证</h3>
+          <p>权限、审计、脱敏 · 伦理合规、医生审核、模型验证</p>
+        </div>
+      </div>
+      <p class="foot">一个病种、一条核心路径、一套高质量数据集——先做深，再扩展。</p>
+    </section>
+
+    <!-- 12 -->
+    <section class="slide" data-label="12">
+      <div class="meta">
+        <strong>附录入口</strong>
+        <span class="sec">12</span>
+      </div>
+      <h2 class="title">主叙事到此结束</h2>
+      <p class="lede">对外演示可在此停住。技术合作或研发评审，继续附录 A–F。</p>
+      <hr class="rule" />
+      <ul class="app-list">
+        <li><span class="c">A1</span>产品技术架构</li>
+        <li><span class="c">A2</span>数据资产与飞轮</li>
+        <li><span class="c">A3</span>知识与推理 CDSS</li>
+        <li><span class="c">A4</span>路径执行内核</li>
+        <li><span class="c">A5</span>规划与世界模型路线</li>
+        <li><span class="c">A6</span>模型训练与验证门槛</li>
+      </ul>
+      <p class="foot">按 → 或空格进入附录 · F 全屏</p>
+    </section>
+
+    <!-- A1 -->
+    <section class="slide" data-label="A1">
+      <div class="meta">
+        <strong>产品技术架构</strong>
+        <span class="sec">A1 · 附录</span>
+      </div>
+      <h2 class="title">知识驱动 × 数据驱动 × 模型驱动</h2>
+      <hr class="rule" />
+      <div class="arch">
+        <div class="arch-band g3">
+          <div class="arch-cell"><div class="k">应用</div><h3>医生工作台</h3><p>任务 · 风险 · 路径进度</p></div>
+          <div class="arch-cell"><div class="k">应用</div><h3>路径设计工作台</h3><p>模板 · 版本 · 审批发布</p></div>
+          <div class="arch-cell"><div class="k">应用</div><h3>院长驾驶舱</h3><p>质量指标 · 变异分析</p></div>
+        </div>
+        <div class="arch-band g1">
+          <div class="arch-cell core"><div class="k">CPIP · Planning &amp; Execution</div><h3>临床路径核心引擎</h3><p>路径设计 · 个体化规划 · 路径执行 · 路径挖掘 · 变异分析 · 病程可视化</p></div>
+        </div>
+        <div class="arch-band g2">
+          <div class="arch-cell"><div class="k">CDSS · 第一期重点</div><h3>肝癌专病决策引擎</h3><p>知识检索与推理 · 分期辅助 · 规则与安全校验 · 循证支持 · 风险预警</p></div>
+          <div class="arch-cell"><div class="k">MWM · 研究方向</div><h3>医疗世界模型引擎</h3><p>多模态状态建模 · 状态转移与预测 · 多路径推演 · 不确定性评估</p></div>
+        </div>
+        <div class="arch-band g3">
+          <div class="arch-cell"><div class="k">底座</div><h3>数据工厂</h3><p>多模态治理 · 高质量数据集</p></div>
+          <div class="arch-cell"><div class="k">底座</div><h3>KEE</h3><p>医学本体 · 指南、规则与证据</p></div>
+          <div class="arch-cell"><div class="k">底座</div><h3>模型工厂</h3><p>专病训练 · 评估与部署</p></div>
+        </div>
+      </div>
+      <p class="foot">数据源：EMR · LIS · CT/MRI · 病理 · 治疗 · 随访。治理：医生审核 · 循证追溯 · 模型验证 · 数据反馈。</p>
+    </section>
+
+    <!-- A2 -->
+    <section class="slide" data-label="A2">
+      <div class="meta">
+        <strong>数据资产与闭环</strong>
+        <span class="sec">A2 · 附录</span>
+      </div>
+      <h2 class="title">把已有肝癌病例转为可追溯的高质量专病数据集</h2>
+      <hr class="rule" />
+      <div class="cols cols-4" style="flex:0">
+        <div class="col"><div class="mark">01</div><h3>临床与影像</h3><p>病历、检验、CT/MRI · 统一索引与单位</p></div>
+        <div class="col"><div class="mark">02</div><h3>围术期与病理</h3><p>治疗事件、手术、病理 · 结局标签</p></div>
+        <div class="col"><div class="mark">03</div><h3>随访与结局</h3><p>复查、复发、生存 · 观察窗口及删失</p></div>
+        <div class="col"><div class="mark">04</div><h3>路径事件</h3><p>活动、时间、病例标识 · 流程挖掘</p></div>
+      </div>
+      <div class="flow" style="margin-top:28px">
+        <div class="f-node"><strong>观测</strong><span>病历 / 影像 / 检验</span></div>
+        <div class="f-node"><strong>状态</strong><span>时序表征 / 缺失标记</span></div>
+        <div class="f-node"><strong>决策</strong><span>CDSS / CPIP</span></div>
+        <div class="f-node"><strong>执行</strong><span>医生确认行动</span></div>
+        <div class="f-node"><strong>结局</strong><span>康复 / 复发 / 随访</span></div>
+      </div>
+      <p class="foot">模型更新必须离线验证、专家审核、版本发布。最常见历史路径 ≠ 最优路径。</p>
+    </section>
+
+    <!-- A3 -->
+    <section class="slide" data-label="A3">
+      <div class="meta">
+        <strong>知识与推理</strong>
+        <span class="sec">A3 · 附录</span>
+      </div>
+      <h2 class="title">将指南与规则编译为可审计的专病 CDSS</h2>
+      <p class="lede">LLM 用于抽取与解释；硬性安全规则由确定性引擎执行，缺失进入人工复核。</p>
+      <hr class="rule" />
+      <div class="flow f4">
+        <div class="f-node"><strong>知识输入</strong><span>指南 / 共识 / 院内规范</span></div>
+        <div class="f-node"><strong>KEE</strong><span>实体关系 / 证据 / 版本</span></div>
+        <div class="f-node"><strong>RAG + 规则</strong><span>检索证据 / 条件校验</span></div>
+        <div class="f-node"><strong>决策支持</strong><span>建议 / 风险 / 依据</span></div>
+      </div>
+      <div class="cols cols-3" style="margin-top:32px;flex:0">
+        <div class="col"><div class="mark">证据溯源</div><h3>可追溯</h3><p>每条建议绑定指南版本与证据</p></div>
+        <div class="col"><div class="mark">安全门控</div><h3>可拦截</h3><p>禁忌、缺失值、冲突规则拦截</p></div>
+        <div class="col"><div class="mark">医生审核</div><h3>可拒绝</h3><p>确认后才进入正式路径</p></div>
+      </div>
+      <p class="foot">规则仍需临床专家确认后方可进入试点。</p>
+    </section>
+
+    <!-- A4 -->
+    <section class="slide" data-label="A4">
+      <div class="meta">
+        <strong>路径执行内核</strong>
+        <span class="sec">A4 · 附录</span>
+      </div>
+      <h2 class="title">条件分支、阻断与审批，都能被解释和追溯</h2>
+      <hr class="rule" />
+      <div class="cap-grid">
+        <div class="cap">
+          <div class="n">01</div>
+          <div>
+            <h3>条件边三值</h3>
+            <p>TRUE / FALSE / UNKNOWN 由冻结规则上下文判定；未知不默认 FALSE</p>
+          </div>
+        </div>
+        <div class="cap">
+          <div class="n">02</div>
+          <div>
+            <h3>未选分支</h3>
+            <p>不生成可执行任务，画布虚线弱化；决策轨迹保留</p>
+          </div>
+        </div>
+        <div class="cap">
+          <div class="n">03</div>
+          <div>
+            <h3>执行 trace</h3>
+            <p>记录快照、规则版本、边、结果与原因，确定性重放</p>
+          </div>
+        </div>
+        <div class="cap">
+          <div class="n">04</div>
+          <div>
+            <h3>审批指纹</h3>
+            <p>execution_fingerprint 绑定审批；trace 篡改返回 409</p>
+          </div>
+        </div>
+      </div>
+      <div class="pill-row">
+        <span>已完成</span>
+        <span>执行中</span>
+        <span>变异</span>
+        <span>阻塞</span>
+        <span>UNKNOWN</span>
+        <span>待执行</span>
+        <span>未选路径</span>
+      </div>
+      <p class="foot">V0.6.1 · PATHWAY ENGINE</p>
+    </section>
+
+    <!-- A5 -->
+    <section class="slide" data-label="A5">
+      <div class="meta">
+        <strong>规划与世界模型</strong>
+        <span class="sec">A5 · 附录</span>
+      </div>
+      <h2 class="title">把知识、状态与预测变成可审核的候选路径</h2>
+      <hr class="rule" />
+      <div class="split">
+        <div>
+          <div class="k">当前 · V0.6.1</div>
+          <h3>规则与约束规划</h3>
+          <p>患者状态 + 临床知识 + 医生确认目标 → Pathway Planner → 候选路径 A/B → 人工审核（确认 / 修改 / 拒绝）。</p>
+        </div>
+        <div>
+          <div class="k">后续 · 研究方向</div>
+          <h3>疾病演化预测</h3>
+          <p>从当前状态预测未来状态。目标：概率状态转移与不确定性估计；真实治疗因果效果需独立验证。</p>
+          <div class="formula">Pθ(sₜ₊₁ | sₜ, aₜ, Δt)</div>
+        </div>
+      </div>
+      <p class="foot warn">预测驱动的多路径优化属后续研究，不自动下达医嘱；clinical_use = false。</p>
+    </section>
+
+    <!-- A6 -->
+    <section class="slide" data-label="A6">
+      <div class="meta">
+        <strong>模型训练与验证</strong>
+        <span class="sec">A6 · 附录</span>
+      </div>
+      <h2 class="title">先建立可解释基线，再训练多模态时序模型</h2>
+      <hr class="rule" />
+      <div class="flow f4">
+        <div class="f-node"><strong>数据治理</strong><span>患者级去重 / 标签 / 时间窗</span></div>
+        <div class="f-node"><strong>基线模型</strong><span>LightGBM / Cox / Logistic</span></div>
+        <div class="f-node"><strong>时序模型</strong><span>GRU / 概率状态空间</span></div>
+        <div class="f-node"><strong>验证发布</strong><span>校准 / 外验 / 版本</span></div>
+      </div>
+      <div class="cols cols-3" style="margin-top:36px;flex:0">
+        <div class="col"><div class="mark">分类</div><h3>方法论指标</h3><p>AUROC / AUPRC / 灵敏度</p></div>
+        <div class="col"><div class="mark">生存</div><h3>方法论指标</h3><p>C-index / 时间依赖 AUC</p></div>
+        <div class="col"><div class="mark">概率</div><h3>方法论指标</h3><p>Brier score / 校准曲线</p></div>
+      </div>
+      <p class="foot">以上为验证方法论，非本演示性能宣称。须完成授权、患者级划分、时间外验证、校准与专家评审后方可试点。</p>
+    </section>
+
+  </div>
+  </div>
+  </div>
+
+  <div class="brand-foot">DR.SeeK · HCC-CIP</div>
+
+  <div class="hud">
+    <span class="page" id="pageLabel">01 / 18</span>
+    <button type="button" id="btnPrev" title="上一页">←</button>
+    <button type="button" id="btnNext" title="下一页">→</button>
+  </div>
+
+  <script>
+    (function () {
+      const slides = Array.from(document.querySelectorAll(".slide"));
+      const deck = document.getElementById("deck");
+      const shell = document.getElementById("shell");
+      const progressBar = document.getElementById("progressBar");
+      const pageLabel = document.getElementById("pageLabel");
+      const btnPrev = document.getElementById("btnPrev");
+      const btnNext = document.getElementById("btnNext");
+      const brandFoot = document.querySelector(".brand-foot");
+      const STAGE_W = 1440;
+      const STAGE_H = 810;
+      let index = 0;
+      let syncingHash = false;
+
+      function fitStage() {
+        const pad = 32;
+        const sx = (window.innerWidth - pad) / STAGE_W;
+        const sy = (window.innerHeight - pad) / STAGE_H;
+        const s = Math.min(sx, sy, 1);
+        deck.style.transform = "scale(" + s + ")";
+        shell.style.width = Math.round(STAGE_W * s) + "px";
+        shell.style.height = Math.round(STAGE_H * s) + "px";
+      }
+
+      window.addEventListener("resize", fitStage);
+      fitStage();
+
+      function show(i) {
+        index = Math.max(0, Math.min(slides.length - 1, i));
+        slides.forEach((s, n) => s.classList.toggle("active", n === index));
+        const label = slides[index].dataset.label || String(index + 1).padStart(2, "0");
+        const total = String(slides.length).padStart(2, "0");
+        pageLabel.textContent = label + " / " + total;
+        progressBar.style.width = ((index + 1) / slides.length) * 100 + "%";
+        const dark = slides[index].classList.contains("dark");
+        brandFoot.style.color = dark ? "rgba(244,245,243,0.35)" : "";
+        syncingHash = true;
+        history.replaceState(null, "", "#" + label);
+        queueMicrotask(() => { syncingHash = false; });
+      }
+
+      function next() { show(index + 1); }
+      function prev() { show(index - 1); }
+
+      btnNext.addEventListener("click", next);
+      btnPrev.addEventListener("click", prev);
+
+      window.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") {
+          e.preventDefault();
+          next();
+        } else if (e.key === "ArrowLeft" || e.key === "PageUp") {
+          e.preventDefault();
+          prev();
+        } else if (e.key === "Home") {
+          e.preventDefault();
+          show(0);
+        } else if (e.key === "End") {
+          e.preventDefault();
+          show(slides.length - 1);
+        } else if (e.key === "f" || e.key === "F") {
+          if (!document.fullscreenElement) document.documentElement.requestFullscreen?.();
+          else document.exitFullscreen?.();
+        } else if (e.key === "Escape" && document.fullscreenElement) {
+          document.exitFullscreen?.();
+        }
+      });
+
+      window.addEventListener("hashchange", () => {
+        if (syncingHash) return;
+        const hash = location.hash.replace("#", "");
+        const fromHash = slides.findIndex((s) => s.dataset.label === hash);
+        if (fromHash >= 0) show(fromHash);
+      });
+
+      const initial = location.hash.replace("#", "");
+      const fromHash = slides.findIndex((s) => s.dataset.label === initial);
+      show(fromHash >= 0 ? fromHash : 0);
+    })();
+  </script>
+</body>
+</html>

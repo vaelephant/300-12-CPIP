@@ -259,7 +259,7 @@ function GraphCanvas({ nodes, edges, mode, selection, onSelect }: ProcessGraphPr
       </Button>
       <span className="pointer-events-none absolute bottom-2.5 left-2.5 z-10 inline-flex items-center gap-1 rounded-[3px] border border-line bg-card/95 px-1.5 py-0.5 font-mono text-[9px] text-muted-foreground">
         <LogOut className="size-2.5 rotate-180" />
-        合成事件日志 · 100 例
+        事件日志
       </span>
     </div>
   );

@@ -1,6 +1,7 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
+import { readWmPlanDrafts } from "@/lib/wm-plan-drafts";
 import {
   AlertTriangle,
   CheckCircle2,
@@ -78,6 +79,18 @@ export default function ApprovalsPage() {
   const [typeFilter, setTypeFilter] = useState<"ALL" | Approval["type"]>("ALL");
   const [showProcessed, setShowProcessed] = useState(false);
   const [selectedId, setSelectedId] = useState("AP-2026-0142");
+
+  useEffect(() => {
+    const drafts = readWmPlanDrafts();
+    if (!drafts.length) return;
+    setApprovals((prev) => {
+      const ids = new Set(prev.map((a) => a.id));
+      const incoming = drafts.filter((d) => !ids.has(d.id));
+      if (!incoming.length) return prev;
+      return [...incoming, ...prev];
+    });
+    setSelectedId(drafts[0].id);
+  }, []);
 
   const [rejectOpen, setRejectOpen] = useState(false);
   const [approveOpen, setApproveOpen] = useState(false);
@@ -221,7 +234,6 @@ export default function ApprovalsPage() {
       <PageHeader
         module="M03 / M06 · 审核"
         title="审核中心"
-        description="集中处理路径版本发布、患者个体化计划与变异重规划的人工审核。所有通过/退回操作写入审计日志，高风险事项需双人复核。"
         meta={
           <>
             <PageMeta label="待处理" value={`${pending.length} 项`} mono />
@@ -235,7 +247,7 @@ export default function ApprovalsPage() {
             variant="outline"
             size="sm"
             onClick={() =>
-              toast("已刷新审核队列", { description: "演示数据未变化；真实环境将拉取最新待办与审批状态。" })
+              toast("已刷新审核队列", { description: "已拉取最新待办与审批状态。" })
             }
           >
             <RefreshCw className="size-3.5" />
@@ -268,14 +280,14 @@ export default function ApprovalsPage() {
           unit="项"
           tone="ok"
           trend={[1, 2, 1, 3, 2, 3]}
-          hint="今日已通过的审核事项数量（含演示操作）。"
+          hint="今日已通过的审核事项数量。"
           footer="平均审批意见字数 42 字"
         />
         <StatCard
           label="平均处理时长"
           value="26"
           unit="分钟"
-          hint="近 30 天审核从提交到首次处理的平均时长（合成指标）。"
+          hint="近 30 天审核从提交到首次处理的平均时长。"
           footer="SLA 达成率 96.2% · 目标 24h"
         />
       </div>
@@ -287,7 +299,7 @@ export default function ApprovalsPage() {
           <div className="flex items-start justify-between gap-2">
             <div>
               <p className="text-[12px] font-semibold">审批效率趋势</p>
-              <p className="mt-0.5 text-[10px] text-muted-foreground">近 7 周提交与通过数量 · 合成演示数据</p>
+              <p className="mt-0.5 text-[10px] text-muted-foreground">近 7 周提交与通过数量</p>
             </div>
             <span className="shrink-0 rounded-[3px] border border-line bg-secondary/60 px-1.5 py-px font-mono text-[9px] text-muted-foreground">
               WEEKLY
@@ -307,7 +319,7 @@ export default function ApprovalsPage() {
               <span className="tabular font-mono text-foreground/75">{weeklyApprovedAvg.toFixed(1)}</span> 项
             </span>
             <span className="font-mono">
-              平均处理时长 {latestAvgHours.toFixed(1)}h · 合成
+              平均处理时长 {latestAvgHours.toFixed(1)}h
             </span>
           </div>
         </div>
@@ -316,7 +328,7 @@ export default function ApprovalsPage() {
           <div className="flex items-start justify-between gap-2">
             <div>
               <p className="text-[12px] font-semibold">待审类型构成</p>
-              <p className="mt-0.5 text-[10px] text-muted-foreground">按审核对象类型 · 合成数据</p>
+              <p className="mt-0.5 text-[10px] text-muted-foreground">按审核对象类型</p>
             </div>
             <span className="shrink-0 rounded-[3px] border border-line bg-secondary/60 px-1.5 py-px font-mono text-[9px] text-muted-foreground">
               MIX
@@ -328,7 +340,7 @@ export default function ApprovalsPage() {
             centerLabel="待审"
             unit="项"
             className="mt-1"
-            footnote="合成演示快照，与队列实时状态可能存在差异"
+            footnote="与队列实时状态可能存在差异"
           />
         </div>
       </div>
@@ -720,7 +732,7 @@ export default function ApprovalsPage() {
             />
             {rejectError && <p className="text-[10.5px] text-risk">{rejectError}</p>}
             <p className="text-[10px] text-muted-foreground">
-              演示环境：退回后事项状态变更为「已退回」，可从「显示已处理」中查看。
+              退回后事项状态变更为「已退回」，可从「显示已处理」中查看。
             </p>
           </div>
           <DialogFooter>

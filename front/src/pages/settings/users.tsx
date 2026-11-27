@@ -252,7 +252,7 @@ export default function UsersPage() {
           label="用户总数"
           value={String(stats.total)}
           unit="人"
-          hint={`${ORGANIZATION.shortName} 演示账号（合成数据）`}
+          hint={`${ORGANIZATION.shortName} 账号`}
           footer={<span className="font-mono text-[10px]">ALL USERS</span>}
         />
         <StatCard
@@ -334,7 +334,6 @@ export default function UsersPage() {
           <EmptyState
             icon={<SearchX />}
             title="未找到匹配用户"
-            description="尝试调整关键词、角色或状态筛选；也可直接新建用户。"
             action={
               <Button
                 variant="outline"

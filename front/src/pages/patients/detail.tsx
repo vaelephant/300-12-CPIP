@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IS_SERVER_MODE } from "@/lib/data-mode";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import {
   Activity,
   AlertTriangle,
@@ -12,12 +12,13 @@ import {
   FlaskConical,
   GitBranch,
   History,
+  Map as MapIcon,
   MoreHorizontal,
+  PanelRight,
   PhoneCall,
   Sparkles,
   Stethoscope,
   UserRound,
-  Users,
 } from "lucide-react";
 import { toast } from "sonner";
 import type { ClinicalEvent, Observation, Patient, Task } from "@/types";
@@ -81,6 +82,12 @@ import {
 } from "@/components/patient/stages";
 import { PathwayExecutionPanel } from "@/components/patient/pathway-execution";
 import { OverviewGroupedSheet } from "@/components/patient/overview-grouped-sheet";
+import { ClinicalObservatory } from "@/components/patient/clinical-observatory";
+import {
+  buildPatientCdssActions,
+  buildPatientObservatoryData,
+  stageIdFromClinicalName,
+} from "@/components/patient/observatory-data";
 import { getStateForPatient } from "@/components/patient/patient-state";
 import { ObservationPanel } from "@/components/patient/observation-table";
 import { KeyLabTrendsCard } from "@/components/patient/key-lab-trends";
@@ -163,7 +170,7 @@ export default function PatientDetailPage() {
         <EmptyState
           icon={<UserRound />}
           title="未找到该患者"
-          description={`患者标识 ${id} 在合成病例集中不存在，可能已被移除或链接有误。`}
+          description={`患者标识 ${id} 在在管病例集中不存在，可能已被移除或链接有误。`}
           action={
             <Button asChild variant="outline" size="sm">
               <Link to="/patients">
@@ -180,6 +187,7 @@ export default function PatientDetailPage() {
 }
 
 function PatientDetailContent({ patient }: { patient: Patient }) {
+  const [searchParams, setSearchParams] = useSearchParams();
   const instance = getPatientInstance(patient);
   const { tasks, derived } = usePatientTasks(patient);
   const state = getStateForPatient(patient, instance);
@@ -196,14 +204,48 @@ function PatientDetailContent({ patient }: { patient: Patient }) {
   const executionLink = `/patients/${patient.id}/pathway`;
   const planningLink = instance ? `/planning/${instance.id}` : null;
 
-  const notifyDemo = (message: string) => toast.info(`${message}（演示环境，未连接真实系统）`);
+  const notifyDemo = (message: string) => toast.info(`${message}`);
   const openTasks = tasks.filter((t) => !isTerminalTask(t.status));
   const overdueTasks = openTasks.filter((t) => t.overdue);
   const [copilotOpen, setCopilotOpen] = useState(false);
+  const [cdssOpen, setCdssOpen] = useState(false);
+  const tabFromUrl = searchParams.get("tab");
+  const [workspaceTab, setWorkspaceTab] = useState(tabFromUrl || "observatory");
   const [focusStage, setFocusStage] = useState(currentStage ?? "");
   const [focusTaskId, setFocusTaskId] = useState<string | undefined>();
   const stageForTasks = focusStage || currentStage || "";
   const stageTasks = (stageForTasks ? tasks.filter((t) => t.stage === stageForTasks) : tasks).slice(0, 10);
+  const deepStageId =
+    stageIdFromClinicalName(searchParams.get("stage")) ?? searchParams.get("stageId");
+  const deepNodeKey = searchParams.get("node");
+
+  const cdssPending = (() => {
+    const wm = buildPatientObservatoryData({ patient, instance, tasks, state });
+    return buildPatientCdssActions({ data: wm, tasks }).filter((a) => a.severity !== "info").length;
+  })();
+
+  useEffect(() => {
+    if (tabFromUrl) setWorkspaceTab(tabFromUrl);
+  }, [tabFromUrl]);
+
+  const onWorkspaceTabChange = (value: string) => {
+    setWorkspaceTab(value);
+    const next = new URLSearchParams(searchParams);
+    if (value === "observatory") next.set("tab", "observatory");
+    else next.delete("tab");
+    if (value !== "observatory") {
+      next.delete("stage");
+      next.delete("stageId");
+      next.delete("node");
+      setCdssOpen(false);
+    }
+    setSearchParams(next, { replace: true });
+  };
+
+  const openCdss = () => {
+    onWorkspaceTabChange("observatory");
+    setCdssOpen(true);
+  };
 
   return (
     <WorkspacePage>
@@ -215,18 +257,19 @@ function PatientDetailContent({ patient }: { patient: Patient }) {
           meta={<SyntheticTag />}
           actions={
             <>
-              <Button size="sm" asChild>
-                <Link to={executionLink}>执行</Link>
-              </Button>
-              <Button variant="ghost" size="sm" asChild>
-                <Link to={`/patients/${patient.id}/map`}>路径图</Link>
-              </Button>
-              <Button variant="ghost" size="sm" onClick={() => setCopilotOpen(true)}>
+              <Button size="sm" onClick={() => setCopilotOpen(true)}>
                 <Sparkles className="size-3.5" />
                 副驾驶
                 {overdueTasks.length > 0 && (
-                  <span className="ml-0.5 font-mono text-[11px] text-risk">{overdueTasks.length}</span>
+                  <span className="ml-1 font-mono text-[11px] tabular-nums">{overdueTasks.length}</span>
                 )}
+              </Button>
+              <Button variant="outline" size="sm" onClick={openCdss}>
+                <PanelRight className="size-3.5" />
+                CDSS
+                {cdssPending > 0 ? (
+                  <span className="ml-1 font-mono text-[11px] tabular-nums">{cdssPending}</span>
+                ) : null}
               </Button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -236,6 +279,22 @@ function PatientDetailContent({ patient }: { patient: Patient }) {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuLabel>更多</DropdownMenuLabel>
+                  <DropdownMenuItem asChild>
+                    <Link to={executionLink}>
+                      <Activity /> 执行中心
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to={`/patients/${patient.id}/map`}>
+                      <MapIcon /> 动态路径图
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to={`/patients/${patient.id}/replay`}>
+                      <History /> 病程回放
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
                   {planningLink ? (
                     <DropdownMenuItem asChild>
                       <Link to={planningLink}>
@@ -247,12 +306,7 @@ function PatientDetailContent({ patient }: { patient: Patient }) {
                       <Sparkles /> 生成规划
                     </DropdownMenuItem>
                   )}
-                  <DropdownMenuItem asChild>
-                    <Link to={`/patients/${patient.id}/replay`}>
-                      <History /> 病程回放
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onSelect={() => notifyDemo("已导出患者档案（PDF 合成模板）")}>
+                  <DropdownMenuItem onSelect={() => notifyDemo("已导出患者档案（PDF）")}>
                     <Download /> 导出
                   </DropdownMenuItem>
                   <DropdownMenuItem onSelect={() => notifyDemo("已登记人工变异记录")}>
@@ -269,13 +323,18 @@ function PatientDetailContent({ patient }: { patient: Patient }) {
         />
       </WorkspaceIdentity>
 
-      <Tabs defaultValue="overview" className="flex min-h-0 w-full min-w-0 flex-1 flex-col gap-0">
+      <Tabs
+        value={workspaceTab}
+        onValueChange={onWorkspaceTabChange}
+        className="flex min-h-0 w-full min-w-0 flex-1 flex-col gap-0"
+      >
         <div className="border-b border-line bg-surface px-4 md:px-5">
           <TabsList className="h-9 w-full justify-start gap-0 overflow-x-auto rounded-none border-0 bg-transparent p-0 scrollbar-slim">
             {(
               [
-                { value: "overview", label: "工作空间" },
-                { value: "pathway", label: "路径" },
+                { value: "observatory", label: "观测台" },
+                { value: "overview", label: "本阶段" },
+                { value: "pathway", label: "阶段任务" },
                 { value: "observations", label: `检验 ${observations.length}` },
                 { value: "timeline", label: "时间轴" },
                 { value: "variations", label: variations.length ? `变异 ${variations.length}` : "变异" },
@@ -285,7 +344,10 @@ function PatientDetailContent({ patient }: { patient: Patient }) {
               <TabsTrigger
                 key={t.value}
                 value={t.value}
-                className="h-9 rounded-none border-b-2 border-transparent px-3 text-[13px] data-[state=active]:border-ink data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+                className={cn(
+                  "h-9 rounded-none border-b-2 border-transparent px-3 text-[13px] data-[state=active]:border-ink data-[state=active]:bg-transparent data-[state=active]:shadow-none",
+                  t.value === "observatory" && "data-[state=active]:border-[#2ec4b6]",
+                )}
               >
                 {t.label}
               </TabsTrigger>
@@ -293,7 +355,7 @@ function PatientDetailContent({ patient }: { patient: Patient }) {
           </TabsList>
         </div>
 
-        {/* ------------------------------ 工作空间 · 窄属性 + 宽主面 ------------------------------ */}
+        {/* ------------------------------ 执行 · 路径甘特 + 本阶段任务 ------------------------------ */}
         <TabsContent value="overview" className="mt-0 flex min-h-0 w-full min-w-0 flex-1 flex-col data-[state=inactive]:hidden">
           <WorkspaceColumns
             left={
@@ -377,12 +439,11 @@ function PatientDetailContent({ patient }: { patient: Patient }) {
                     <EmptyState
                       className="mt-2 py-8"
                       title="尚未入径"
-                      description="在患者中心完成入径匹配后可查看路径。"
                       icon={<GitBranch />}
                     />
                   )}
                   {derived && (
-                    <p className="mt-2 text-[12px] text-muted-foreground">阶段由住院进度合成推演。</p>
+                    <p className="mt-2 text-[12px] text-muted-foreground">阶段由住院进度推演。</p>
                   )}
                 </WorkspacePanel>
 
@@ -446,10 +507,35 @@ function PatientDetailContent({ patient }: { patient: Patient }) {
           />
         </TabsContent>
 
+        {/* ------------------------------ 观测台 · 路径 × CDSS × 世界模型 ------------------------------ */}
+        <TabsContent
+          value="observatory"
+          className="mt-0 flex min-h-0 flex-1 flex-col overflow-y-auto bg-canvas p-3 md:p-4 data-[state=inactive]:hidden"
+        >
+          <ClinicalObservatory
+            embedded
+            showPillars={false}
+            patient={patient}
+            instance={instance}
+            tasks={tasks}
+            state={state}
+            initialStageId={deepStageId}
+            initialNodeKey={deepNodeKey}
+            cdssOpen={cdssOpen}
+            onCdssOpenChange={setCdssOpen}
+            pathwayLabel={(() => {
+              const name = instance?.pathwayName ?? patient.pathwayName;
+              if (!name) return undefined;
+              const ver = instance?.version ?? patient.pathwayVersion;
+              return ver ? `${name} · V${ver}` : name;
+            })()}
+          />
+        </TabsContent>
+
         {/* ------------------------------ 临床路径 ------------------------------ */}
         <TabsContent value="pathway" className="mt-0 space-y-4 bg-canvas p-4 md:p-5 data-[state=inactive]:hidden">
           {derived && (
-            <Callout tone="info" title="合成推演任务">
+            <Callout tone="info" title="推演任务">
               该患者未关联实时执行任务，以下任务按住院进度推导生成，仅用于界面展示；实际执行请以路径实例任务为准。
             </Callout>
           )}
@@ -544,12 +630,6 @@ function PatientDetailContent({ patient }: { patient: Patient }) {
           <VisualFrame
             title="多模态临床指标联动"
             english="MULTIMODAL MONITORING"
-            description="检验指标趋势 · 参考区间 · 临床事件 · 回放游标共用时间轴；点击指标可切换 AFP / ALT / ALB / CRP"
-            badge={
-              <Badge variant="outline" className="font-mono text-[8.5px]">
-                SYNTHETIC
-              </Badge>
-            }
             actions={
               <Button variant="ghost" size="xs" asChild>
                 <Link to={`/patients/${patient.id}/replay`}>
@@ -557,7 +637,7 @@ function PatientDetailContent({ patient }: { patient: Patient }) {
                 </Link>
               </Button>
             }
-            footnote="事件标记、参考区间与游标仅用于可视化演示；UNKNOWN / 异常值不等同于临床诊断。"
+            footnote="事件标记、参考区间与游标用于可视化对照；UNKNOWN / 异常值不等同于临床诊断。"
             contentClassName="pt-2"
           >
             <ClinicalTrendLinkage height={280} showZoom />
@@ -569,8 +649,8 @@ function PatientDetailContent({ patient }: { patient: Patient }) {
         {/* ------------------------------ 病程时间轴 ------------------------------ */}
         <TabsContent value="timeline" className="mt-0 space-y-4 bg-canvas p-4 md:p-5 data-[state=inactive]:hidden">
           {eventsAreFallback && (
-            <Callout tone="neutral" title="通用合成事件流">
-              该患者暂无独立事件流记录，以下为演示通用事件（与患者档案关联展示）。
+            <Callout tone="neutral" title="通用事件流">
+              该患者暂无独立事件流记录，以下为通用事件流（与患者档案关联展示）。
             </Callout>
           )}
           <Card>
@@ -578,12 +658,6 @@ function PatientDetailContent({ patient }: { patient: Patient }) {
               <SectionHead
                 title="病程时间轴"
                 count={events.length}
-                description="由 HIS / EMR / LIS / PACS 与 HCC-CIP 运行引擎聚合的临床事件"
-                action={
-                  <Badge variant="outline" className="font-mono text-[9.5px]">
-                    {eventsAreFallback ? "SYNTHETIC" : "REALTIME DEMO"}
-                  </Badge>
-                }
               />
             </CardHeader>
             <CardContent>
@@ -600,7 +674,6 @@ function PatientDetailContent({ patient }: { patient: Patient }) {
                 <EmptyState
                   icon={<GitBranch />}
                   title="暂无变异记录"
-                  description="该患者在路径执行中未登记病情、时间、资源或数据类变异。变异记录会在任务超时、安全约束触发或医生主动登记时生成。"
                   action={
                     <Button size="sm" variant="outline" onClick={() => notifyDemo("已提交人工变异登记入口请求")}>
                       <GitBranch className="size-3.5" /> 登记变异
@@ -751,7 +824,7 @@ function PatientDetailContent({ patient }: { patient: Patient }) {
               })}
               <Callout tone="info" title="路径完成后自动生成">
                 随访任务将在「出院标准评估」任务完成且路径实例进入「已完成」状态后自动创建；当前患者路径
-                进度 {patient.progress}%，尚未触发随访生成。演示环境不会创建真实随访任务。
+                进度 {patient.progress}%，尚未触发随访生成。
               </Callout>
             </CardContent>
           </Card>
@@ -764,18 +837,13 @@ function PatientDetailContent({ patient }: { patient: Patient }) {
               <EmptyState
                 icon={<CalendarDays />}
                 title="暂无随访记录"
-                description="患者仍在院执行路径，尚无出院后随访记录。"
               />
             </CardContent>
           </Card>
         </TabsContent>
       </Tabs>
 
-      <div className="flex flex-wrap items-center justify-between gap-2 border-t border-line bg-surface px-4 py-3 text-[12px] leading-[18px] text-muted-foreground md:px-5">
-        <span className="inline-flex items-center gap-1.5">
-          <Users className="size-3.5 text-muted-foreground/70" />
-          本页展示内容均来自合成演示数据集，不代表真实患者诊疗信息。
-        </span>
+      <div className="flex flex-wrap items-center justify-end gap-2 border-t border-line bg-surface px-4 py-3 text-[12px] leading-[18px] text-muted-foreground md:px-5">
         <Link to={executionLink} className="inline-flex items-center gap-0.5 text-ink hover:underline">
           进入路径执行中心 <ExternalLink className="size-3.5" />
         </Link>
@@ -785,7 +853,7 @@ function PatientDetailContent({ patient }: { patient: Patient }) {
         <SheetContent side="right" className="w-full gap-0 p-0 sm:max-w-[360px]">
           <SheetHeader>
             <SheetTitle className="text-[15px]">临床副驾驶</SheetTitle>
-            <SheetDescription>绑定当前患者 · AI 辅助非医嘱 · 演示未接真实 LLM</SheetDescription>
+            <SheetDescription>绑定当前患者 · AI 辅助非医嘱 · 请用上方芯片提问</SheetDescription>
           </SheetHeader>
           <SheetBody className="px-4 py-3">
             <ClinicalCopilot

@@ -77,6 +77,13 @@ export default function VizGalleryPage() {
               Tasks →
             </a>
             <a
+              href="/dev/desgin/timeline"
+              className="rounded-md border px-2.5 py-1 text-[12px] font-medium transition-colors hover:bg-white"
+              style={{ borderColor: VIZ.line, color: VIZ.ink, background: VIZ.card }}
+            >
+              Timeline →
+            </a>
+            <a
               href="/dev/desgin/combo"
               className="rounded-md border px-2.5 py-1 text-[12px] font-medium transition-colors hover:bg-white"
               style={{ borderColor: VIZ.line, color: VIZ.ink, background: VIZ.card }}
@@ -96,6 +103,13 @@ export default function VizGalleryPage() {
               style={{ borderColor: VIZ.line, color: VIZ.ink, background: VIZ.card }}
             >
               World Model →
+            </a>
+            <a
+              href="/dev/desgin/product-demo"
+              className="rounded-md border px-2.5 py-1 text-[12px] font-medium transition-colors hover:bg-white"
+              style={{ borderColor: VIZ.lineStrong, color: VIZ.ink, background: VIZ.card }}
+            >
+              Product Demo →
             </a>
             <div
               className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[12px]"

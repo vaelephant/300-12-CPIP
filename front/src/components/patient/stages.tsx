@@ -44,7 +44,7 @@ export function deriveStageStates(tasks: Task[]): Record<string, StageState> {
   return map;
 }
 
-/** 非演示患者的合成推演任务：按患者住院进度推导各阶段任务状态（仅用于界面展示）。 */
+/** 非演示患者的推演任务：按患者住院进度推导各阶段任务状态（仅用于界面展示）。 */
 export function deriveDisplayTasks(patient: Patient): Task[] {
   const thresholds = [20, 45, 70, 90, 100];
   const instanceId = patient.instanceId ?? `INST-DERIVED-${patient.id}`;
@@ -82,7 +82,7 @@ export function deriveDisplayTasks(patient: Patient): Task[] {
         startedAt: status === "COMPLETED" || status === "IN_PROGRESS" ? earliestStartAt : undefined,
         completedAt: status === "COMPLETED" ? addHours(earliestStartAt, 2) : undefined,
         overdue: false,
-        summary: `${patient.name} · ${patient.diagnosis} · 合成推演任务`,
+        summary: `${patient.name} · ${patient.diagnosis} · 推演任务`,
       });
     });
   });

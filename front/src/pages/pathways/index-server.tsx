@@ -134,7 +134,6 @@ export default function ServerPathwaysPage() {
       <PageHeader
         module="M03 · 路径设计 · 后端只读视图"
         title="路径库"
-        description="数据来自 FastAPI /alembic seed；当前为只读聚合视图，设计器与版本审批页面仍为 demo。"
         actions={<SyntheticTag />}
         meta={
           <>

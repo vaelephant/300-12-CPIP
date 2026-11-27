@@ -71,7 +71,7 @@ export function NavUser() {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuLabel>切换演示账号</DropdownMenuLabel>
+            <DropdownMenuLabel>切换账号</DropdownMenuLabel>
             {DEMO_ACCOUNTS.map((acc) => (
               <DropdownMenuItem
                 key={acc.user.id}

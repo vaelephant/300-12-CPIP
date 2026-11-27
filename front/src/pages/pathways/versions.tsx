@@ -244,7 +244,7 @@ function VersionsWorkspace({ pathway }: { pathway: Pathway }) {
         approval: {
           reviewer: user?.name ?? "周敏",
           reviewedAt: now,
-          comment: "审核通过，同意发布（演示操作）。",
+          comment: "审核通过，同意发布。",
         },
       });
       toast.success(`版本 ${selected.version} 已发布`, {
@@ -341,7 +341,6 @@ function VersionsWorkspace({ pathway }: { pathway: Pathway }) {
           <EmptyState
             icon={<History className="size-4" />}
             title="该路径暂无版本记录"
-            description="创建第一个版本后即可开始设计路径图并提交审核。"
             action={
               <Button size="sm" onClick={openCreateDialog}>
                 <Plus className="size-3.5" />
@@ -469,7 +468,7 @@ function VersionsWorkspace({ pathway }: { pathway: Pathway }) {
                         ? "该版本已发布，无需重复发布。"
                         : status === "DRAFT"
                           ? "草稿版本须先提交审核，通过后方可发布。"
-                          : "确认后将记录审批人并立即发布（演示：具备权限的角色可完成审核发布）。"}
+                          : "确认后将记录审批人并立即发布。"}
                   </TooltipContent>
                 </Tooltip>
 
@@ -501,7 +500,7 @@ function VersionsWorkspace({ pathway }: { pathway: Pathway }) {
               <div className="min-w-0">
                 <div className="flex items-baseline justify-between gap-2">
                   <p className="text-[11.5px] font-semibold">版本规模演化</p>
-                  <span className="font-mono text-[9px] text-muted-foreground">{growthRange} · 合成</span>
+                  <span className="font-mono text-[9px] text-muted-foreground">{growthRange}</span>
                 </div>
                 <GroupedBarChart
                   data={growthData}
@@ -514,7 +513,7 @@ function VersionsWorkspace({ pathway }: { pathway: Pathway }) {
                   className="mt-0.5"
                 />
                 <p className="mt-0.5 text-[9px] text-muted-foreground/70">
-                  节点 / 连线数量 · 合成演示数据
+                  节点 / 连线数量 · 
                 </p>
               </div>
               <div className="min-w-0">

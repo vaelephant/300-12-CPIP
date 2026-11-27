@@ -84,7 +84,7 @@ export function DataCompletenessBody({
 
       {showSource && (
         <p className="font-mono text-[9.5px] text-muted-foreground/70">
-          状态快照 {fmtDate(state.snapshotAt, true)} · {relTime(state.snapshotAt)} · 来源 HCC-CIP 状态聚合（合成）
+          状态快照 {fmtDate(state.snapshotAt, true)} · {relTime(state.snapshotAt)} · 来源 HCC-CIP 状态聚合
         </p>
       )}
     </div>

@@ -121,7 +121,7 @@ function DemoPlanningPage() {
 function PlanningWorkbench({ instance, patient }: { instance: PathwayInstance; patient: Patient }) {
   const navigate = useNavigate();
   const user = useSessionStore((s) => s.user);
-  const actor = user?.name ?? "演示医生";
+  const actor = user?.name ?? "责任医生";
 
   const plans = useMemo(() => getPlans(instance.id), [instance.id]);
   const activePlan = plans.find((p) => p.status === "ACTIVE");
@@ -240,9 +240,8 @@ function PlanningWorkbench({ instance, patient }: { instance: PathwayInstance; p
         <EmptyState
           icon={<FileText />}
           title="该实例暂无候选计划"
-          description="路径实例尚未生成个体化计划草案。生成草案后将在此进行规则校验、安全校验与医生审核。"
           action={
-            <Button size="sm" onClick={() => toast.info("生成草案需由责任医生发起（演示）")}>
+            <Button size="sm" onClick={() => toast.info("生成草案需由责任医生发起")}>
               <Sparkles className="size-3.5" /> 生成规划草案
             </Button>
           }
@@ -259,7 +258,7 @@ function PlanningWorkbench({ instance, patient }: { instance: PathwayInstance; p
       setGenerating(false);
       setDraftCount((c) => c + 1);
       setStep(3);
-      toast.success(`已生成规划草案 D${draftCount + 1}（合成演示）`);
+      toast.success(`已生成规划草案 D${draftCount + 1}`);
       toast.info("草案不会自动生效，需完成安全校验与医生审核");
     }, 900);
   };
@@ -285,7 +284,7 @@ function PlanningWorkbench({ instance, patient }: { instance: PathwayInstance; p
   const handleActivate = () => {
     setActivated(true);
     setActivateOpen(false);
-    toast.success(`计划 ${candidate.version} 已激活，路径实例切换至新版本（演示）`);
+    toast.success(`计划 ${candidate.version} 已激活，路径实例切换至新版本`);
     window.setTimeout(() => navigate(`/patients/${patient.id}/pathway`), 700);
   };
 
@@ -482,7 +481,7 @@ function PlanningWorkbench({ instance, patient }: { instance: PathwayInstance; p
                 UNKNOWN / STALE 字段不会命中任何条件分支，也不会被自动补齐。需由医生补录资料后重新计算。
               </Callout>
               <p className="font-mono text-[9px] leading-relaxed text-muted-foreground/70">
-                planning.engine · deterministic=true · clinical_use=false · SYNTHETIC
+                planning.engine · deterministic=true · clinical_use=false
               </p>
             </CardContent>
           </Card>
@@ -537,10 +536,9 @@ function PlanningWorkbench({ instance, patient }: { instance: PathwayInstance; p
                 <SectionHead
                   title="阶段计划窗口"
                   count={plannedRows.length}
-                  description="候选计划投影窗口（相对入径时间），实色为已执行 / 执行中进度"
                   action={
                     <Badge variant="outline" className="font-mono text-[9px]">
-                      SYNTHETIC · 投影
+                      投影
                     </Badge>
                   }
                 />
@@ -553,13 +551,13 @@ function PlanningWorkbench({ instance, patient }: { instance: PathwayInstance; p
                   />
                 </div>
                 <p className="mt-1.5 text-[10px] leading-relaxed text-muted-foreground">
-                  时间轴以入径时间为锚点计算；候选计划为合成投影，未激活前不生成真实执行任务。UNKNOWN
+                  时间轴以入径时间为锚点计算；候选计划为投影方案，未激活前不生成执行任务。UNKNOWN
                   相关任务保持待补充状态，不按默认值补齐。
                 </p>
               </div>
 
               <div>
-                <SectionHead title="计划任务" count={plannedRows.length} description="时间窗口以入径时间为锚点计算（合成）" />
+                <SectionHead title="计划任务" count={plannedRows.length} description="时间窗口以入径时间为锚点计算" />
                 <div className="mt-2 overflow-hidden rounded-md border border-line">
                   <Table>
                     <TableHeader>
@@ -823,7 +821,7 @@ function PlanningWorkbench({ instance, patient }: { instance: PathwayInstance; p
                 },
                 {
                   label: "医务处 / 专家审核",
-                  desc: approved ? `${actor} · 已审核通过（本地演示）` : "待审核 · 需填写审核意见",
+                  desc: approved ? `${actor} · 已审核通过` : "待审核 · 需填写审核意见",
                   done: approved,
                   current: !approved,
                 },
@@ -933,7 +931,6 @@ function PlanningWorkbench({ instance, patient }: { instance: PathwayInstance; p
             VIS-010
           </span>
         }
-        description="系统为什么给出这个规划建议？推荐建议 → 临床规则 → 证据条目 → 患者状态 → 候选计划，所有依据实际参与计算并可审计。"
         actions={
           <Button variant="outline" size="xs" asChild>
             <Link to="/knowledge">
@@ -941,7 +938,7 @@ function PlanningWorkbench({ instance, patient }: { instance: PathwayInstance; p
             </Link>
           </Button>
         }
-        footnote="图谱展示实际规则与证据引用关系，不是大语言模型生成的解释文本；当前为合成演示数据。"
+        footnote="图谱展示实际规则与证据引用关系，不是大语言模型生成的解释文本；当前为。"
       >
         <div className="grid grid-cols-1 gap-4 xl:grid-cols-12">
           <div className="xl:col-span-8">
@@ -997,9 +994,9 @@ function PlanningWorkbench({ instance, patient }: { instance: PathwayInstance; p
               id="approve-comment"
               value={comment}
               onChange={(e) => setComment(e.target.value)}
-              placeholder="例如：同意按调整后计划执行；术前需完成 NRS 2002 筛查并复核门静脉癌栓影像（演示输入）"
+              placeholder="例如：同意按调整后计划执行；术前需完成 NRS 2002 筛查并复核门静脉癌栓影像"
             />
-            <p className="text-[10px] text-muted-foreground">审核人：{actor} · 意见将写入计划版本与审计日志（演示环境仅本地保存）。</p>
+            <p className="text-[10px] text-muted-foreground">审核人：{actor} · 意见将写入计划版本与审计日志。</p>
           </div>
           <DialogFooter>
             <Button variant="outline" size="sm" onClick={() => setApproveOpen(false)}>
@@ -1030,7 +1027,7 @@ function PlanningWorkbench({ instance, patient }: { instance: PathwayInstance; p
                 注意：仍有 {unknownCount} 项 UNKNOWN（营养风险等）未闭合。激活后不会自动视为满足条件，相关任务将保持「待补充资料」状态。
               </div>
             )}
-            <p className="text-[10px] text-muted-foreground">激活人：{actor} · 演示环境不会写入真实执行系统。</p>
+            <p className="text-[10px] text-muted-foreground">激活人：{actor}</p>
           </div>
           <DialogFooter>
             <Button variant="outline" size="sm" onClick={() => setActivateOpen(false)}>
@@ -1046,7 +1043,7 @@ function PlanningWorkbench({ instance, patient }: { instance: PathwayInstance; p
       <div className="mt-4 flex flex-wrap items-center justify-between gap-2 px-1 text-[10.5px] text-muted-foreground">
         <span className="inline-flex items-center gap-1">
           <Info className="size-3 text-muted-foreground/70" />
-          规划引擎为确定性演示实现：相同输入与版本产生语义一致计划；UNKNOWN 不参与条件命中。
+          规划引擎：相同输入与版本产生语义一致计划；UNKNOWN 不参与条件命中。
         </span>
         <Link to={`/patients/${patient.id}/pathway`} className="inline-flex items-center gap-0.5 text-primary hover:underline">
           返回路径执行 <ArrowRight className="size-3" />

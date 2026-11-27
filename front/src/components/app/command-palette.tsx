@@ -52,7 +52,7 @@ export function CommandPalette() {
           </div>
           <Command.List className="max-h-[400px] overflow-y-auto scrollbar-slim p-1.5">
             <Command.Empty className="py-10 text-center text-[12px] text-muted-foreground">
-              未找到匹配结果。演示数据仅包含以下三类资源。
+              未找到匹配结果。
             </Command.Empty>
 
             <Command.Group heading="导航">
@@ -125,7 +125,7 @@ export function CommandPalette() {
           <div className="flex items-center gap-4 border-t border-line bg-secondary/30 px-3.5 py-2 text-[10px] text-muted-foreground">
             <span className="flex items-center gap-1"><kbd className="rounded border border-line bg-card px-1 font-mono text-[9px]">↑</kbd><kbd className="rounded border border-line bg-card px-1 font-mono text-[9px]">↓</kbd> 选择</span>
             <span className="flex items-center gap-1"><CornerDownLeft className="size-2.5" /> 打开</span>
-            <span className="ml-auto font-mono">HCC-CIP · 演示数据</span>
+            <span className="ml-auto font-mono">HCC-CIP</span>
           </div>
         </Command>
       </DialogContent>

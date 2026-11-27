@@ -18,7 +18,7 @@ export function getStateForPatient(patient: Patient, instance?: PathwayInstance)
       { field: "diagnosis.stage", label: "临床分期", value: patient.stage, status: "KNOWN" },
       { field: "patient.risk", label: "风险等级", value: RISK_LABEL[patient.riskLevel], status: "KNOWN" },
       { field: "lab.inr", label: "凝血 INR", value: "1.08", status: "KNOWN" },
-      { field: "imaging.report", label: "影像报告", value: "已归档（合成数据）", status: "KNOWN" },
+      { field: "imaging.report", label: "影像报告", value: "已归档", status: "KNOWN" },
       { field: "assessment.nutrition", label: "营养风险筛查 NRS 2002", value: null, status: "UNKNOWN" },
       { field: "imaging.extra", label: "补充影像复核", value: "待影像复核", status: "STALE" },
       { field: "consent.signed", label: "手术知情同意", value: patient.status === "PENDING_ADMISSION" ? "未签署" : "已签署", status: "KNOWN" },

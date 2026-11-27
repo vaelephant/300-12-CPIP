@@ -164,7 +164,6 @@ export default function RolesPage() {
       <PageHeader
         module="M01 · 组织权限"
         title="角色权限"
-        description="按 RBAC 维护角色与权限集合；矩阵可逐项勾选，组级支持全选 / 半选。系统内置角色不可删除，仅可调整业务权限。"
         meta={
           <>
             <SyntheticTag />
@@ -187,7 +186,7 @@ export default function RolesPage() {
           label="角色数"
           value={String(stats.roleCount)}
           unit="个"
-          hint="系统内置角色 + 自定义角色（合成演示）"
+          hint="系统内置角色 + 自定义角色"
           footer={<span className="font-mono text-[10px]">TOTAL ROLES</span>}
         />
         <StatCard
@@ -437,7 +436,7 @@ export default function RolesPage() {
           {/* 角色分配摘要 */}
           <Card className="mt-4 gap-0 py-0">
             <div className="border-b border-line px-4 py-3">
-              <SectionHead title="角色分配摘要" description="按角色统计已分配用户（演示）" />
+              <SectionHead title="角色分配摘要" description="按角色统计已分配用户" />
             </div>
             <CardContent className="grid grid-cols-2 gap-x-6 px-4 py-2.5 lg:grid-cols-3">
               {roles.map((role) => (
@@ -511,7 +510,7 @@ export default function RolesPage() {
               <Field label="数据范围说明" value={DATA_SCOPE_META[newRole.dataScope].label} />
             </div>
             <p className="text-[10.5px] leading-relaxed text-muted-foreground">
-              自定义角色可删除；创建与权限变更均写入审计日志。演示数据中的角色与用户为合成数据。
+              自定义角色可删除；创建与权限变更均写入审计日志。
             </p>
           </div>
           <DialogFooter>

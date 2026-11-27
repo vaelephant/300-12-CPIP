@@ -154,7 +154,7 @@ export default function PathwayStudioPage() {
           <EmptyState
             icon={<History className="size-4" />}
             title="路径不存在"
-            description={`未找到路径 ID「${id}」。该路径可能已停用或未在演示数据中登记。`}
+            description={`未找到路径 ID「${id}」。该路径可能已停用或未登记。`}
             action={
               <Button asChild size="sm">
                 <Link to="/pathways">返回路径库</Link>
@@ -493,7 +493,7 @@ function StudioWorkspace({ pathway }: { pathway: Pathway }) {
       setVersionStatus(next.status);
       setDirty(false);
       toast(`已切换至版本 ${next.version}`, {
-        description: `${VERSION_STATUS_META[next.status].label} · 画布加载该版本的演示图快照。`,
+        description: `${VERSION_STATUS_META[next.status].label} · 画布加载该版本图快照。`,
       });
     },
     [versions],
@@ -520,7 +520,7 @@ function StudioWorkspace({ pathway }: { pathway: Pathway }) {
       ?.writeText(JSON.stringify(payload, null, 2))
       .then(() => {
         toast.success("已导出路径 JSON", {
-          description: `${nodes.length} 个节点 · ${edges.length} 条连线已复制到剪贴板（演示导出）。`,
+          description: `${nodes.length} 个节点 · ${edges.length} 条连线已复制到剪贴板。`,
         });
       })
       .catch(() => {
@@ -569,7 +569,7 @@ function StudioWorkspace({ pathway }: { pathway: Pathway }) {
         })),
       );
       setDirty(true);
-      toast.success("已模拟修复 1 项错误（演示）", {
+      toast.success("已模拟修复 1 项错误", {
         description: issue.nodeKey
           ? `已为节点 ${issue.nodeKey} 补充默认分支并标记为修复，可重新校验或直接提交审核。`
           : "该问题已标记为修复。",
@@ -887,7 +887,7 @@ function StudioWorkspace({ pathway }: { pathway: Pathway }) {
             <AlertDialogTitle>提交审核已被阻断</AlertDialogTitle>
             <AlertDialogDescription>
               当前版本存在 {errorCount} 项阻断性错误，路径不可提交审核。请在校验面板中定位问题节点并修复；
-              演示环境下可使用「模拟修复」体验完整审核流程。
+              可使用「模拟修复」完成结构校验后继续审核。
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

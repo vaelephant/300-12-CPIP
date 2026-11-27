@@ -43,11 +43,6 @@ export function VitalsTrendCard({ className }: { className?: string }) {
         <SectionHead
           title="生命体征趋势"
           description="近 3 日 8 个采集点 · 体温 / 脉搏双轴，参考区间底色 36.0–37.2°C"
-          action={
-            <Badge variant="outline" className="font-mono text-[9px]">
-              SYNTHETIC · 趋势
-            </Badge>
-          }
         />
       </CardHeader>
       <CardContent className="space-y-3">
@@ -105,7 +100,7 @@ export function VitalsTrendCard({ className }: { className?: string }) {
         </div>
 
         <p className="text-[10px] leading-relaxed text-muted-foreground">
-          合成演示趋势，用于展示趋势与参考区间交互，不代表真实监护记录；异常值仅提示需复测，不构成诊断结论。
+          异常值仅提示需复测，不构成诊断结论。
         </p>
       </CardContent>
     </Card>

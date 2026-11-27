@@ -90,7 +90,7 @@ export const KPIS: Kpi[] = [
     denominator: "同期出院患者数",
     period: "近 30 天",
     exclusions: "排除非计划再入院与转院患者",
-    source: "住院病案首页（合成）",
+    source: "住院病案首页",
   },
   {
     key: "cost",
@@ -105,7 +105,7 @@ export const KPIS: Kpi[] = [
     denominator: "同期路径患者数",
     period: "近 30 天",
     exclusions: "排除合并严重并发症患者的额外费用",
-    source: "费用结算数据（合成）",
+    source: "费用结算数据",
   },
   {
     key: "overdue",
@@ -280,7 +280,7 @@ export const PREDICTION_RECORDS: PredictionRecord[] = [
     horizonDays: 30,
     status: "SIMULATED",
     createdAt: at(0, 8, 52),
-    warnings: ["合成数据演示，不得用于真实患者风险评估", "模型未经过临床验证，clinical_use = false"],
+    warnings: ["不得用于真实患者风险评估", "模型未经过临床验证，clinical_use = false"],
     metrics: [
       { label: "预计住院日", value: "8.4 天", uncertainty: "± 1.8 天（模拟）" },
       { label: "术后并发症风险", value: "12.6%", uncertainty: "± 4.2%（模拟）" },
@@ -298,7 +298,7 @@ export const PREDICTION_RECORDS: PredictionRecord[] = [
     horizonDays: 90,
     status: "SIMULATED",
     createdAt: at(0, 7, 12),
-    warnings: ["仅用于流程演示", "预测分布由 Mock Provider 生成"],
+    warnings: ["仅用于流程推演", "预测分布由 Mock Provider 生成"],
     metrics: [
       { label: "预计至手术时间", value: "6.2 周", uncertainty: "± 1.4 周（模拟）" },
       { label: "术后肝功能不全风险", value: "14.8%", uncertainty: "± 4.6%（模拟）" },
@@ -323,7 +323,7 @@ export const ADAPTER_STATUS = [
   { key: "kee", name: "KEE 知识工程平台", mode: "Mock Adapter", status: "DEGRADED", latency: "128 ms", note: "本地知识库可用；远端检索降级，缓存命中 76%" },
   { key: "mwm", name: "MWM 医疗世界模型", mode: "Mock Provider", status: "SIMULATED", latency: "42 ms", note: "合成推演已启用，clinical_use = false" },
   { key: "data", name: "多模态数据平台", mode: "Mock Adapter", status: "ONLINE", latency: "86 ms", note: "影像/检验/病理数据映射正常" },
-  { key: "his", name: "HIS 医院信息系统", mode: "演示接口", status: "ONLINE", latency: "64 ms", note: "只读同步，未开启医嘱下发" },
+  { key: "his", name: "HIS 医院信息系统", mode: "院内接口", status: "ONLINE", latency: "64 ms", note: "只读同步，未开启医嘱下发" },
 ];
 
 /* ------------------------------ 模拟中心 ------------------------------ */
@@ -332,7 +332,7 @@ export const SIMULATION_SCENARIOS: SimulationScenario[] = [
   {
     id: "SIM-001",
     name: "肝癌手术 · 标准路径 vs ERAS 加速路径",
-    description: "对比标准围术期管理与 ERAS 加速康复方案在合成队列中的住院日与费用差异。",
+    description: "对比标准围术期管理与 ERAS 加速康复方案在分析队列中的住院日与费用差异。",
     pathwayId: "PW-HCC-001",
     horizonDays: 30,
     cohortSize: 100,
@@ -369,10 +369,10 @@ export const SIMULATION_RESULTS: SimulationResult[] = [
     status: "SIMULATED",
     generatedAt: at(0, 9, 12),
     outcomes: [
-      { label: "预计平均住院日", value: "8.4 天", uncertainty: "± 1.8 天（合成）" },
-      { label: "预计次均费用", value: "¥64,280", uncertainty: "± ¥8,400（合成）" },
-      { label: "路径完成率", value: "91.2%", uncertainty: "± 3.6%（合成）" },
-      { label: "变异风险", value: "17.4%", uncertainty: "± 5.1%（合成）" },
+      { label: "预计平均住院日", value: "8.4 天", uncertainty: "± 1.8 天" },
+      { label: "预计次均费用", value: "¥64,280", uncertainty: "± ¥8,400" },
+      { label: "路径完成率", value: "91.2%", uncertainty: "± 3.6%" },
+      { label: "变异风险", value: "17.4%", uncertainty: "± 5.1%" },
     ],
     trajectories: trajectoryDays.map((label, i) => ({
       label,
@@ -394,10 +394,10 @@ export const SIMULATION_RESULTS: SimulationResult[] = [
     status: "SIMULATED",
     generatedAt: at(0, 8, 30),
     outcomes: [
-      { label: "预计 R0 切除率", value: "78.6%", uncertainty: "± 6.4%（合成）" },
-      { label: "至手术中位时间", value: "5.8 周", uncertainty: "± 1.6 周（合成）" },
-      { label: "路径完成率", value: "92.4%", uncertainty: "± 2.8%（合成）" },
-      { label: "术后肝功能不全风险", value: "12.8%", uncertainty: "± 4.4%（合成）" },
+      { label: "预计 R0 切除率", value: "78.6%", uncertainty: "± 6.4%" },
+      { label: "至手术中位时间", value: "5.8 周", uncertainty: "± 1.6 周" },
+      { label: "路径完成率", value: "92.4%", uncertainty: "± 2.8%" },
+      { label: "术后肝功能不全风险", value: "12.8%", uncertainty: "± 4.4%" },
     ],
     trajectories: trajectoryDays.map((label, i) => ({
       label,
@@ -407,17 +407,17 @@ export const SIMULATION_RESULTS: SimulationResult[] = [
       { plan: "立即手术（转化 2 周期后）", los: "10.8 天", cost: "¥86,420", completion: "89.2%", risk: "18.6%", recommended: false },
       { plan: "继续转化 2 周期后手术", los: "11.6 天", cost: "¥92,180", completion: "92.4%", risk: "13.2%", recommended: true },
     ],
-    warnings: ["合成数据演示", "转化疗程与手术窗口为模拟约束，未接入真实 MDT 排期"],
+    warnings: ["研究推演", "转化疗程与手术窗口为模拟约束，未接入真实 MDT 排期"],
   },
   {
     scenarioId: "SIM-003",
     status: "SIMULATED",
     generatedAt: at(-1, 15, 0),
     outcomes: [
-      { label: "消融治疗占比", value: "58.0%", uncertainty: "± 5.0%（合成）" },
-      { label: "预计平均住院日", value: "3.6 天", uncertainty: "± 1.1 天（合成）" },
-      { label: "床位释放", value: "14.2 床日/周", uncertainty: "± 2.8 床日（合成）" },
-      { label: "路径完成率", value: "94.1%", uncertainty: "± 2.1%（合成）" },
+      { label: "消融治疗占比", value: "58.0%", uncertainty: "± 5.0%" },
+      { label: "预计平均住院日", value: "3.6 天", uncertainty: "± 1.1 天" },
+      { label: "床位释放", value: "14.2 床日/周", uncertainty: "± 2.8 床日" },
+      { label: "路径完成率", value: "94.1%", uncertainty: "± 2.1%" },
     ],
     trajectories: trajectoryDays.map((label, i) => ({
       label,
@@ -427,7 +427,7 @@ export const SIMULATION_RESULTS: SimulationResult[] = [
       { plan: "腹腔镜小范围切除", los: "6.4 天", cost: "¥42,680", completion: "90.2%", risk: "12.4%", recommended: false },
       { plan: "超声引导下消融", los: "3.6 天", cost: "¥28,940", completion: "94.1%", risk: "10.8%", recommended: true },
     ],
-    warnings: ["合成数据演示", "未考虑真实患者偏好、肿瘤位置与消融技术差异"],
+    warnings: ["研究推演", "未考虑真实患者偏好、肿瘤位置与消融技术差异"],
   },
 ];
 

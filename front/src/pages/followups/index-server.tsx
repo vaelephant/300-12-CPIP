@@ -67,7 +67,6 @@ export default function ServerFollowupsPage() {
       <PageHeader
         module="M10 · 随访管理 · 后端"
         title="随访队列"
-        description="读取服务端随访计划；关闭操作要求预警已闭环，不伪造联系结果。"
         actions={<SyntheticTag />}
         meta={
           <>

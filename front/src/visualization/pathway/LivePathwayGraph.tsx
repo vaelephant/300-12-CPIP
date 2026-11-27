@@ -48,6 +48,10 @@ export interface LivePathwayGraphProps {
   onNodeSelect?: (nodeKey: string | null) => void;
   height?: number | string;
   showLegend?: boolean;
+  /** 右上角「只读 · 实际/计划」徽标；深工作页可关，工具条已表达模式 */
+  showModeBadge?: boolean;
+  /** 右下角「路径图」字样 */
+  showDemoLabel?: boolean;
   showEvidence?: boolean;
   showMiniMap?: boolean;
   /** fixture 坐标按窄卡片排布，默认放大以避免 200px 卡片重叠 */
@@ -225,6 +229,8 @@ export function LivePathwayGraph({
   onNodeSelect,
   height = 620,
   showLegend = true,
+  showModeBadge = true,
+  showDemoLabel = false,
   showEvidence = true,
   showMiniMap = false,
   layoutScale = 1.45,
@@ -257,10 +263,12 @@ export function LivePathwayGraph({
         />
       </ReactFlowProvider>
 
-      <div className="pointer-events-none absolute top-2.5 right-2.5 z-10 flex items-center gap-1.5 rounded-md border border-line bg-surface/95 px-2 py-1 text-[12px] leading-[18px] text-muted-foreground backdrop-blur">
-        <span className="size-1.5 rounded-full bg-ink/70" />
-        只读 · {mode === "actual" ? "实际执行态" : "计划态"}
-      </div>
+      {showModeBadge && (
+        <div className="pointer-events-none absolute top-2.5 right-2.5 z-10 flex items-center gap-1.5 rounded-md border border-line bg-surface/95 px-2 py-1 text-[12px] leading-[18px] text-muted-foreground backdrop-blur">
+          <span className="size-1.5 rounded-full bg-ink/70" />
+          只读 · {mode === "actual" ? "实际执行态" : "计划态"}
+        </div>
+      )}
 
       {showLegend && (
         <div className="pointer-events-none absolute bottom-2.5 left-2.5 z-10 rounded-md border border-line bg-surface/95 px-3 py-2 backdrop-blur">
@@ -268,9 +276,11 @@ export function LivePathwayGraph({
         </div>
       )}
 
-      <div className="pointer-events-none absolute bottom-2.5 right-2.5 z-10 rounded-md bg-surface/90 px-2 py-1 text-[12px] leading-[18px] text-muted-foreground/80 backdrop-blur">
-        演示路径图
-      </div>
+      {showDemoLabel && (
+        <div className="pointer-events-none absolute bottom-2.5 right-2.5 z-10 rounded-md bg-surface/90 px-2 py-1 text-[12px] leading-[18px] text-muted-foreground/80 backdrop-blur">
+          路径图
+        </div>
+      )}
     </div>
   );
 }

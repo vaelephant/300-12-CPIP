@@ -480,7 +480,7 @@ export default function KnowledgePage() {
       setTestResult(fixture);
       setTesting(false);
       if (fixture.result === "TRUE") {
-        toast.success("规则测试结果：TRUE", { description: "基于演示患者陈志远的状态快照执行，未写入患者数据。" });
+        toast.success("规则测试结果：TRUE", { description: "基于患者状态快照执行，未写入患者数据。" });
       } else if (fixture.result === "UNKNOWN") {
         toast.warning("规则测试结果：UNKNOWN", {
           description: `缺少 ${fixture.missing.join("、") || "必要字段"}；UNKNOWN 不等于 FALSE，需补充资料后复测。`,
@@ -513,7 +513,6 @@ export default function KnowledgePage() {
       <PageHeader
         module="M02 · 知识库"
         title="知识库"
-        description="集中维护指南、专家共识、国家临床路径、院内规范、临床规则与证据条目；所有路径引用均绑定版本，外部知识更新不会自动修改已发布路径。"
         meta={
           <>
             <SyntheticTag />
@@ -538,7 +537,7 @@ export default function KnowledgePage() {
 
       {/* ------------------------------- 统计 ------------------------------- */}
       <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-5">
-        <StatCard label="知识条目" value={String(stats.total)} unit="条" hint="含指南、共识、国家路径、院内规范、规则与术语（合成数据）" />
+        <StatCard label="知识条目" value={String(stats.total)} unit="条" hint="含指南、共识、国家路径、院内规范、规则与术语" />
         <StatCard
           label="已发布"
           value={String(stats.published)}
@@ -620,7 +619,7 @@ export default function KnowledgePage() {
 
       <Card className="gap-0 py-0 lg:col-span-4">
         <div className="flex items-center justify-between border-b border-line px-4 py-3">
-          <SectionHead title="证据等级构成" description="EVIDENCE_ITEMS 分级（合成）" />
+          <SectionHead title="证据等级构成" description="EVIDENCE_ITEMS 分级" />
           <span className="font-mono text-[10px] text-muted-foreground">n = {EVIDENCE_ITEMS.length}</span>
         </div>
         <CardContent className="px-4 py-3">
@@ -630,7 +629,7 @@ export default function KnowledgePage() {
             centerLabel="证据"
             centerValue={EVIDENCE_ITEMS.length}
             unit="条"
-            footnote="A / B 级来自指南与共识，院内规范单列；演示数据。"
+            footnote="A / B 级来自指南与共识，院内规范单列。"
           />
         </CardContent>
       </Card>
@@ -692,7 +691,6 @@ export default function KnowledgePage() {
                 <EmptyState
                   icon={<SearchX />}
                   title="未找到知识条目"
-                  description="当前搜索与审核状态组合下无记录，可调整筛选或新建知识条目。"
                   action={
                     <Button
                       variant="outline"
@@ -798,7 +796,6 @@ export default function KnowledgePage() {
               <EmptyState
                 icon={<SearchX />}
                 title="未找到临床规则"
-                description="调整搜索关键词或状态筛选后重试。"
                 action={
                   <Button
                     variant="outline"
@@ -889,7 +886,6 @@ export default function KnowledgePage() {
               <EmptyState
                 icon={<SearchX />}
                 title="未找到证据条目"
-                description="尝试更宽泛的关键词，例如「肝癌」「ERAS」「VTE」。"
                 action={
                   <Button variant="outline" size="sm" onClick={() => setQuery("")}>
                     清除搜索
@@ -934,7 +930,7 @@ export default function KnowledgePage() {
               </div>
             )}
             <div className="border-t border-line px-4 py-2 text-[10.5px] text-muted-foreground">
-              证据条目为合成演示摘要，不可作为临床决策依据引用。
+              证据条目为摘要展示，引用前请核对原文。
             </div>
           </Card>
         </TabsContent>
@@ -1132,7 +1128,6 @@ export default function KnowledgePage() {
                 <section>
                   <SectionHead
                     title="规则 DSL"
-                    description="只读结构化表达式；修改需创建新版本并经审核"
                     className="mb-1.5"
                   />
                   <pre className="max-h-[260px] overflow-auto rounded-md border border-line bg-secondary/30 p-3 font-mono text-[10.5px] leading-relaxed text-foreground/80">
@@ -1143,7 +1138,7 @@ export default function KnowledgePage() {
                 <section>
                   <SectionHead
                     title="执行测试"
-                    description="基于演示患者陈志远的状态快照，不写入患者数据"
+                    description="基于患者状态快照，不写入患者数据"
                     className="mb-1.5"
                   />
                   <div className="rounded-md border border-line">
@@ -1200,7 +1195,7 @@ export default function KnowledgePage() {
                   ) : (
                     <div className="mt-2 flex items-center justify-between gap-3 rounded-md border border-dashed border-line px-3 py-2.5">
                       <p className="text-[11px] text-muted-foreground">
-                        {testing ? "正在按三态逻辑执行规则（约 0.7 秒）…" : "尚未执行测试。测试结果为合成演示，不改变患者状态。"}
+                        {testing ? "正在按三态逻辑执行规则（约 0.7 秒）…" : "尚未执行测试。测试结果不改变患者状态。"}
                       </p>
                       <Button size="sm" variant="outline" onClick={runRuleTest} disabled={testing}>
                         {testing ? <Loader2 className="size-3.5 animate-spin" /> : <FlaskConical className="size-3.5" />}
@@ -1302,7 +1297,7 @@ export default function KnowledgePage() {
               />
             </div>
             <p className="text-[10.5px] leading-relaxed text-muted-foreground">
-              演示数据：条目内容仅用于界面演示，不代表真实指南或院内制度。
+              
             </p>
           </div>
           <DialogFooter>
@@ -1323,7 +1318,7 @@ export default function KnowledgePage() {
           <DialogHeader>
             <DialogTitle>导入外部文档</DialogTitle>
             <DialogDescription>
-              支持 PDF / Word / 网页快照（演示）。导入后仅生成草稿与待核对证据，不自动生效。
+              支持 PDF / Word / 网页快照。导入后仅生成草稿与待核对证据，不自动生效。
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-3 px-5 py-4">

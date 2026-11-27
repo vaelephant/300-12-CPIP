@@ -24,7 +24,6 @@ export default function ServerAnalyticsPage() {
       <PageHeader
         module="M14 · 运营分析 · 后端聚合"
         title="质量与运营指标"
-        description="仅聚合数据，不含患者身份信息；指标由后端实时计算，不展示虚构趋势。"
         actions={
           <div className="flex items-center gap-2">
             <SyntheticTag />
@@ -51,7 +50,6 @@ export default function ServerAnalyticsPage() {
         <EmptyState
           icon={<AlertTriangle />}
           title={summaryQuery.error instanceof ApiError && summaryQuery.error.status === 403 ? "当前角色无权查看聚合指标" : "无法读取聚合指标"}
-          description="请使用医务处、院办或管理员账号，或检查后端连接。"
         />
       ) : null}
       {metrics.length > 0 ? (

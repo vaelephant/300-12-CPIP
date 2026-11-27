@@ -197,7 +197,7 @@ const demoTace: Patient = {
   flags: ["HBV 感染", "Child-Pugh A 级", "门静脉分支受侵"],
 };
 
-/* --------------------------- 生成 300 份合成病例 --------------------------- */
+/* --------------------------- 生成 300 份在管病例 --------------------------- */
 
 function buildPatients(): Patient[] {
   const list: Patient[] = [demoHcc, demoConversion, demoTace];

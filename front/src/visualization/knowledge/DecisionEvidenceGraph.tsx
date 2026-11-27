@@ -145,7 +145,7 @@ export function DecisionEvidenceGraph({
           </span>
         ))}
         <span className="ml-auto font-mono text-[9px] text-muted-foreground/60">
-          点击节点查看依据 · 可拖拽/缩放 · 合成演示
+          点击节点查看依据 · 可拖拽/缩放
         </span>
       </div>
       <div className="rounded-md border border-line bg-secondary/30 px-3 py-2">

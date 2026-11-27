@@ -71,7 +71,7 @@ const PREDICTION_STATUS_META: Record<
   (typeof PREDICTION_RECORDS)[number]["status"],
   { label: string; tone: "ok" | "warn" | "risk" | "info" | "neutral" }
 > = {
-  SIMULATED: { label: "已生成合成推演", tone: "info" },
+  SIMULATED: { label: "已生成推演", tone: "info" },
   UNAVAILABLE: { label: "不可用 · 已回退", tone: "risk" },
   FAILED: { label: "推演失败", tone: "risk" },
 };
@@ -105,7 +105,7 @@ export default function SimulationPage() {
     setResourceProfile(next.resourceProfile);
     setRunning(false);
     toast("已切换推演情景", {
-      description: `${next.name}。当前显示该情景最近一次合成推演结果。`,
+      description: `${next.name}。当前显示该情景最近一次推演结果。`,
     });
   }
 
@@ -116,9 +116,9 @@ export default function SimulationPage() {
       setGeneratedAt((prev) => ({ ...prev, [scenario.id]: new Date().toISOString() }));
       setLastRun({ horizon: Number(horizon), cohort: Number(cohort), profile: resourceProfile });
       setRunning(false);
-      toast.warning("本次推演为合成结果", {
+      toast.warning("本次为研究推演结果", {
         description:
-          "队列与结局全部由 Mock Provider 合成生成，clinical_use = false，不可用于临床决策或患者沟通。",
+          "clinical_use = false，不可用于临床决策或患者沟通。",
       });
     }, 900);
   }
@@ -129,14 +129,14 @@ export default function SimulationPage() {
     window.setTimeout(() => {
       setTestingProvider(false);
       toast("Mock Provider 连通性正常", {
-        description: `响应 ${mwm?.latency ?? "42 ms"}；仅返回合成分布，未做临床验证。`,
+        description: `响应 ${mwm?.latency ?? "42 ms"}；仅返回研究分布，未做临床验证。`,
       });
     }, 700);
   }
 
   function exportReport() {
     toast.success("推演报告导出已创建", {
-      description: "PDF 将标注「合成数据 / clinical_use = false」水印；导出行为写入审计日志。",
+      description: "导出标注 clinical_use = false；行为写入审计日志。",
     });
   }
 
@@ -145,7 +145,6 @@ export default function SimulationPage() {
       <PageHeader
         module="M09 · 路径模拟"
         title="路径模拟"
-        description="在合成队列中比较标准路径、ERAS 加速方案与国家临床路径基线的推演差异，仅用于流程与容量规划演示。"
         meta={
           <>
             <SyntheticTag />
@@ -168,21 +167,20 @@ export default function SimulationPage() {
           <AlertOctagon className="mt-0.5 size-4 shrink-0 text-risk" />
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
-              <p className="text-[13px] font-semibold text-risk">合成数据 · 模型未验证 · 不可用于临床决策</p>
+              <p className="text-[13px] font-semibold text-risk">研究推演 · 模型未验证 · 不可用于临床决策</p>
               <span className="rounded-[3px] border border-risk/25 bg-card px-1.5 py-px font-mono text-[10px] text-risk">
                 clinical_use = false
               </span>
-              <StatusBadge tone="info">SYNTHETIC · 合成推演</StatusBadge>
+              <StatusBadge tone="info">研究推演</StatusBadge>
             </div>
             <p className="mt-1.5 max-w-[880px] text-[11.5px] leading-relaxed text-foreground/70">
-              本页所有队列构成、结局指标与不确定性均由演示用 Mock Provider 生成，未使用真实医院数据训练，
-              也未经过临床验证。推演结果不代表真实患者结局、风险概率或费用承诺，禁止用于临床决策、患者沟通与考核。
+              推演结果不代表真实患者结局、风险概率或费用承诺，禁止用于临床决策、患者沟通与考核。
             </p>
           </div>
           <div className="hidden shrink-0 gap-5 border-l border-risk/20 pl-4 text-[10.5px] lg:flex">
             <div>
-              <p className="text-muted-foreground">数据构成</p>
-              <p className="mt-0.5 font-mono text-foreground">100% 合成</p>
+              <p className="text-muted-foreground">用途</p>
+              <p className="mt-0.5 font-mono text-foreground">容量规划</p>
             </div>
             <div>
               <p className="text-muted-foreground">模型验证</p>
@@ -190,7 +188,7 @@ export default function SimulationPage() {
             </div>
             <div>
               <p className="text-muted-foreground">监管用途</p>
-              <p className="mt-0.5 font-mono text-foreground">教学演示</p>
+              <p className="mt-0.5 font-mono text-foreground">研究推演</p>
             </div>
           </div>
         </div>
@@ -206,8 +204,7 @@ export default function SimulationPage() {
             VIS-012 / VIS-013
           </span>
         }
-        description="候选路径 A / B / C 在 30 / 90 / 180 天时间尺度下的疾病负担演化。切换时间尺度只改变展示坐标；区间为合成不确定性带。"
-        footnote="确定性合成演示：不含随机概率，不代表真实治疗效果；模型版本与适用范围随结果一并展示。"
+        footnote="推演不含随机概率，不代表真实治疗效果；模型版本与适用范围随结果一并展示。"
       >
         <TrajectorySimulator />
       </VisualFrame>
@@ -217,7 +214,7 @@ export default function SimulationPage() {
         <SectionHead
           title="推演情景"
           count={SIMULATION_SCENARIOS.length}
-          description="选择情景后可调整推演配置并重新运行；情景定义与结局均为合成数据"
+          description="选择情景后可调整推演配置并重新运行"
           className="mb-2.5"
         />
         <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
@@ -244,11 +241,7 @@ export default function SimulationPage() {
                       <CheckCircle2 className="size-3" />
                       已选择
                     </span>
-                  ) : (
-                    <span className="inline-flex items-center gap-1 rounded-[3px] border border-line bg-secondary/60 px-1.5 py-px font-mono text-[9.5px] text-muted-foreground">
-                      SYNTHETIC
-                    </span>
-                  )}
+                  ) : null}
                 </div>
                 <p className="mt-1.5 text-[13px] leading-snug font-semibold text-foreground">{s.name}</p>
                 <p className="mt-1 line-clamp-2 text-[11.5px] leading-relaxed text-muted-foreground">{s.description}</p>
@@ -309,7 +302,7 @@ export default function SimulationPage() {
                   </Select>
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-[11px] text-muted-foreground">合成队列规模</label>
+                  <label className="text-[11px] text-muted-foreground">分析队列规模</label>
                   <Select value={cohort} onValueChange={setCohort}>
                     <SelectTrigger size="sm" className="w-[120px]">
                       <SelectValue />
@@ -346,7 +339,7 @@ export default function SimulationPage() {
               <div className="mt-2.5 flex flex-wrap items-center justify-between gap-2 border-t border-line pt-2.5 text-[10.5px] text-muted-foreground">
                 <span>
                   {running
-                    ? "正在生成合成队列并比较候选方案（约 0.9 秒，确定性演示）…"
+                    ? "正在生成分析队列并比较候选方案…"
                     : lastRun
                       ? `本次配置：队列 ${lastRun.cohort} 例 · 时间窗 ${lastRun.horizon} 天 · ${lastRun.profile}`
                       : `情景默认配置：队列 ${scenario.cohortSize} 例 · 时间窗 ${scenario.horizonDays} 天 · ${scenario.resourceProfile}`}
@@ -363,9 +356,9 @@ export default function SimulationPage() {
                 key={o.label}
                 label={o.label}
                 value={o.value}
-                hint={`不确定度（合成）：${o.uncertainty}`}
+                hint={`不确定度：${o.uncertainty}`}
                 tone="info"
-                footer={<span className="font-mono text-[10px]">合成推演 · 非真实结局</span>}
+                
               />
             ))}
           </div>
@@ -373,7 +366,7 @@ export default function SimulationPage() {
           {/* 轨迹图 */}
           <Card className="gap-0 py-0">
             <div className="flex items-center justify-between border-b border-line px-4 py-3">
-              <SectionHead title="队列轨迹" description="队列剩余比例（合成）" />
+              <SectionHead title="队列轨迹" description="队列剩余比例" />
               <span className="font-mono text-[10px] text-muted-foreground">
                 {scenario.horizonDays} 天 · n = {cohort}
               </span>
@@ -386,10 +379,10 @@ export default function SimulationPage() {
                 unit="%"
                 digits={1}
                 yDomain={[0, 100]}
-                footnote="合成推演：曲线由 Mock Provider 确定性生成，不含随机抽样，不代表真实患者脱落率。"
+                footnote="曲线由推演引擎确定性生成，不含随机抽样，不代表真实患者脱落率。"
               />
               <div className="mt-2 flex items-center justify-between border-t border-line pt-2 text-[10.5px] text-muted-foreground">
-                <span>D0 = 入径日；曲线为合成队列剩余比例</span>
+                <span>D0 = 入径日；曲线为分析队列剩余比例</span>
                 <span className="font-mono">SIMULATED · clinical_use = false</span>
               </div>
             </CardContent>
@@ -400,7 +393,7 @@ export default function SimulationPage() {
           <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
             <Card className="gap-0 py-0">
               <div className="flex items-center justify-between border-b border-line px-4 py-3">
-                <SectionHead title="推演不确定性（P10–P90）" description="标准路径 vs ERAS 加速路径（合成）" />
+                <SectionHead title="推演不确定性（P10–P90）" description="标准路径 vs ERAS 加速路径" />
                 <span className="rounded-[3px] border border-risk/25 bg-risk-wash px-1.5 py-px font-mono text-[9.5px] text-risk">
                   clinical_use = false
                 </span>
@@ -408,7 +401,7 @@ export default function SimulationPage() {
               <CardContent className="px-4 py-3">
                 <FanChart data={SIM_UNCERTAINTY} series={FAN_SERIES} height={206} unit="%" yDomain={[0, 100]} />
                 <p className="mt-1 text-[10px] leading-relaxed text-muted-foreground">
-                  阴影为合成推演 P10–P90 区间，实线为中位数；区间宽度来自 Mock Provider 的合成扰动，
+                  阴影为推演 P10–P90 区间，实线为中位数；区间宽度为模型不确定性估计，
                   不代表真实临床不确定性，不可用于患者沟通或临床决策。
                 </p>
               </CardContent>
@@ -416,13 +409,12 @@ export default function SimulationPage() {
 
             <Card className="gap-0 py-0">
               <div className="flex items-center justify-between border-b border-line px-4 py-3">
-                <SectionHead title="成本-效果候选方案" description="次均费用 vs 完成率（合成）" />
-                <StatusBadge tone="info">SYNTHETIC</StatusBadge>
+                <SectionHead title="成本-效果候选方案" description="次均费用 vs 完成率" />
               </div>
               <CardContent className="px-4 py-3">
                 <CostEffectScatter points={COST_EFFECT_POINTS} height={206} />
                 <p className="mt-1 text-[10px] leading-relaxed text-muted-foreground">
-                  气泡为合成队列规模，虚线为合成目标基线；推荐点为合成目标函数下最优，
+                  气泡为分析队列规模，虚线为目标基线；推荐点为目标函数下最优，
                   clinical_use = false，不构成临床推荐。
                 </p>
               </CardContent>
@@ -432,7 +424,7 @@ export default function SimulationPage() {
           {/* 比较表 */}
           <Card className="gap-0 py-0">
             <div className="flex items-center justify-between border-b border-line px-4 py-3">
-              <SectionHead title="候选方案比较" description="推荐项为合成推演中指标最优的候选方案" />
+              <SectionHead title="候选方案比较" description="推荐项为本次推演中指标最优的候选方案" />
               <span className="font-mono text-[10px] text-muted-foreground">{result.comparison.length} 个方案</span>
             </div>
             <CardContent className="px-0 py-0">
@@ -471,7 +463,7 @@ export default function SimulationPage() {
                 </TableBody>
               </Table>
               <div className="border-t border-line px-4 py-2 text-[10.5px] leading-relaxed text-muted-foreground">
-                推荐仅表示在本次合成推演的目标函数下指标较优，并非临床推荐；实际方案须由 MDT / 医生结合患者情况决定。
+                推荐仅表示在本次推演目标函数下指标较优，并非临床推荐；实际方案须由 MDT / 医生结合患者情况决定。
               </div>
             </CardContent>
           </Card>
@@ -501,10 +493,10 @@ export default function SimulationPage() {
                 <Field label="适配器" value="world-model-adapter" mono />
                 <Field label="响应延迟" value={mwm?.latency ?? "42 ms"} mono />
                 <Field label="临床使用" value={<span className="font-mono text-risk">clinical_use = false</span>} mono />
-                <Field label="输出性质" value="合成概率分布" />
+                <Field label="输出性质" value="研究概率分布" />
               </div>
               <div className="mt-2 rounded-md border border-line bg-secondary/40 px-2.5 py-2 text-[10.5px] leading-relaxed text-muted-foreground">
-                {mwm?.note ?? "合成推演已启用，clinical_use = false"}
+                {mwm?.note ?? "研究推演已启用，clinical_use = false"}
               </div>
               <div className="mt-2.5 space-y-1.5">
                 <p className="label-micro">回退策略</p>
@@ -599,12 +591,12 @@ export default function SimulationPage() {
             </CardContent>
           </Card>
 
-          <Callout tone="neutral" title="确定性演示 · 不呈现真实风险">
-            本页推演为确定性演示：同一情景与配置每次返回相同合成结果，不包含随机抽样与概率预测，也不以百分比形式呈现真实风险。
+          <Callout tone="neutral" title="研究推演 · 不呈现真实风险">
+            同一情景与配置每次返回一致结果，不包含随机抽样与概率预测，也不以百分比形式呈现真实风险。
           </Callout>
 
           <Callout tone="info" title="推演结果的正确用途">
-            仅用于路径设计评审时的容量与流程讨论，例如比较候选方案在合成队列中的相对差异；不可用于个体患者决策。
+            仅用于路径设计评审时的容量与流程讨论，例如比较候选方案在分析队列中的相对差异；不可用于个体患者决策。
           </Callout>
         </div>
       </div>

@@ -143,7 +143,7 @@ export function NodeInspector({
           <div className="mt-3 rounded-md border border-line bg-card p-2.5">
             <div className="mb-1.5 flex items-center justify-between">
               <p className="text-[11px] font-semibold">结构分析</p>
-              <span className="font-mono text-[9px] text-muted-foreground">当前画布 · 合成</span>
+              <span className="font-mono text-[9px] text-muted-foreground">当前画布</span>
             </div>
 
             {structure.groups.length === 0 ? (
@@ -376,7 +376,7 @@ export function NodeInspector({
                     }
                   >
                     <Sparkles className="size-3.5" />
-                    更新完成规则引用（演示）
+                    更新完成规则引用
                   </Button>
                 </div>
               ) : (
@@ -404,7 +404,7 @@ export function NodeInspector({
                     }
                   >
                     <Plus className="size-3.5" />
-                    引用完成规则（演示）
+                    引用完成规则
                   </Button>
                 </div>
               )}

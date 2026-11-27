@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "finalize",
+  "status": "pass",
+  "type": "explainer",
+  "quality": "showcase",
+  "specification": {
+    "path": "/Users/nihao/code/300-12-CPIP/.archify/explainer-vercel-calm-20261127-141212/candidate.archify.md",
+    "sha256": "59e9849fa884eda8d932f5d01d8d5e2ab4fa732fbed2ef8968052a0e6bd5f89f",
+    "bytes": 6307
+  },
+  "artifact": {
+    "path": "/Users/nihao/code/300-12-CPIP/.archify/explainer-vercel-calm-20261127-141212/vercel-calm.html",
+    "sha256": "2b6e521d718d786bc3c9c29cf0c9a002d78c8773e9a51408e2c5e760fc35b769",
+    "bytes": 912862
+  },
+  "gates": {
+    "validate": "pass",
+    "deliver": "pass",
+    "check": "pass",
+    "browser-check": "not-run"
+  },
+  "diagnostics": [],
+  "diagnosticSummary": {
+    "total": 0,
+    "shown": 0,
+    "truncated": false
+  },
+  "evidence": {
+    "receipt": "/Users/nihao/code/300-12-CPIP/.archify/explainer-vercel-calm-20261127-141212/vercel-calm.finalize.json",
+    "summaryReceipt": "/Users/nihao/code/300-12-CPIP/.archify/explainer-vercel-calm-20261127-141212/vercel-calm.finalize-summary.json"
+  },
+  "visualReview": "not-requested",
+  "durationMs": 1230,
+  "browserCheck": {
+    "requested": false,
+    "ran": false
+  }
+}

@@ -74,7 +74,6 @@ export default function ServerVariationsPage() {
       <PageHeader
         module="M08 · 变异管理 · 后端"
         title="路径变异"
-        description="读取服务端变异记录；处置与关闭由后端状态机校验。"
         actions={<SyntheticTag />}
         meta={
           <>

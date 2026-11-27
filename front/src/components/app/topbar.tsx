@@ -7,7 +7,6 @@ import {
   CircleHelp,
   Command as CommandIcon,
   LogOut,
-  PlayCircle,
   Search,
   ShieldCheck,
   UserRound,
@@ -40,7 +39,6 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { crumbForPath } from "./nav-config";
-import { IS_SERVER_MODE } from "@/lib/data-mode";
 import { ModeToggle } from "@/components/mode-toggle";
 
 export function Topbar() {
@@ -86,15 +84,6 @@ export function Topbar() {
           </BreadcrumbList>
         </Breadcrumb>
       </div>
-
-      {!IS_SERVER_MODE && (
-        <button
-          onClick={() => useUiStore.getState().openTour()}
-          className="ml-1 hidden h-7 shrink-0 items-center gap-1.5 rounded-md bg-secondary px-2.5 text-[12px] font-medium text-foreground transition-colors hover:bg-secondary/80 sm:flex"
-        >
-          <PlayCircle className="size-3.5" /> 演示导览
-        </button>
-      )}
 
       <button
         onClick={() => setCommandOpen(true)}
@@ -158,7 +147,7 @@ export function Topbar() {
               ))}
             </div>
             <div className="border-t border-line bg-secondary/30 px-3 py-2 text-center text-[10px] text-muted-foreground">
-              演示通知 · 合成数据
+              全部通知
             </div>
           </PopoverContent>
         </Popover>
@@ -208,7 +197,7 @@ export function Topbar() {
               </div>
             </div>
             <DropdownMenuSeparator />
-            <DropdownMenuLabel>切换演示账号</DropdownMenuLabel>
+            <DropdownMenuLabel>切换账号</DropdownMenuLabel>
             {DEMO_ACCOUNTS.map((acc) => (
               <DropdownMenuItem
                 key={acc.user.id}

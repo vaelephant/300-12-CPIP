@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "finalize",
+  "status": "pass",
+  "type": "explainer",
+  "quality": "showcase",
+  "specification": {
+    "path": "/Users/nihao/code/300-12-CPIP/.archify/explainer-pathway-map-next-20261127-135245/candidate.archify.md",
+    "sha256": "2e4706ff79dde57bf2c77a20ecb3a11714c8a7aa105bedcd553f929af36a785c",
+    "bytes": 3030
+  },
+  "artifact": {
+    "path": "/Users/nihao/code/300-12-CPIP/.archify/explainer-pathway-map-next-20261127-135245/pathway-map-next.html",
+    "sha256": "4a9b9b02b333ad7e51731fb88bc18ff706dd1fd540be46b1fc78897155562a5f",
+    "bytes": 140239
+  },
+  "gates": {
+    "validate": "pass",
+    "deliver": "pass",
+    "check": "pass",
+    "browser-check": "not-run"
+  },
+  "diagnostics": [],
+  "diagnosticSummary": {
+    "total": 0,
+    "shown": 0,
+    "truncated": false
+  },
+  "evidence": {
+    "receipt": "/Users/nihao/code/300-12-CPIP/.archify/explainer-pathway-map-next-20261127-135245/pathway-map-next.finalize.json",
+    "summaryReceipt": "/Users/nihao/code/300-12-CPIP/.archify/explainer-pathway-map-next-20261127-135245/pathway-map-next.finalize-summary.json"
+  },
+  "visualReview": "not-requested",
+  "durationMs": 628,
+  "browserCheck": {
+    "requested": false,
+    "ran": false
+  }
+}

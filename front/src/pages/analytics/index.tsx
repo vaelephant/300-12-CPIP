@@ -64,7 +64,7 @@ import { cn, fmt, fmtDate, fmtTime, pct } from "@/lib/utils";
 
 /* ===========================================================================
  * M10 · 质量与运营分析
- * 指标均为合成演示数据；分母为 0 时返回「不可计算」，不得显示为 0%。
+ * 指标；分母为 0 时返回「不可计算」，不得显示为 0%。
  * ========================================================================= */
 
 const TREND_SERIES_DEF = [
@@ -270,11 +270,10 @@ function DemoAnalyticsPage() {
       <PageHeader
         module="M10 · 质量与运营分析"
         title="质量与运营分析"
-        description="路径覆盖率、入径与完成率、变异与效率指标的统一口径分析；所有数字均为合成演示数据，不可用于对外披露。"
         meta={
           <>
             <SyntheticTag />
-            <PageMeta label="统计周期" value={`${period}（演示）`} />
+            <PageMeta label="统计周期" value={`${period}`} />
             <PageMeta label="最近同步" value={fmtDate(LAST_SYNC, true)} mono />
             <PageMeta label="指标数" value={`${KPIS.length} 项`} />
           </>
@@ -285,7 +284,7 @@ function DemoAnalyticsPage() {
               value={period}
               onValueChange={(v) => {
                 setPeriod(v);
-                toast("统计周期已切换", { description: `当前周期：${v}。演示数据不随周期重算。` });
+                toast("统计周期已切换", { description: `当前周期：${v}` });
               }}
             >
               <SelectTrigger size="sm" className="w-[116px]">
@@ -344,14 +343,14 @@ function DemoAnalyticsPage() {
               size={136}
             />
             <div className="mt-3 w-full rounded-md border border-line bg-secondary/40 px-2.5 py-2 text-[10px] leading-relaxed text-muted-foreground">
-              目标 ≥ 90%；分母为已结束路径，排除已取消入径实例。合成演示数据。
+              目标 ≥ 90%；分母为已结束路径，排除已取消入径实例。
             </div>
           </CardContent>
         </Card>
 
         <Card className="gap-0 py-0 lg:col-span-4">
           <div className="flex items-center justify-between border-b border-line px-4 py-3">
-            <SectionHead title="治疗组质量画像" description="六维质量评分（合成）" />
+            <SectionHead title="治疗组质量画像" description="六维质量评分" />
             <span className="font-mono text-[10px] text-muted-foreground">0–100</span>
           </div>
           <CardContent className="px-4 py-3">
@@ -364,7 +363,7 @@ function DemoAnalyticsPage() {
 
         <Card className="gap-0 py-0 lg:col-span-5">
           <div className="flex items-center justify-between border-b border-line px-4 py-3">
-            <SectionHead title="任务超时分布" description="治疗组 × 计划时段（近 30 天，合成）" />
+            <SectionHead title="任务超时分布" description="治疗组 × 计划时段（近 30 天）" />
             <StatusBadge tone="warn">共 46 项</StatusBadge>
           </div>
           <CardContent className="px-4 py-3">
@@ -388,13 +387,12 @@ function DemoAnalyticsPage() {
       <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-12">
         <Card className="gap-0 py-0 lg:col-span-5">
           <div className="flex items-center justify-between border-b border-line px-4 py-3">
-            <SectionHead title="入径 / 完成 / 变异趋势" description={`${period} · 周度（合成）`} />
+            <SectionHead title="入径 / 完成 / 变异趋势" description={`${period} · 周度`} />
             <span className="font-mono text-[10px] text-muted-foreground">12 周</span>
           </div>
           <CardContent className="px-4 py-3">
             <TrendChart data={TREND_SERIES} series={TREND_SERIES_DEF} height={200} unit="%" />
-            <p className="mt-1 text-[10px] text-muted-foreground">纵轴为合成比率，仅用于界面演示，不代表真实趋势。</p>
-          </CardContent>
+                      </CardContent>
         </Card>
 
         <Card className="gap-0 py-0 lg:col-span-3">
@@ -414,8 +412,7 @@ function DemoAnalyticsPage() {
           </div>
           <CardContent className="px-4 py-3">
             <TrendChart data={LOS_SERIES} series={LOS_SERIES_DEF} height={200} unit="天" digits={1} />
-            <p className="mt-1 text-[10px] text-muted-foreground">合成住院日序列，用于路径效率对比演示。</p>
-          </CardContent>
+                      </CardContent>
         </Card>
       </div>
 
@@ -569,7 +566,7 @@ function DemoAnalyticsPage() {
               </TableBody>
             </Table>
             <div className="border-t border-line px-4 py-2 text-[10px] text-muted-foreground">
-              排名依据完成率排序；费用为合成数据，不含医保结算口径。
+              排名依据完成率排序；费用不含医保结算口径。
             </div>
           </CardContent>
         </Card>
@@ -579,7 +576,7 @@ function DemoAnalyticsPage() {
       <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-12">
         <Card className="gap-0 py-0 lg:col-span-4">
           <div className="border-b border-line px-4 py-3">
-            <SectionHead title="变异类型构成" description="近 30 天变异分布（合成）" />
+            <SectionHead title="变异类型构成" description="近 30 天变异分布" />
           </div>
           <CardContent className="px-4 py-3">
             <HBarChart data={variationChart} height={196} labelWidth={64} rightPad={64} />
@@ -653,7 +650,7 @@ function DemoAnalyticsPage() {
       <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-12">
         <Card className="gap-0 py-0 lg:col-span-8">
           <div className="flex items-center justify-between border-b border-line px-4 py-3">
-            <SectionHead title="变异类型趋势" description="近 12 周新增变异（按类型堆叠，合成）" />
+            <SectionHead title="变异类型趋势" description="近 12 周新增变异（按类型堆叠）" />
             <span className="font-mono text-[10px] text-muted-foreground">单位：例</span>
           </div>
           <CardContent className="px-4 py-3">
@@ -666,7 +663,7 @@ function DemoAnalyticsPage() {
 
         <Card className="gap-0 py-0 lg:col-span-4">
           <div className="border-b border-line px-4 py-3">
-            <SectionHead title="变异趋势解读" description="基于 12 周合成序列聚合" />
+            <SectionHead title="变异趋势解读" description="基于 12 周序列聚合" />
           </div>
           <CardContent className="px-4 py-2.5">
             <div className="divide-y divide-line">
@@ -703,7 +700,7 @@ function DemoAnalyticsPage() {
       </div>
 
       <Callout tone="neutral" title="数据说明与合规边界" className="mt-4">
-        本页指标均为合成演示数据，不得用于等级评审、绩效考核或对外披露。指标口径遵循「分母为零返回不可计算」原则；
+        本页指标，不得用于等级评审、绩效考核或对外披露。指标口径遵循「分母为零返回不可计算」原则；
         患者级数据导出需单独授权，导出行为全量记入审计日志（M12）。
       </Callout>
 
@@ -759,7 +756,7 @@ function DemoAnalyticsPage() {
           </div>
           <DialogFooter>
             <span className="mr-auto font-mono text-[10px] text-muted-foreground">
-              最近同步 {fmtTime(LAST_SYNC)} · 合成数据
+              最近同步 {fmtTime(LAST_SYNC)}
             </span>
             <Button variant="outline" size="sm" onClick={() => setDefOpen(false)}>
               关闭

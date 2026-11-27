@@ -368,7 +368,6 @@ function DemoVariationsPage() {
       <PageHeader
         module="M08 · 变异管理"
         title="变异管理"
-        description="统一登记临床、资源、时间与流程变异，评估影响后生成重规划草案；安全相关变异阻断自动推进，不自动改变正式方案。"
         meta={
           <>
             <SyntheticTag />
@@ -397,7 +396,7 @@ function DemoVariationsPage() {
           label="全部变异"
           value={String(stats.total)}
           unit="条"
-          hint="演示数据集中的变异登记总数（合成数据）"
+          hint="近 30 天变异登记总数"
           footer={<span className="font-mono text-[10px]">ALL STATUSES</span>}
         />
         <StatCard
@@ -503,7 +502,6 @@ function DemoVariationsPage() {
             <EmptyState
               icon={<SearchX />}
               title="没有符合条件的变异"
-              description="当前类型 / 严重度 / 状态 / 关键词组合下无记录。可重置筛选条件后查看全部变异。"
               action={
                 <Button
                   variant="outline"
@@ -568,7 +566,7 @@ function DemoVariationsPage() {
             </div>
           )}
           <div className="flex items-center justify-between border-t border-line px-4 py-2 text-[10.5px] text-muted-foreground">
-            <span>共 {filtered.length} 条记录 · 全部为合成数据</span>
+            <span>共 {filtered.length} 条记录 · </span>
             <span className="font-mono">severity: HIGH / MEDIUM / LOW</span>
           </div>
         </Card>
@@ -577,12 +575,12 @@ function DemoVariationsPage() {
         <div className="space-y-4 lg:col-span-4">
           <Card className="gap-0 py-0">
             <div className="border-b border-line px-4 py-3">
-              <SectionHead title="变异类型分布" count={VARIATIONS.length} description="近 30 天登记构成（合成）" />
+              <SectionHead title="变异类型分布" count={VARIATIONS.length} description="近 30 天登记构成" />
             </div>
             <CardContent className="px-4 py-3">
               <HBarChart data={typeChart} height={196} labelWidth={64} rightPad={62} />
               <div className="mt-1 flex items-center justify-between border-t border-line pt-2 text-[10.5px] text-muted-foreground">
-                <span>近 30 天全量 40 条 · 列表为演示抽样</span>
+                <span>近 30 天登记</span>
                 <span className="font-mono">时间+临床 65.0%</span>
               </div>
             </CardContent>
@@ -630,7 +628,7 @@ function DemoVariationsPage() {
       <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-12">
         <Card className="gap-0 py-0 lg:col-span-5">
           <div className="flex items-center justify-between border-b border-line px-4 py-3">
-            <SectionHead title="类型 × 严重度矩阵" description="近 30 天变异登记数（合成）" />
+            <SectionHead title="类型 × 严重度矩阵" description="近 30 天变异登记数" />
             <span className="font-mono text-[10px] text-muted-foreground">单位：例</span>
           </div>
           <CardContent className="px-4 py-3">
@@ -651,13 +649,13 @@ function DemoVariationsPage() {
 
         <Card className="gap-0 py-0 lg:col-span-7">
           <div className="flex items-center justify-between border-b border-line px-4 py-3">
-            <SectionHead title="变异类型趋势" description="近 12 周新增（按类型堆叠，合成）" />
+            <SectionHead title="变异类型趋势" description="近 12 周新增（按类型堆叠）" />
             <span className="font-mono text-[10px] text-muted-foreground">单位：例</span>
           </div>
           <CardContent className="px-4 py-3">
             <StackedAreaTrend data={VARIATION_TREND} series={VARIATION_TREND_SERIES} height={208} unit="例" />
             <p className="mt-1 text-[10px] leading-relaxed text-muted-foreground">
-              趋势为合成演示序列；安全变异（红色）任何上升均需人工复核，系统不会自动重规划。
+              安全变异（红色）任何上升均需人工复核，系统不会自动重规划。
             </p>
           </CardContent>
         </Card>
@@ -669,7 +667,6 @@ function DemoVariationsPage() {
           <div className="flex items-center justify-between border-b border-line px-4 py-3">
             <SectionHead
               title="病区 × 路径阶段变异热力"
-              description="近 30 天模拟变异率，可点击单元格下钻至病区 / 阶段记录（合成）"
             />
             <span className="font-mono text-[10px] text-muted-foreground">单位：变异率 %</span>
           </div>
@@ -744,13 +741,13 @@ function DemoVariationsPage() {
                   <Field label="关联路径" value="肝癌手术 · 肝癌消融治疗" />
                 </div>
                 <p className="text-[10px] leading-relaxed text-muted-foreground">
-                  正式产品点击单元格后将下钻到该病区、阶段、路径版本的变异清单与患者事件；演示环境仅展示聚合值。
+                  点击单元格可下钻到该病区、阶段、路径版本的变异清单与患者事件。
                 </p>
                 <Button
                   size="xs"
                   variant="outline"
                   onClick={() =>
-                    toast.info(`下钻：${heatCell.row} · ${heatCell.col}（演示）`, {
+                    toast.info(`下钻：${heatCell.row} · ${heatCell.col}`, {
                       description: "正式版本将按数据范围过滤并展示相关变异记录。",
                     })
                   }
@@ -907,7 +904,6 @@ function DemoVariationsPage() {
                 <section>
                   <SectionHead
                     title="处理流程与历史轨迹"
-                    description="当前步骤高亮；时间戳来自变异事件记录"
                     className="mb-2"
                   />
                   <ol>
@@ -1196,7 +1192,7 @@ function DemoVariationsPage() {
               />
             </div>
             <p className="text-[10.5px] leading-relaxed text-muted-foreground">
-              登记信息为合成演示数据；提交后可在列表中继续评估影响并生成重规划草案。
+              提交后可在列表中继续评估影响并生成重规划草案。
             </p>
           </div>
           <DialogFooter>

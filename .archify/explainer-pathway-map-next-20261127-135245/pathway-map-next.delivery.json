@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "879c1d62-c3d7-4460-bd0f-95774df78366",
+  "status": "current",
+  "command": "deliver",
+  "type": "explainer",
+  "input": "/Users/nihao/code/300-12-CPIP/.archify/explainer-pathway-map-next-20261127-135245/candidate.archify.md",
+  "output": "/Users/nihao/code/300-12-CPIP/.archify/explainer-pathway-map-next-20261127-135245/pathway-map-next.html",
+  "specification": {
+    "sha256": "2e4706ff79dde57bf2c77a20ecb3a11714c8a7aa105bedcd553f929af36a785c",
+    "bytes": 3030
+  },
+  "artifact": {
+    "sha256": "4a9b9b02b333ad7e51731fb88bc18ff706dd1fd540be46b1fc78897155562a5f",
+    "bytes": 140239
+  },
+  "explainer": {
+    "preparedSha256": "7fa68af04c9e96f65cdafa1b07c1f454e02cdc9afd676715e4ac9e1f9bae0b4e",
+    "dependencies": []
+  }
+}

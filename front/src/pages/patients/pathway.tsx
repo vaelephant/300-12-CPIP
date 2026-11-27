@@ -297,7 +297,7 @@ function PathwayExecutionContent({ patient }: { patient: Patient }) {
           actions={
             <Button variant="outline" size="sm" asChild>
               <Link to={`/patients/${patient.id}`}>
-                <ArrowLeft className="size-3.5" /> 返回患者详情
+                <ArrowLeft className="size-3.5" /> 返回患者 360
               </Link>
             </Button>
           }
@@ -306,7 +306,6 @@ function PathwayExecutionContent({ patient }: { patient: Patient }) {
         <EmptyState
           icon={<GitBranch />}
           title="未找到路径实例"
-          description="该患者尚未确认入径或路径实例尚未创建，无法进入执行中心。请先在患者中心完成智能入径匹配。"
           action={
             <Button asChild size="sm">
               <Link to="/patients">前往患者中心</Link>
@@ -364,7 +363,7 @@ function PathwayExecutionContent({ patient }: { patient: Patient }) {
             </Button>
             <Button variant="ghost" size="sm" asChild>
               <Link to={`/patients/${patient.id}`}>
-                <ArrowLeft className="size-3.5" /> 返回患者详情
+                <ArrowLeft className="size-3.5" /> 返回患者 360
               </Link>
             </Button>
           </>
@@ -380,7 +379,7 @@ function PathwayExecutionContent({ patient }: { patient: Patient }) {
             <PageMeta label="当前阶段" value={instance.currentStage} />
             <PageMeta label="责任医生" value={instance.responsibleDoctor} />
             <PageMeta label="修订" value={`R${instance.revision}`} mono />
-            <PageMeta label="角色" value="临床医生（执行演示）" />
+            <PageMeta label="角色" value="临床医生" />
           </>
         }
       />
@@ -453,9 +452,9 @@ function PathwayExecutionContent({ patient }: { patient: Patient }) {
       {executionSummary && (
         <Card className="mb-4 overflow-hidden">
           <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line bg-secondary/25 px-4 py-2">
-            <SectionHead title="执行分析摘要" description="计划 vs 实际住院日与关键路径偏差 · 合成演示" />
+            <SectionHead title="执行分析摘要" description="计划 vs 实际住院日与关键路径偏差" />
             <Badge variant="outline" className="font-mono text-[9px]">
-              SYNTHETIC · 执行分析
+              执行分析
             </Badge>
           </div>
           <div className="grid grid-cols-2 gap-px bg-line sm:grid-cols-3 xl:grid-cols-5">
@@ -472,7 +471,7 @@ function PathwayExecutionContent({ patient }: { patient: Patient }) {
             <SummaryCell
               label="偏差"
               value={executionSummary.deviationDays > 0 ? `+${executionSummary.deviationDays} 天` : "0 天"}
-              hint="按超时任务数预估（合成）"
+              hint="按超时任务数预估"
               tone={executionSummary.deviationDays > 0 ? "risk" : "ok"}
             />
             <SummaryCell
@@ -489,7 +488,7 @@ function PathwayExecutionContent({ patient }: { patient: Patient }) {
             />
           </div>
           <p className="border-t border-line px-4 py-1.5 text-[9.5px] text-muted-foreground">
-            计划住院日由路径任务时间窗口推算；偏差为基于超时任务数的合成演示估算，不作为真实住院日预测。
+            计划住院日由路径任务时间窗口推算；偏差基于超时任务估算。
           </p>
         </Card>
       )}
@@ -499,10 +498,9 @@ function PathwayExecutionContent({ patient }: { patient: Patient }) {
           <CardHeader className="pb-2">
             <SectionHead
               title="任务计划 vs 实际"
-              description="计划窗口（浅色）与实际执行记录（实色）对照 · 实例级全部任务"
               action={
                 <Badge variant="outline" className="font-mono text-[9px]">
-                  SYNTHETIC · GANTT
+                  GANTT
                 </Badge>
               }
             />
@@ -510,7 +508,7 @@ function PathwayExecutionContent({ patient }: { patient: Patient }) {
           <CardContent>
             <GanttChart rows={ganttRows} now={new Date().toISOString()} maxHeight={300} labelWidth={190} />
             <p className="mt-1.5 text-[10px] leading-relaxed text-muted-foreground">
-              红色标记为已超时任务；竖线为当前时间。超时仅作标记、不自动改变执行状态；甘特图为合成演示计划与实际记录。
+              红色标记为已超时任务；竖线为当前时间。超时仅作标记、不自动改变执行状态。
             </p>
           </CardContent>
         </Card>
@@ -544,7 +542,7 @@ function PathwayExecutionContent({ patient }: { patient: Patient }) {
                         </Link>
                       </Button>
                       <Button size="sm" variant="outline" asChild>
-                        <Link to={`/patients/${patient.id}`}>返回患者详情</Link>
+                        <Link to={`/patients/${patient.id}`}>返回患者 360</Link>
                       </Button>
                     </div>
                   }
@@ -712,13 +710,13 @@ function PathwayExecutionContent({ patient }: { patient: Patient }) {
               <div className="mt-2 flex flex-wrap gap-1.5">
                 <Button size="xs" variant="outline" asChild>
                   <Link to={`/patients/${patient.id}`}>
-                    <ArrowLeft className="size-3" /> 患者详情
+                    <ArrowLeft className="size-3" /> 患者 360
                   </Link>
                 </Button>
                 <Button
                   size="xs"
                   variant="ghost"
-                  onClick={() => toast.info("已请求同步外部系统最新状态（演示）")}
+                  onClick={() => toast.info("已请求同步外部系统最新状态")}
                 >
                   <RefreshCw className="size-3" /> 同步状态
                 </Button>
@@ -772,10 +770,10 @@ function PathwayExecutionContent({ patient }: { patient: Patient }) {
               id="exit-reason"
               value={exitReason}
               onChange={(e) => setExitReason(e.target.value)}
-              placeholder="例如：患者要求转院治疗 / 出现排除条件需退出路径（演示输入）"
+              placeholder="例如：患者要求转院治疗 / 出现排除条件需退出路径"
             />
             <p className="text-[10.5px] text-muted-foreground">
-              退出原因将写入路径变异与质控台账（演示环境仅保存在本地会话）。
+              退出原因将写入路径变异与质控台账。
             </p>
           </div>
           <DialogFooter>
@@ -801,7 +799,7 @@ function PathwayExecutionContent({ patient }: { patient: Patient }) {
       <div className="mt-4 flex flex-wrap items-center justify-between gap-2 px-1 text-[10.5px] text-muted-foreground">
         <span className="inline-flex items-center gap-1">
           <ShieldAlert className="size-3 text-muted-foreground/70" />
-          任务状态变更由运行时引擎校验（TASK_TRANSITIONS），演示数据不写入真实病历。
+          任务状态变更由运行时引擎校验（TASK_TRANSITIONS）。
         </span>
         <span className="inline-flex items-center gap-1">
           <Timer className="size-3" /> 超时仅标记，不自动改变执行状态
